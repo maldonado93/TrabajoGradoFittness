@@ -51,7 +51,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         btnIngresar.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                cargarWebServices();
+                consultarUsuario();
 
             }
         });
@@ -59,7 +59,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
 
 
-    private void cargarWebServices(){
+    private void consultarUsuario(){
         etUsuario = (EditText)findViewById(R.id.etUsuario);
         String usuario = etUsuario.getText().toString().trim();
 
@@ -71,6 +71,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
         }*/
+
         /*progreso = new ProgressDialog(getApplicationContext());
         progreso.setMessage("Registrando...");
         progreso.show();*/
@@ -79,8 +80,13 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
         url = url.replace(" ", "%20");
 
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
-        request.add(jsonObjectRequest);
+        /*jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);*/
+
+        Intent registro = new Intent(Login.this, Principal.class);
+        registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
+
+        startActivity(registro);
     }
 
 
@@ -120,10 +126,10 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
     public void Registrar(View v) throws NoSuchAlgorithmException {
 
-        /*Intent registro = new Intent(LoginActivity.this, RegistroPersonaActivity.class);
+        Intent registro = new Intent(Login.this, RegistroPersona.class);
         registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
 
-        startActivity(registro);*/
+        startActivity(registro);
     }
 
     public String toMd5(String texto) throws NoSuchAlgorithmException {
