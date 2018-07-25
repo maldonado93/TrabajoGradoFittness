@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,11 +31,11 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Nutricion extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
+public class Alimentos extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     View v;
-    private RecyclerView recyclerCategoriaNutricion;
-    private List<CategoriaNutricion> listaCategoriaNutricion;
+    private RecyclerView recyclerAlimentos;
+    private List<CategoriaNutricion> listaAlimentos;
     TextView titulo;
 
     RequestQueue request;
@@ -47,12 +45,11 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        v = inflater.inflate(R.layout.fragment_nutricion,container,false);
+        v = inflater.inflate(R.layout.fragment_alimentos,container,false);
 
+        titulo = getActivity().findViewById(R.id.tvTituloCategoria);
 
-        titulo = getActivity().findViewById(R.id.tvTitulo);
-
-        recyclerCategoriaNutricion = (RecyclerView)v.findViewById(R.id.rvCategorias);
+        recyclerAlimentos = (RecyclerView)v.findViewById(R.id.rvAlimentos);
 
         return v;
     }
@@ -62,17 +59,13 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         super.onCreate(savedInstanceState);
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
-        consultarCategorias("nombre");
-
-        /*listaCategoriaNutricion.add(new CategoriaNutricion("Cereales"));
-        listaCategoriaNutricion.add(new CategoriaNutricion("Carnes"));
-        listaCategoriaNutricion.add(new CategoriaNutricion("Frutas"));*/
+        consultarCategorias("categoria", "orden");
     }
 
 
-    private void consultarCategorias(String orden){
+    private void consultarCategorias(String categoria, String orden){
 
-        String url = "http://192.168.1.6/proyectoGrado/query_BD/nutricion/listar_categorias.php?orden="+orden;
+        String url = "http://192.168.0.20/proyectoGrado/query_BD/nutricion/listar_alimentos.php?categoria="+categoria+"&orden="+orden;
 
         url = url.replace(" ", "%20");
 
@@ -85,23 +78,22 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         JSONArray datos = response.optJSONArray("alimentos");
 
         try {
-            listaCategoriaNutricion = new ArrayList<>();
+            listaAlimentos = new ArrayList<>();
             for(int i=0; i<datos.length();i++) {
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
 
-                listaCategoriaNutricion.add(new CategoriaNutricion(jsonObject.optString("categoria")));
+                listaAlimentos.add(new CategoriaNutricion(jsonObject.optString("categoria")));
             }
 
-            AdaptadorCategoriaNutricion adaptador = new AdaptadorCategoriaNutricion(getContext(), listaCategoriaNutricion);
-            recyclerCategoriaNutricion.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+            AdaptadorCategoriaNutricion adaptador = new AdaptadorCategoriaNutricion(getContext(), listaAlimentos);
+            recyclerAlimentos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
-            recyclerCategoriaNutricion.setAdapter(adaptador);
+            recyclerAlimentos.setAdapter(adaptador);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-
 
     }
 

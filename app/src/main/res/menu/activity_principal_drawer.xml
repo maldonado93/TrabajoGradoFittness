@@ -18,7 +18,7 @@
             android:title="Rutina" />
         <item
             android:id="@+id/nav_manage"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ic_local_dining"
             android:title="Nutricion" />
     </group>
 

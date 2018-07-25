@@ -14,12 +14,14 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:text="Nutrición"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:textStyle="bold" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvCategorias"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="20dp" />
 </LinearLayout>
