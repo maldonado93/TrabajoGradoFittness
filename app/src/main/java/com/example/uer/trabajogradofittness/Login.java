@@ -27,6 +27,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 public class Login extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener {
 
+    public String ip = "192.168.1.6";
     private EditText etUsuario;
     private EditText etPassword;
     private Button btnIngresar;
@@ -76,7 +77,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         progreso.setMessage("Registrando...");
         progreso.show();*/
 
-        String url = "http://192.168.1.3/proyectoGrado/query_BD/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
+        String url = "http://"+ip+"/proyectoGrado/query_BD/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
 
         url = url.replace(" ", "%20");
 

@@ -35,6 +35,7 @@ import java.util.List;
  */
 public class Nutricion extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
 
+    public String ip = "192.168.1.6";
     View v;
     private RecyclerView recyclerCategoriaNutricion;
     private List<CategoriaNutricion> listaCategoriaNutricion;
@@ -50,7 +51,7 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         v = inflater.inflate(R.layout.fragment_nutricion,container,false);
 
 
-        titulo = getActivity().findViewById(R.id.tvTitulo);
+        titulo = v.findViewById(R.id.tvTitulo);
 
         recyclerCategoriaNutricion = (RecyclerView)v.findViewById(R.id.rvCategorias);
 
@@ -62,7 +63,7 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         super.onCreate(savedInstanceState);
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
-        consultarCategorias("nombre");
+        consultarCategorias();
 
         /*listaCategoriaNutricion.add(new CategoriaNutricion("Cereales"));
         listaCategoriaNutricion.add(new CategoriaNutricion("Carnes"));
@@ -70,9 +71,9 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
     }
 
 
-    private void consultarCategorias(String orden){
+    private void consultarCategorias(){
 
-        String url = "http://192.168.1.6/proyectoGrado/query_BD/nutricion/listar_categorias.php?orden="+orden;
+        String url = "http://"+ip+"/proyectoGrado/query_BD/nutricion/listar_categorias.php";
 
         url = url.replace(" ", "%20");
 

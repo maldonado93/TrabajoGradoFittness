@@ -27,6 +27,8 @@ import java.util.ArrayList;
 
 public class RegistroPersona extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
 
+    public String ip = "192.168.1.6";
+
     private Spinner spTipoIdentificacion;
     private EditText etIdentificacion;
     private EditText etNombres;
@@ -103,7 +105,7 @@ public class RegistroPersona extends AppCompatActivity implements Response.Liste
     private void cargarIdentificaciones(){
         consulta = "tipos_identificaciones";
 
-        String url = "http://192.168.0.20/proyectoGrado/query_BD/tipo_identificaciones/listar_tipo_identificaciones.php";
+        String url = "http://"+ip+"/proyectoGrado/query_BD/tipo_identificaciones/listar_tipo_identificaciones.php";
 
         url = url.replace(" ", "%20");
 
@@ -114,7 +116,7 @@ public class RegistroPersona extends AppCompatActivity implements Response.Liste
     private void cargarDepartamentos(){
         consulta = "departamentos";
 
-        String url = "http://192.168.0.20/proyectoGrado/query_BD/departamentos/listar_departamentos.php";
+        String url = "http://"+ip+"/proyectoGrado/query_BD/departamentos/listar_departamentos.php";
 
         url = url.replace(" ", "%20");
 
@@ -125,7 +127,7 @@ public class RegistroPersona extends AppCompatActivity implements Response.Liste
     private void cargarCiudades(int id){
         consulta = "ciudades";
 
-        String url = "http://192.168.0.20/proyectoGrado/query_BD/ciudades/listar_ciudades.php?idDepartamento="+id;
+        String url = "http://"+ip+"/proyectoGrado/query_BD/ciudades/listar_ciudades.php?idDepartamento="+id;
 
         url = url.replace(" ", "%20");
 
@@ -167,7 +169,7 @@ public class RegistroPersona extends AppCompatActivity implements Response.Liste
         progreso.setMessage("Consultando...");
         progreso.show();*/
 
-        String url = "http://192.168.0.20/proyectoGrado/query_BD/usuario/registrar_usuario.php?usuario="+ nombres +"&password="+ apellidos +"";
+        String url = "http://"+ip+"/proyectoGrado/query_BD/usuario/registrar_usuario.php?usuario="+ nombres +"&password="+ apellidos +"";
 
         url = url.replace(" ", "%20");
 

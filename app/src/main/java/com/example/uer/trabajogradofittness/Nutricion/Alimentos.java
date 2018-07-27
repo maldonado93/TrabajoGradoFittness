@@ -1,6 +1,8 @@
 package com.example.uer.trabajogradofittness.Nutricion;
 
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,6 +12,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,12 +39,20 @@ import java.util.List;
 public class Alimentos extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     View v;
-    private RecyclerView recyclerAlimentos;
-    private List<CategoriaNutricion> listaAlimentos;
+    public String ip = "192.168.1.6";
+    private String categoria;
+
+    private List<AlimentosCategoria> listaAlimentos;
+    ArrayList<String> listaOrden;
+
     TextView titulo;
+    Spinner spOrden;
+    RecyclerView recyclerAlimentos;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,25 +60,57 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
 
         v = inflater.inflate(R.layout.fragment_alimentos,container,false);
 
-        titulo = getActivity().findViewById(R.id.tvTituloCategoria);
+        titulo = (TextView) v.findViewById(R.id.tvTituloCategoria);
+        titulo.setText(categoria);
+
+        spOrden = (Spinner)v.findViewById(R.id.spOrden);
+        spOrden.setOnItemSelectedListener(
+                new AdapterView.OnItemSelectedListener() {
+                    public void onItemSelected(AdapterView<?> spn,
+                                               android.view.View v,
+                                               int posicion,
+                                               long id) {
+                        String orden = spOrden.getSelectedItem().toString();
+                        consultarCategorias(categoria, orden);
+                    }
+
+                    public void onNothingSelected(AdapterView<?> spn) {
+                    }
+                });
 
         recyclerAlimentos = (RecyclerView)v.findViewById(R.id.rvAlimentos);
 
         return v;
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if(getArguments() != null){
+            categoria = getArguments().getString("categoria"," ");
+        }
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
-        consultarCategorias("categoria", "orden");
+
+        listaOrden = new ArrayList<String>();
+
+        listaOrden.add("Nombre");
+        listaOrden.add("Calorias");
+        listaOrden.add("Proteinas");
+        listaOrden.add("Carbohidratos");
+
+        /*ArrayAdapter<CharSequence> adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, listaOrden);
+        spOrden.setAdapter(adapter);*/
+
+        consultarCategorias(categoria, "nombre");
     }
 
 
     private void consultarCategorias(String categoria, String orden){
 
-        String url = "http://192.168.0.20/proyectoGrado/query_BD/nutricion/listar_alimentos.php?categoria="+categoria+"&orden="+orden;
+        String url = "http://"+ip+"/proyectoGrado/query_BD/nutricion/listar_alimentosxcategoria.php?categoria="+categoria+"&orden="+orden;
 
         url = url.replace(" ", "%20");
 
@@ -83,10 +128,13 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
 
-                listaAlimentos.add(new CategoriaNutricion(jsonObject.optString("categoria")));
+                listaAlimentos.add(new AlimentosCategoria(jsonObject.optString("nombre"),
+                                                          jsonObject.optString("calorias"),
+                                                          jsonObject.optString("proteinas"),
+                                                          jsonObject.optString("carbohidratos")));
             }
 
-            AdaptadorCategoriaNutricion adaptador = new AdaptadorCategoriaNutricion(getContext(), listaAlimentos);
+            AdaptadorAlimentosCategoria adaptador = new AdaptadorAlimentosCategoria(getContext(), listaAlimentos);
             recyclerAlimentos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
             recyclerAlimentos.setAdapter(adaptador);
@@ -94,7 +142,6 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
         catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -102,6 +149,5 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
         Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
-
 
 }
