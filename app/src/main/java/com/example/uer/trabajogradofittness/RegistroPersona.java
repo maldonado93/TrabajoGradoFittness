@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 public class RegistroPersona extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
 
-    public String ip = "192.168.1.6";
+    public String ip = "192.168.0.27";
 
     private Spinner spTipoIdentificacion;
     private EditText etIdentificacion;

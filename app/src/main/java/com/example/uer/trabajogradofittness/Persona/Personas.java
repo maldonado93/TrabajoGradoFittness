@@ -1,4 +1,4 @@
-package com.example.uer.trabajogradofittness.Nutricion;
+package com.example.uer.trabajogradofittness.Persona;
 
 
 import android.os.Bundle;
@@ -21,6 +21,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
+import com.example.uer.trabajogradofittness.Rutina.AdaptadorListaEjercicios;
+import com.example.uer.trabajogradofittness.Rutina.ListaEjercicios;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,29 +34,46 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Nutricion extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
-
+public class Personas extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     View v;
     GlobalState gs;
 
+    private AdaptadorListaPersonas adaptadorPersonas;
+    private List<ListaPersonas> listaPersonas;
+
     TextView titulo;
-    private RecyclerView recyclerCategoriaNutricion;
-    private List<ListaCategoriasAlimentos> listaCategoriaNutricion;
+    android.widget.SearchView svBuscar;
+    RecyclerView recyclerPersonas;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.fragment_personas,container,false);
 
-        v = inflater.inflate(R.layout.fragment_nutricion,container,false);
 
+        titulo = (TextView) v.findViewById(R.id.tvTitulo);
 
-        titulo = v.findViewById(R.id.tvTitulo);
+        svBuscar = (android.widget.SearchView)v.findViewById(R.id.svBuscar);
+        svBuscar.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-        recyclerCategoriaNutricion = (RecyclerView)v.findViewById(R.id.rvCategorias);
+            @Override
+            public boolean onQueryTextChange(String texto) {
+                adaptadorPersonas.getFilter().filter(texto);
+
+                return false;
+            }
+        });
+
+        recyclerPersonas = (RecyclerView)v.findViewById(R.id.rvPersonas);
 
         return v;
     }
@@ -65,14 +84,15 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
 
         gs = (GlobalState) getActivity().getApplication();
 
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
-        consultarCategorias();
+
+        listarPersonas();
     }
 
+    private void listarPersonas(){
 
-    private void consultarCategorias(){
-
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/nutricion/listar_categorias.php";
+        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/instructor/listar_alumnos.php?idInstructor="+gs.getSesion_usuario();
 
         url = url.replace(" ", "%20");
 
@@ -80,29 +100,32 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         request.add(jsonObjectRequest);
     }
 
+
+
     @Override
     public void onResponse(JSONObject response) {
-        JSONArray datos = response.optJSONArray("alimento");
+        JSONArray datos = response.optJSONArray("entrena");
 
         try {
-            listaCategoriaNutricion = new ArrayList<>();
+            listaPersonas = new ArrayList<>();
             for(int i=0; i<datos.length();i++) {
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
 
-                listaCategoriaNutricion.add(new ListaCategoriasAlimentos(jsonObject.optString("categoria")));
+                listaPersonas.add(new ListaPersonas(jsonObject.optString("id"),
+                                                jsonObject.optString("nombres")+" "
+                                                        +jsonObject.optString("apellidos")));
             }
 
-            AdaptadorCategoriasAlimentos adaptador = new AdaptadorCategoriasAlimentos(getContext(), listaCategoriaNutricion);
-            recyclerCategoriaNutricion.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
-            recyclerCategoriaNutricion.setAdapter(adaptador);
+            adaptadorPersonas = new AdaptadorListaPersonas(getContext(), listaPersonas);
+            recyclerPersonas.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+
+            recyclerPersonas.setAdapter(adaptadorPersonas);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -110,6 +133,4 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
-
-
 }

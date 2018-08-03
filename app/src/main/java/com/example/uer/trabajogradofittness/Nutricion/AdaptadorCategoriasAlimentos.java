@@ -17,12 +17,12 @@ import com.example.uer.trabajogradofittness.R;
 
 import java.util.List;
 
-public class AdaptadorCategoriaNutricion extends RecyclerView.Adapter<AdaptadorCategoriaNutricion.MyViewHolder> {
+public class AdaptadorCategoriasAlimentos extends RecyclerView.Adapter<AdaptadorCategoriasAlimentos.MyViewHolder> {
 
     Context context;
-    List<CategoriaNutricion> categoria;
+    List<ListaCategoriasAlimentos> categoria;
 
-    public AdaptadorCategoriaNutricion(Context context, List<CategoriaNutricion> categoria) {
+    public AdaptadorCategoriasAlimentos(Context context, List<ListaCategoriasAlimentos> categoria) {
         this.context = context;
         this.categoria = categoria;
     }
@@ -35,13 +35,10 @@ public class AdaptadorCategoriaNutricion extends RecyclerView.Adapter<AdaptadorC
         v = LayoutInflater.from(context).inflate(R.layout.item_categoria_nutricion,viewGroup,false);
         final MyViewHolder holder = new MyViewHolder(v);
 
-
-
         holder.item_categoria.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String nombreCategoria = categoria.get(holder.getAdapterPosition()).getCategoria();
-                //Toast.makeText(context,"Categoria: "+nombreCategoria, Toast.LENGTH_SHORT).show();
 
                 Bundle datos = new Bundle();
                 datos.putString("categoria", nombreCategoria);
@@ -49,7 +46,7 @@ public class AdaptadorCategoriaNutricion extends RecyclerView.Adapter<AdaptadorC
                 Alimentos fragment = new Alimentos();
                 fragment.setArguments(datos);
                 FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack("fragment_nutricion").commit();
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
 
             }
         });

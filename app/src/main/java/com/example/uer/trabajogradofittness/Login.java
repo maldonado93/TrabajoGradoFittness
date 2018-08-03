@@ -3,8 +3,10 @@ package com.example.uer.trabajogradofittness;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -25,15 +27,23 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 public class Login extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener {
 
-    public String ip = "192.168.1.6";
+    String TAG = this.getClass().getName();
+
+    GlobalState gs;
+
     private EditText etUsuario;
     private EditText etPassword;
     private Button btnIngresar;
 
-    ProgressDialog progreso;
+    String usuario;
+    String password;
 
+    boolean salir = false;
+
+    ProgressDialog progreso;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -43,8 +53,14 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        gs = (GlobalState)getApplication();
+
         etUsuario = (EditText)findViewById(R.id.etUsuario);
+        etUsuario.setText("");
+
         etPassword = (EditText)findViewById(R.id.etPassword);
+        etPassword.setText("");
+
         btnIngresar = (Button)findViewById(R.id.btnIngresar);
 
         request = Volley.newRequestQueue(getApplicationContext());
@@ -53,65 +69,74 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             @Override
             public void onClick(View v) {
                 consultarUsuario();
-
             }
         });
     }
 
-
-
     private void consultarUsuario(){
         etUsuario = (EditText)findViewById(R.id.etUsuario);
-        String usuario = etUsuario.getText().toString().trim();
+        usuario = etUsuario.getText().toString().trim();
 
         etPassword = (EditText)findViewById(R.id.etPassword);
-        String password = etPassword.getText().toString().trim();
+        password = etPassword.getText().toString().trim();
 
-        /*try {
-            String passwdMd5 = this.toMd5(password);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }*/
+        if(usuario != "" && password !=""){
+            /*try {
+                String passwdMd5 = this.toMd5(password);
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }*/
 
-        /*progreso = new ProgressDialog(getApplicationContext());
-        progreso.setMessage("Registrando...");
-        progreso.show();*/
+            //String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuarios/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
 
-        String url = "http://"+ip+"/proyectoGrado/query_BD/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
+            String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuarios/consultar_usuario1.php?usuario="+ usuario;
 
-        url = url.replace(" ", "%20");
+            url = url.replace(" ", "%20");
 
-        /*jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
-        request.add(jsonObjectRequest);*/
-
-        Intent registro = new Intent(Login.this, Principal.class);
-        registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
-
-        startActivity(registro);
+            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+            request.add(jsonObjectRequest);
+        }
+        else{
+            Toast.makeText(this, "Complete los campos, por favor!",Toast.LENGTH_SHORT).show();
+        }
     }
-
 
 
     @Override
     public void onResponse(JSONObject response) {
-        Toast.makeText(getApplicationContext(), "Bienvenido!", Toast.LENGTH_SHORT).show();
         //progreso.hide();
-
-        Usuario usuario = new Usuario();
+        int tipoUsuario = 0;
 
         JSONArray datos = response.optJSONArray("usuario");
         JSONObject jsonObject = null;
 
         try {
             jsonObject = datos.getJSONObject(0);
+            if(jsonObject != null){
+                gs.setSesion_usuario(jsonObject.optInt("id_persona"));
+                gs.setTipo_usuario(jsonObject.optInt("id_tipo_usuario"));
+            }
+            if(gs.getSesion_usuario() != 0){
+                if(jsonObject.optString("password").compareTo(password) == 0 ){
 
-            usuario.setId_usuario(jsonObject.optInt("ID_USUARIO"));
-            usuario.setId_tipo_usuario(jsonObject.optInt("ID_TIPO_USUARIO"));
-            usuario.setId_persona(jsonObject.optInt("ID_PERSONA"));
+                    Intent ingreso = null;
+                    if(gs.getTipo_usuario() == 1){
+                        ingreso = new Intent(Login.this, Principal.class);
+                    }
+                    else{
+                        ingreso = new Intent(Login.this, PrincipalInstructor.class);
+                    }
 
-            int id = usuario.getId_usuario();
-            int idPersona = usuario.getId_persona();
-            Toast.makeText(this, "id:"+ id + "Persona: "+idPersona, Toast.LENGTH_LONG).show();
+                    ingreso.addFlags(ingreso.FLAG_ACTIVITY_CLEAR_TOP | ingreso.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(ingreso);
+                }
+                else{
+                    Toast.makeText(this, "Contraseña erronea!",Toast.LENGTH_SHORT).show();
+                }
+            }
+            else{
+                Toast.makeText(this, "Usuario no registrado!",Toast.LENGTH_SHORT).show();
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -144,4 +169,30 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         //ahora sb.toString(); es la contraseña cifrada
         return  sb.toString();
     }
+
+    @Override
+    public void onBackPressed() {
+
+        Log.d(TAG, "click");
+
+        if(salir){
+            Intent intent = new Intent(Intent.ACTION_MAIN);
+            intent.addCategory(Intent.CATEGORY_HOME);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+            finish();
+            System.exit(0);
+        }
+        salir = true;
+        Log.d(TAG, "Salir: "+salir);
+        Toast.makeText(Login.this,"Presione de nuevo para salir", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                salir = false;
+                Log.d(TAG, "Salir: "+salir);
+            }
+        },3000);
+    }
+
 }

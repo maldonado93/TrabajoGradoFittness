@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:gravity="center_horizontal"
     android:orientation="vertical"
     tools:context="com.example.uer.trabajogradofittness.Login">
@@ -26,12 +27,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="15dp"
+            android:background="@android:color/background_light"
             android:orientation="vertical">
 
             <EditText
                 android:id="@+id/etUsuario"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:ems="10"
                 android:hint="Usuario"
                 android:inputType="text" />
@@ -40,6 +44,8 @@
                 android:id="@+id/etPassword"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:ems="10"
                 android:hint="Contraseña"
                 android:inputType="textPassword" />
@@ -48,17 +54,16 @@
                 android:id="@+id/btnIngresar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ingresar" />
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+                android:background="@color/colorAccent"
+                android:text="Ingresar"
+                android:textColor="@android:color/background_light"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
 
                 <TextView
@@ -76,12 +81,19 @@
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
                     android:background="#00ffffff"
-                    android:onClick="Registrar"
                     android:text="Registrate"
                     android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                     android:textColor="@color/colorPrimary" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:background="@android:color/darker_gray" />
 
         </LinearLayout>
     </ScrollView>

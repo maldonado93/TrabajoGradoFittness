@@ -1,14 +1,16 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
+
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -23,18 +25,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-public class Rutina extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
+/**
+ * A simple {@link Fragment} subclass.
+ */
+public class InformacionEjercicio extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     View v;
     GlobalState gs;
+    private String idEjercicio;
 
-    TextView titulo;
-    private RecyclerView recyclerCategoriaEjercicios;
-    private List<ListaCategorias> listaCategoriaEjercicios;
+    TextView tvNombre;
+    TextView tvDescripcion;
+    ImageView ivImagen;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -42,28 +44,33 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.fragment_informacion_ejercicio,container,false);
 
-        v = inflater.inflate(R.layout.fragment_rutina,container,false);
-
-        titulo = v.findViewById(R.id.tvTitulo);
-        recyclerCategoriaEjercicios = (RecyclerView)v.findViewById(R.id.rvCategorias);
+        tvNombre = v.findViewById(R.id.tvNombre);
+        tvDescripcion = v.findViewById(R.id.tvDescripcion);
+        ivImagen = v.findViewById(R.id.ivImagen);
 
         return v;
     }
 
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         gs = (GlobalState) getActivity().getApplication();
 
+        if(getArguments() != null){
+            idEjercicio= getArguments().getString("idEjercicio","");
+        }
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
-        consultarCategorias();
+
+        consultarEjercicio(idEjercicio);
     }
 
-    private void consultarCategorias(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicios/listar_categorias.php";
+    private void consultarEjercicio(String id){
+
+        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicios/consultar_ejercicio.php?id="+id;
 
         url = url.replace(" ", "%20");
 
@@ -71,24 +78,16 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
         request.add(jsonObjectRequest);
     }
 
-
     @Override
     public void onResponse(JSONObject response) {
         JSONArray datos = response.optJSONArray("ejercicio");
+        JSONObject jsonObject = null;
 
         try {
-            listaCategoriaEjercicios = new ArrayList<>();
-            for(int i=0; i<datos.length();i++) {
-                JSONObject jsonObject = null;
-                jsonObject = datos.getJSONObject(i);
+            jsonObject = datos.getJSONObject(0);
 
-                listaCategoriaEjercicios.add(new ListaCategorias(jsonObject.optString("categoria")));
-            }
-
-            AdaptadorListaCategorias adaptador = new AdaptadorListaCategorias(getContext(), listaCategoriaEjercicios);
-            recyclerCategoriaEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-
-            recyclerCategoriaEjercicios.setAdapter(adaptador);
+            tvNombre.setText(jsonObject.optString("nombre"));
+            tvDescripcion.setText(jsonObject.optString("descripcion"));
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -97,8 +96,7 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
 
     @Override
     public void onErrorResponse(VolleyError error) {
-
+        Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
+        Log.i("ERROR", error.toString());
     }
-
-
 }

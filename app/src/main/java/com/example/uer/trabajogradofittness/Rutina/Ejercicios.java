@@ -1,4 +1,4 @@
-package com.example.uer.trabajogradofittness.Nutricion;
+package com.example.uer.trabajogradofittness.Rutina;
 
 
 import android.os.Bundle;
@@ -32,15 +32,19 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Nutricion extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
+public class Ejercicios extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
 
     View v;
     GlobalState gs;
 
+    private String categoria;
+    private AdaptadorListaEjercicios adaptadorEjercicios;
+    private List<ListaEjercicios> listaEjercicios;
+
     TextView titulo;
-    private RecyclerView recyclerCategoriaNutricion;
-    private List<ListaCategoriasAlimentos> listaCategoriaNutricion;
+    android.widget.SearchView svBuscar;
+    RecyclerView recyclerEjercicios;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -48,13 +52,28 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.fragment_ejercicios,container,false);
 
-        v = inflater.inflate(R.layout.fragment_nutricion,container,false);
 
+        titulo = (TextView) v.findViewById(R.id.tvTituloCategoria);
+        titulo.setText(categoria);
 
-        titulo = v.findViewById(R.id.tvTitulo);
+        svBuscar = (android.widget.SearchView)v.findViewById(R.id.svBuscar);
+        svBuscar.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
-        recyclerCategoriaNutricion = (RecyclerView)v.findViewById(R.id.rvCategorias);
+            @Override
+            public boolean onQueryTextChange(String texto) {
+                adaptadorEjercicios.getFilter().filter(texto);
+
+                return false;
+            }
+        });
+
+        recyclerEjercicios = (RecyclerView)v.findViewById(R.id.rvEjercicios);
 
         return v;
     }
@@ -65,14 +84,19 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
 
         gs = (GlobalState) getActivity().getApplication();
 
+        if(getArguments() != null){
+            categoria = getArguments().getString("categoria"," ");
+        }
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
-        consultarCategorias();
+
+        listarEjercicios(categoria);
     }
 
 
-    private void consultarCategorias(){
+    private void listarEjercicios(String categoria){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/nutricion/listar_categorias.php";
+        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicios/listar_ejerciciosxcategoria.php?categoria="+categoria;
 
         url = url.replace(" ", "%20");
 
@@ -82,27 +106,27 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
 
     @Override
     public void onResponse(JSONObject response) {
-        JSONArray datos = response.optJSONArray("alimento");
+        JSONArray datos = response.optJSONArray("ejercicio");
 
         try {
-            listaCategoriaNutricion = new ArrayList<>();
+            listaEjercicios = new ArrayList<>();
             for(int i=0; i<datos.length();i++) {
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
 
-                listaCategoriaNutricion.add(new ListaCategoriasAlimentos(jsonObject.optString("categoria")));
+                listaEjercicios.add(new ListaEjercicios(jsonObject.optString("id"),
+                                                        jsonObject.optString("nombre")));
             }
 
-            AdaptadorCategoriasAlimentos adaptador = new AdaptadorCategoriasAlimentos(getContext(), listaCategoriaNutricion);
-            recyclerCategoriaNutricion.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
-            recyclerCategoriaNutricion.setAdapter(adaptador);
+            adaptadorEjercicios = new AdaptadorListaEjercicios(getContext(), listaEjercicios);
+            recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+
+            recyclerEjercicios.setAdapter(adaptadorEjercicios);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -110,6 +134,7 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
+
 
 
 }

@@ -9,21 +9,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.R;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class AdaptadorAlimentosCategoria extends RecyclerView.Adapter<AdaptadorAlimentosCategoria.MyViewHolder>{
+public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorListaAlimentos.MyViewHolder> implements Filterable{
 
     Context context;
-    List<AlimentosCategoria> alimentos;
+    List<ListaAlimentos> alimentos;
+    List<ListaAlimentos> alimentosFiltrados;
 
-    public AdaptadorAlimentosCategoria(Context context, List<AlimentosCategoria> alimentos) {
+
+
+    public AdaptadorListaAlimentos(Context context, List<ListaAlimentos> alimentos) {
         this.context = context;
         this.alimentos = alimentos;
+        alimentosFiltrados = new ArrayList<>(alimentos);
     }
 
     @NonNull
@@ -36,17 +43,16 @@ public class AdaptadorAlimentosCategoria extends RecyclerView.Adapter<AdaptadorA
         holder.item_alimento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*String nombreCategoria = categoria.get(holder.getAdapterPosition()).getCategoria();
+                String idAlimento = alimentos.get(holder.getAdapterPosition()).getId();
                 //Toast.makeText(context,"Categoria: "+nombreCategoria, Toast.LENGTH_SHORT).show();
 
                 Bundle datos = new Bundle();
-                datos.putString("categoria", nombreCategoria);
+                datos.putString("idAlimento", idAlimento);
 
-                Alimentos fragment = new Alimentos();
+                InformacionAlimento fragment = new InformacionAlimento();
                 fragment.setArguments(datos);
                 FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack("fragment_nutricion").commit();
-*/
+                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
             }
         });
 
@@ -56,6 +62,7 @@ public class AdaptadorAlimentosCategoria extends RecyclerView.Adapter<AdaptadorA
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
+        myViewHolder.tvId.setText(alimentos.get(i).getId());
         myViewHolder.tvNombre.setText(alimentos.get(i).getNombre());
         myViewHolder.tvCalorias.setText(alimentos.get(i).getValorCalorias());
         myViewHolder.tvProteinas.setText(alimentos.get(i).getValorProteinas());
@@ -67,9 +74,45 @@ public class AdaptadorAlimentosCategoria extends RecyclerView.Adapter<AdaptadorA
         return alimentos.size();
     }
 
+    @Override
+    public Filter getFilter(){
+        return alimentosFiltro;
+    }
+
+    private Filter alimentosFiltro = new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            List<ListaAlimentos> filtroAlimentos = new ArrayList<>();
+            if(charSequence == null || charSequence.length() == 0){
+                filtroAlimentos.addAll(alimentosFiltrados);
+            }
+            else{
+                String filterPattern = charSequence.toString().toLowerCase().trim();
+
+                for(ListaAlimentos item : alimentosFiltrados){
+                    if(item.getNombre().toLowerCase().contains(filterPattern)){
+                        filtroAlimentos.add(item);
+                    }
+                }
+            }
+            FilterResults results = new FilterResults();
+            results.values = filtroAlimentos;
+
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            alimentos.clear();
+            alimentos.addAll((List) filterResults.values);
+            notifyDataSetChanged();
+        }
+    };
+
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
         private LinearLayout item_alimento;
+        private TextView tvId;
         private TextView tvNombre;
         private TextView tvCalorias;
         private TextView tvProteinas;
@@ -77,7 +120,9 @@ public class AdaptadorAlimentosCategoria extends RecyclerView.Adapter<AdaptadorA
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
+
             item_alimento = (LinearLayout)itemView.findViewById(R.id.item_alimento);
+            tvId = (TextView)itemView.findViewById(R.id.tvId);
             tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
             tvCalorias = (TextView)itemView.findViewById(R.id.tvValCalorias);
             tvProteinas = (TextView)itemView.findViewById(R.id.tvValProteinas);

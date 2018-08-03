@@ -1,22 +1,18 @@
-package com.example.uer.trabajogradofittness.Nutricion;
+package com.example.uer.trabajogradofittness.Rutina;
 
-public class CategoriaNutricion {
+public class ListaCategorias {
 
     private String categoria;
     private int imagen;
 
-    public CategoriaNutricion() {
-    }
-
-    public CategoriaNutricion(String categoria, int imagen) {
+    public ListaCategorias(String categoria, int imagen) {
         this.categoria = categoria;
         this.imagen = imagen;
     }
 
-    public CategoriaNutricion(String categoria) {
+    public ListaCategorias(String categoria) {
         this.categoria = categoria;
     }
-
 
     public String getCategoria() {
         return categoria;

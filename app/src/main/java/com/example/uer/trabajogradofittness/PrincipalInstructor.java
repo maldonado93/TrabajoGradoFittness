@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -15,29 +15,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.support.v4.app.Fragment;
 import android.widget.Button;
 
 import com.example.uer.trabajogradofittness.InformacionPersonal.Informacion;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
-import com.example.uer.trabajogradofittness.RegistroEntreno.RegistrosEntreno;
+import com.example.uer.trabajogradofittness.Persona.Personas;
 import com.example.uer.trabajogradofittness.Rutina.Rutina;
 
-
-public class Principal extends AppCompatActivity
+public class PrincipalInstructor extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     NavigationView navigationView = null;
     Toolbar toolbar = null;
 
     String tituloFragment;
-
     GlobalState gs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_principal);
+        setContentView(R.layout.activity_principal_instructor);
 
         gs = (GlobalState) getApplication();
 
@@ -49,7 +46,6 @@ public class Principal extends AppCompatActivity
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -68,29 +64,13 @@ public class Principal extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        if(savedInstanceState == null){
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.fragment_container, new MainFragment());
-            ft.commit();
-        }
     }
-
-    /*@Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            //drawer.closeDrawer(GravityCompat.START);
-            dialogSalir();
-        } else {
-            super.onBackPressed();
-        }
-    }*/
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
-            getFragmentManager().popBackStack();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -99,7 +79,7 @@ public class Principal extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.principal, menu);
+        getMenuInflater().inflate(R.menu.principal_instructor, menu);
         return true;
     }
 
@@ -128,11 +108,10 @@ public class Principal extends AppCompatActivity
             tituloFragment = "Principal";
             MainFragment fragment = new MainFragment();
             cambiarFragment(fragment);
-        } else if (id == R.id.nav_registros) {
-            tituloFragment = "Registros de entrenos";
-            RegistrosEntreno fragment = new RegistrosEntreno();
+        } else if (id == R.id.nav_alumnos) {
+            tituloFragment = "Mis alumnos";
+            Personas fragment = new Personas();
             cambiarFragment(fragment);
-
         } else if (id == R.id.nav_informacion) {
             tituloFragment = "Informacion personal";
             Informacion fragment = new Informacion();
@@ -157,18 +136,6 @@ public class Principal extends AppCompatActivity
 
         }
 
-        Fragment switchTo = null;
-
-        if(switchTo != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, switchTo);
-            for(int i=0; i<getSupportFragmentManager().getBackStackEntryCount(); i++){
-                getSupportFragmentManager().popBackStackImmediate();
-            }
-            ft.commit();
-        }
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -182,7 +149,7 @@ public class Principal extends AppCompatActivity
 
 
     private void dialogSalir(){
-        AlertDialog.Builder buider = new AlertDialog.Builder(Principal.this);
+        AlertDialog.Builder buider = new AlertDialog.Builder(PrincipalInstructor.this);
         View dView = getLayoutInflater().inflate(R.layout.dialog_salir, null);
         Button btnSalir = (Button)dView.findViewById(R.id.btnSalir);
 
@@ -191,7 +158,7 @@ public class Principal extends AppCompatActivity
 
             @Override
             public void onClick(View view) {
-                Intent salir = new Intent(Principal.this, Login.class);
+                Intent salir = new Intent(PrincipalInstructor.this, Login.class);
                 salir.addFlags(salir.FLAG_ACTIVITY_CLEAR_TOP | salir.FLAG_ACTIVITY_SINGLE_TOP);
 
                 startActivity(salir);
@@ -203,5 +170,4 @@ public class Principal extends AppCompatActivity
         AlertDialog dialog = buider.create();
         dialog.show();
     }
-
 }
