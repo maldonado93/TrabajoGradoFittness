@@ -20,6 +20,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
+import com.example.uer.trabajogradofittness.Principal;
+import com.example.uer.trabajogradofittness.PrincipalInstructor;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -64,6 +66,13 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         super.onCreate(savedInstanceState);
 
         gs = (GlobalState) getActivity().getApplication();
+
+        if(gs.getTipo_usuario() == 1){
+            ((Principal) getActivity()).getSupportActionBar().setTitle("Nutrición");
+        }
+        else{
+            ((PrincipalInstructor) getActivity()).getSupportActionBar().setTitle("Nutrición");
+        }
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
         consultarCategorias();

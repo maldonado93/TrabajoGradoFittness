@@ -169,16 +169,17 @@ public class InformacionAlimento extends Fragment implements Response.Listener<J
 
     private String verificarValor(String v){
         String val = v;
-        if(val.compareTo("-") != 0 && !val.contains("/")){
+        if(!val.contains("/")){
             double valor = Double.valueOf(v);
 
             if(valor == -1.00){
                 val = "N";
             }
-            else{
-                if(valor == -2.00){
-                    val = "TR";
-                }
+            if(valor == -2.00){
+                val = "TR";
+            }
+            if(valor == -3.00){
+                val = "-";
             }
         }
         return val;

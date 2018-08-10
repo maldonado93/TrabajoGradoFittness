@@ -20,7 +20,9 @@ import android.widget.Button;
 
 import com.example.uer.trabajogradofittness.InformacionPersonal.Informacion;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
+import com.example.uer.trabajogradofittness.RegistroEntreno.InicioEntreno;
 import com.example.uer.trabajogradofittness.RegistroEntreno.RegistrosEntreno;
+import com.example.uer.trabajogradofittness.Rutina.Ejercicios;
 import com.example.uer.trabajogradofittness.Rutina.Rutina;
 
 
@@ -29,8 +31,6 @@ public class Principal extends AppCompatActivity
 
     NavigationView navigationView = null;
     Toolbar toolbar = null;
-
-    String tituloFragment;
 
     GlobalState gs;
 
@@ -42,10 +42,8 @@ public class Principal extends AppCompatActivity
         gs = (GlobalState) getApplication();
 
         //Inicializar fragment
-        MainFragment fragment = new MainFragment();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.commit();
+        InicioEntreno fragment = new InicioEntreno();
+        cambiarFragment(fragment);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -71,7 +69,7 @@ public class Principal extends AppCompatActivity
 
         if(savedInstanceState == null){
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.fragment_container, new MainFragment());
+            ft.add(R.id.fragment_container, new InicioEntreno());
             ft.commit();
         }
     }
@@ -89,10 +87,11 @@ public class Principal extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 0) {
+        if (getFragmentManager().getBackStackEntryCount() > 1){
             getFragmentManager().popBackStack();
-        } else {
-            super.onBackPressed();
+        }
+        else{
+            dialogSalir();
         }
     }
 
@@ -125,31 +124,25 @@ public class Principal extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_inicio) {
-            tituloFragment = "Principal";
-            MainFragment fragment = new MainFragment();
+            InicioEntreno fragment = new InicioEntreno();
             cambiarFragment(fragment);
         } else if (id == R.id.nav_registros) {
-            tituloFragment = "Registros de entrenos";
             RegistrosEntreno fragment = new RegistrosEntreno();
             cambiarFragment(fragment);
 
         } else if (id == R.id.nav_informacion) {
-            tituloFragment = "Informacion personal";
             Informacion fragment = new Informacion();
             cambiarFragment(fragment);
 
         } else if (id == R.id.nav_rutina) {
-            tituloFragment = "Rutinas";
             Rutina fragment = new Rutina();
             cambiarFragment(fragment);
 
         } else if (id == R.id.nav_nutricion) {
-            tituloFragment = "Nutricion";
             Nutricion fragment = new Nutricion();
             cambiarFragment(fragment);
 
         } else if (id == R.id.nav_cuenta) {
-            tituloFragment = "Cuenta";
 
 
         } else if (id == R.id.nav_salir) {
@@ -159,14 +152,14 @@ public class Principal extends AppCompatActivity
 
         Fragment switchTo = null;
 
-        if(switchTo != null) {
+        /*if(switchTo != null) {
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.fragment_container, switchTo);
             for(int i=0; i<getSupportFragmentManager().getBackStackEntryCount(); i++){
                 getSupportFragmentManager().popBackStackImmediate();
             }
             ft.commit();
-        }
+        }*/
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -175,8 +168,12 @@ public class Principal extends AppCompatActivity
     }
 
     private void cambiarFragment(Fragment frag){
+        Bundle dato = new Bundle();
+        dato.putString("Principal14", "alumno");
+        frag.setArguments(dato);
+
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, frag).addToBackStack(null);
+        fragmentTransaction.add(R.id.fragment_container, frag).addToBackStack(null);
         fragmentTransaction.commit();
     }
 
@@ -186,7 +183,6 @@ public class Principal extends AppCompatActivity
         View dView = getLayoutInflater().inflate(R.layout.dialog_salir, null);
         Button btnSalir = (Button)dView.findViewById(R.id.btnSalir);
 
-
         btnSalir.setOnClickListener(new View.OnClickListener(){
 
             @Override
@@ -195,10 +191,8 @@ public class Principal extends AppCompatActivity
                 salir.addFlags(salir.FLAG_ACTIVITY_CLEAR_TOP | salir.FLAG_ACTIVITY_SINGLE_TOP);
 
                 startActivity(salir);
-
             }
         });
-
         buider.setView(dView);
         AlertDialog dialog = buider.create();
         dialog.show();

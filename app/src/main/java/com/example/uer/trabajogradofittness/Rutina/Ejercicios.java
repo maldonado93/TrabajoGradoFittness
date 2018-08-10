@@ -37,8 +37,9 @@ public class Ejercicios extends Fragment implements Response.Listener<JSONObject
 
     View v;
     GlobalState gs;
-
+    private String consulta;
     private String categoria;
+    private String idRutina;
     private AdaptadorListaEjercicios adaptadorEjercicios;
     private List<ListaEjercicios> listaEjercicios;
 
@@ -56,7 +57,6 @@ public class Ejercicios extends Fragment implements Response.Listener<JSONObject
 
 
         titulo = (TextView) v.findViewById(R.id.tvTituloCategoria);
-        titulo.setText(categoria);
 
         svBuscar = (android.widget.SearchView)v.findViewById(R.id.svBuscar);
         svBuscar.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
@@ -85,18 +85,28 @@ public class Ejercicios extends Fragment implements Response.Listener<JSONObject
         gs = (GlobalState) getActivity().getApplication();
 
         if(getArguments() != null){
-            categoria = getArguments().getString("categoria"," ");
+            categoria =  getArguments().getString("categoria","");
+            idRutina =  getArguments().getString("idRutina", "");
         }
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        listarEjercicios(categoria);
+        listarEjercicios();
+
     }
 
 
-    private void listarEjercicios(String categoria){
+    private void listarEjercicios(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicios/listar_ejerciciosxcategoria.php?categoria="+categoria;
+        String url = "";
+        if(categoria != ""){
+            consulta = "ejercicio";
+            url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicio/listar_ejerciciosxcategoria.php?categoria="+categoria;
+        }
+        else{
+            consulta = "rutina";
+            url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicio/listar_ejerciciosxrutina.php?idRutina="+idRutina;
+        }
 
         url = url.replace(" ", "%20");
 
@@ -106,18 +116,18 @@ public class Ejercicios extends Fragment implements Response.Listener<JSONObject
 
     @Override
     public void onResponse(JSONObject response) {
-        JSONArray datos = response.optJSONArray("ejercicio");
+        JSONArray datos = response.optJSONArray(consulta);
 
         try {
             listaEjercicios = new ArrayList<>();
             for(int i=0; i<datos.length();i++) {
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
-
                 listaEjercicios.add(new ListaEjercicios(jsonObject.optString("id"),
                                                         jsonObject.optString("nombre")));
+                categoria = jsonObject.optString("categoria");
             }
-
+            titulo.setText(categoria);
 
             adaptadorEjercicios = new AdaptadorListaEjercicios(getContext(), listaEjercicios);
             recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));

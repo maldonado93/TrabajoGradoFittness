@@ -99,7 +99,14 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
     private void generarHistorial(){
         consulta = "historial";
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/registro_entrenos/listar_fechas.php?idPersona="+ gs.getSesion_usuario() ;
+        String url;
+        if(gs.getId_alumno() == 0){
+            url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/registro_entrenos/listar_fechas.php?idPersona="+ gs.getSesion_usuario() ;
+
+        }
+        else{
+            url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/registro_entrenos/listar_fechas.php?idPersona="+ gs.getId_alumno() ;
+ }
 
         url = url.replace(" ", "%20");
 
@@ -109,8 +116,13 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
     private void consultarRegistros(int mm, int yyyy){
         consulta = "registros";
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/registro_entrenos/listar_registros.php?idPersona="+ gs.getSesion_usuario()+"&mes="+mm+"&year="+yyyy;
-
+        String url;
+        if(gs.getId_alumno() == 0) {
+            url = "http://" + gs.getIp() + "/proyectoGrado/query_BD/registro_entrenos/listar_registros.php?idPersona=" + gs.getSesion_usuario() + "&mes=" + mm + "&year=" + yyyy;
+        }
+        else{
+            url = "http://" + gs.getIp() + "/proyectoGrado/query_BD/registro_entrenos/listar_registros.php?idPersona=" + gs.getId_alumno() + "&mes=" + mm + "&year=" + yyyy;
+        }
         url = url.replace(" ", "%20");
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);

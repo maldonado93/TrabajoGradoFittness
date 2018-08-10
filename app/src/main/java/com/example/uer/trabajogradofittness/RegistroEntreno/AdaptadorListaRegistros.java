@@ -36,12 +36,10 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
             @Override
             public void onClick(View view) {
                 String idRegistro = registros.get(holder.getAdapterPosition()).getIdRegistro();
-                Bundle datos = new Bundle();
-                datos.putString("idRegistro", idRegistro);
 
                 Intent registro = new Intent(context, DetallesEntreno.class);
                 registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
-
+                registro.putExtra("idRegistro", idRegistro);
                 context.startActivity(registro);
 
             }

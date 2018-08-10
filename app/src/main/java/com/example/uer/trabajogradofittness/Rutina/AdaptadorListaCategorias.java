@@ -39,11 +39,12 @@ public class AdaptadorListaCategorias extends RecyclerView.Adapter<AdaptadorList
 
                 Bundle datos = new Bundle();
                 datos.putString("categoria", nombreCategoria);
+                datos.putString("idRutina", "");
 
                 Ejercicios fragment = new Ejercicios();
                 fragment.setArguments(datos);
                 FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
 
             }
         });

@@ -80,16 +80,16 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         etPassword = (EditText)findViewById(R.id.etPassword);
         password = etPassword.getText().toString().trim();
 
-        if(usuario != "" && password !=""){
+        if(usuario.compareTo("") != 0 && password.compareTo("") != 0){
             /*try {
                 String passwdMd5 = this.toMd5(password);
             } catch (NoSuchAlgorithmException e) {
                 e.printStackTrace();
             }*/
 
-            //String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuarios/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
+            //String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
 
-            String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuarios/consultar_usuario1.php?usuario="+ usuario;
+            String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuario/consultar_usuario1.php?usuario="+ usuario;
 
             url = url.replace(" ", "%20");
 

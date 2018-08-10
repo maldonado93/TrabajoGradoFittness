@@ -6,10 +6,12 @@ import java.io.File;
 
 public class GlobalState extends Application{
 
-    public String ip = "192.168.1.2";
+    public String ip = "192.168.0.24";
+
     public int sesion_usuario = 0;
     public int tipo_usuario = 0;
     public int id_registro_entreno = 0;
+    public int id_alumno = 0;
 
     public String getIp() {
         return ip;
@@ -41,5 +43,13 @@ public class GlobalState extends Application{
 
     public void setId_registro_entreno(int id_registro_entreno) {
         this.id_registro_entreno = id_registro_entreno;
+    }
+
+    public int getId_alumno() {
+        return id_alumno;
+    }
+
+    public void setId_alumno(int id_alumno) {
+        this.id_alumno = id_alumno;
     }
 }

@@ -46,7 +46,7 @@ public class AdaptadorCategoriasAlimentos extends RecyclerView.Adapter<Adaptador
                 Alimentos fragment = new Alimentos();
                 fragment.setArguments(datos);
                 FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
 
             }
         });

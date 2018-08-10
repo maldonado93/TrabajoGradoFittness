@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -17,6 +18,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
+import com.example.uer.trabajogradofittness.Principal;
+import com.example.uer.trabajogradofittness.PrincipalInstructor;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -33,6 +36,9 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
     GlobalState gs;
 
     TextView titulo;
+    Button btnVerRutinas;
+
+
     private RecyclerView recyclerCategoriaEjercicios;
     private List<ListaCategorias> listaCategoriaEjercicios;
 
@@ -46,6 +52,15 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
         v = inflater.inflate(R.layout.fragment_rutina,container,false);
 
         titulo = v.findViewById(R.id.tvTitulo);
+        btnVerRutinas = v.findViewById(R.id.btnVerRutinas);
+
+        btnVerRutinas.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                verRutinas();
+            }
+        });
+
         recyclerCategoriaEjercicios = (RecyclerView)v.findViewById(R.id.rvCategorias);
 
         return v;
@@ -57,18 +72,37 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
 
         gs = (GlobalState) getActivity().getApplication();
 
+        if(gs.getTipo_usuario() == 1){
+            ((Principal) getActivity()).getSupportActionBar().setTitle("Rutina");
+        }
+        else{
+            ((PrincipalInstructor) getActivity()).getSupportActionBar().setTitle("Rutina");
+        }
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
         consultarCategorias();
     }
 
     private void consultarCategorias(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicios/listar_categorias.php";
+        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicio/listar_categorias.php";
 
         url = url.replace(" ", "%20");
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
+    }
+
+    private void verRutinas(){
+        Rutinas fragment = new Rutinas();
+
+        /*Bundle dato = new Bundle();
+        dato.putString("Principal14", "alumno");
+        fragment.setArguments(dato);*/
+
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
+        fragmentTransaction.commit();
     }
 
 

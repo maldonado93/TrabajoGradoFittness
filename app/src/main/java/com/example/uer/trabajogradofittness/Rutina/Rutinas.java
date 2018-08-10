@@ -4,11 +4,12 @@ package com.example.uer.trabajogradofittness.Rutina;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,57 +26,51 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class InformacionEjercicio extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
+public class Rutinas extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     View v;
     GlobalState gs;
-    ModeloEjercicio modeloEjercicio;
 
-    private String idEjercicio;
+    private AdaptadorListaRutinas adaptadorRutinas;
+    private List<ListaRutinas> listaRutinas;
 
-    TextView tvId;
-    ImageView ivImagen;
-    TextView tvNombre;
-    TextView tvDescripcion;
-
+    RecyclerView recyclerRutinas;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_informacion_ejercicio,container,false);
+        // Inflate the layout for this fragment
+        View v = inflater.inflate(R.layout.fragment_rutinas, container, false);
 
-        tvId = v.findViewById(R.id.tvId);
-        tvNombre = v.findViewById(R.id.tvNombre);
-        tvDescripcion = v.findViewById(R.id.tvDescripcion);
-        ivImagen = v.findViewById(R.id.ivImagen);
+        recyclerRutinas = (RecyclerView)v.findViewById(R.id.rvRutinas);
 
         return v;
     }
-
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         gs = (GlobalState) getActivity().getApplication();
 
-        if(getArguments() != null){
-            idEjercicio= getArguments().getString("idEjercicio","");
-        }
-
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        consultarEjercicio(idEjercicio);
+        listarEjercicios();
     }
 
 
-    private void consultarEjercicio(String id){
+    private void listarEjercicios(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicios/consultar_ejercicio.php?id="+id;
+        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicio/listar_rutinas.php?idPersona="+gs.getSesion_usuario();
 
         url = url.replace(" ", "%20");
 
@@ -85,32 +80,28 @@ public class InformacionEjercicio extends Fragment implements Response.Listener<
 
     @Override
     public void onResponse(JSONObject response) {
-        JSONArray datos = response.optJSONArray("ejercicio");
-        JSONObject jsonObject = null;
+        JSONArray datos = response.optJSONArray("rutina");
 
         try {
-            jsonObject = datos.getJSONObject(0);
+            listaRutinas  = new ArrayList<>();
+            for(int i=0; i<datos.length();i++) {
+                JSONObject jsonObject = null;
+                jsonObject = datos.getJSONObject(i);
 
-            modeloEjercicio.setId(jsonObject.optString("id"));
-            modeloEjercicio.setDato(jsonObject.optString("imagen"));
-            modeloEjercicio.setNombre(jsonObject.optString("nombre"));
-            modeloEjercicio.setCategoria(jsonObject.optString("categoria"));
-            modeloEjercicio.setDescripcion(jsonObject.optString("descripcion"));
+                listaRutinas.add(new ListaRutinas(jsonObject.optString("id"),
+                                                jsonObject.optString("nombre"),
+                                                jsonObject.optString("categoria"),
+                                                jsonObject.optString("cantidad")));
+            }
 
+
+            adaptadorRutinas = new AdaptadorListaRutinas(getContext(), listaRutinas);
+            recyclerRutinas.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+
+            recyclerRutinas.setAdapter(adaptadorRutinas);
         }
         catch (JSONException e) {
             e.printStackTrace();
-        }
-
-        tvId.setText(modeloEjercicio.getId());
-        tvNombre.setText(modeloEjercicio.getNombre());
-        tvDescripcion.setText(modeloEjercicio.getDescripcion());
-        tvId.setText(modeloEjercicio.getId());
-        if(modeloEjercicio.getImagen() != null){
-            ivImagen.setImageBitmap(modeloEjercicio.getImagen());
-        }
-        else{
-            ivImagen.setImageResource(R.mipmap.foto_defecto_round);
         }
     }
 
@@ -119,4 +110,5 @@ public class InformacionEjercicio extends Fragment implements Response.Listener<
         Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
+
 }

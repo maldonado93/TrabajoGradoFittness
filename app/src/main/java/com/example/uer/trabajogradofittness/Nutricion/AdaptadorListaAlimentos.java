@@ -52,7 +52,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
                 InformacionAlimento fragment = new InformacionAlimento();
                 fragment.setArguments(datos);
                 FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
             }
         });
 

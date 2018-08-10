@@ -39,11 +39,11 @@
 
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/textView17"
+    <View
+        android:id="@+id/divider"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="60dp"
         android:layout_weight="1"
-        android:background="@android:color/darker_gray" />
+        android:background="?android:attr/listDivider" />
+
 </LinearLayout>

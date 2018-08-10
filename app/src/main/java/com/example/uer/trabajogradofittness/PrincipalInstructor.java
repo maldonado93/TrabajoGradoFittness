@@ -20,6 +20,7 @@ import android.widget.Button;
 import com.example.uer.trabajogradofittness.InformacionPersonal.Informacion;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
 import com.example.uer.trabajogradofittness.Persona.Personas;
+import com.example.uer.trabajogradofittness.RegistroEntreno.InicioEntreno;
 import com.example.uer.trabajogradofittness.Rutina.Rutina;
 
 public class PrincipalInstructor extends AppCompatActivity
@@ -28,7 +29,6 @@ public class PrincipalInstructor extends AppCompatActivity
     NavigationView navigationView = null;
     Toolbar toolbar = null;
 
-    String tituloFragment;
     GlobalState gs;
 
     @Override
@@ -39,7 +39,7 @@ public class PrincipalInstructor extends AppCompatActivity
         gs = (GlobalState) getApplication();
 
         //Inicializar fragment
-        MainFragment fragment = new MainFragment();
+        InicioEntreno fragment = new InicioEntreno();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, fragment);
         fragmentTransaction.commit();
@@ -105,30 +105,24 @@ public class PrincipalInstructor extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_inicio) {
-            tituloFragment = "Principal";
-            MainFragment fragment = new MainFragment();
+            InicioEntreno fragment = new InicioEntreno();
             cambiarFragment(fragment);
         } else if (id == R.id.nav_alumnos) {
-            tituloFragment = "Mis alumnos";
             Personas fragment = new Personas();
             cambiarFragment(fragment);
         } else if (id == R.id.nav_informacion) {
-            tituloFragment = "Informacion personal";
             Informacion fragment = new Informacion();
             cambiarFragment(fragment);
 
         } else if (id == R.id.nav_rutina) {
-            tituloFragment = "Rutinas";
             Rutina fragment = new Rutina();
             cambiarFragment(fragment);
 
         } else if (id == R.id.nav_nutricion) {
-            tituloFragment = "Nutricion";
             Nutricion fragment = new Nutricion();
             cambiarFragment(fragment);
 
         } else if (id == R.id.nav_cuenta) {
-            tituloFragment = "Cuenta";
 
 
         } else if (id == R.id.nav_salir) {
@@ -142,6 +136,9 @@ public class PrincipalInstructor extends AppCompatActivity
     }
 
     private void cambiarFragment(Fragment frag){
+        Bundle dato = new Bundle();
+        dato.putString("Principal14", "instructor");
+        frag.setArguments(dato);
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.fragment_container, frag).addToBackStack(null);
         fragmentTransaction.commit();
@@ -152,7 +149,6 @@ public class PrincipalInstructor extends AppCompatActivity
         AlertDialog.Builder buider = new AlertDialog.Builder(PrincipalInstructor.this);
         View dView = getLayoutInflater().inflate(R.layout.dialog_salir, null);
         Button btnSalir = (Button)dView.findViewById(R.id.btnSalir);
-
 
         btnSalir.setOnClickListener(new View.OnClickListener(){
 
@@ -165,7 +161,6 @@ public class PrincipalInstructor extends AppCompatActivity
 
             }
         });
-
         buider.setView(dView);
         AlertDialog dialog = buider.create();
         dialog.show();

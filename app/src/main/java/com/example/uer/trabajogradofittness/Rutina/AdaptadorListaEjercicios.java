@@ -49,7 +49,7 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
                 InformacionEjercicio fragment = new InformacionEjercicio();
                 fragment.setArguments(datos);
                 FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
             }
         });
 

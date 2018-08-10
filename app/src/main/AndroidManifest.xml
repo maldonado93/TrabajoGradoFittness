@@ -31,6 +31,10 @@
         <activity
             android:name=".PrincipalInstructor"
             android:label="@string/title_activity_principal_instructor"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Persona.InformacionPersona"
+            android:label="@string/title_activity_informacion_persona"
             android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
