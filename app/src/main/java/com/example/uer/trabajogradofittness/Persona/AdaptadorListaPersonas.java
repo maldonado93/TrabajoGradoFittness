@@ -2,8 +2,6 @@ package com.example.uer.trabajogradofittness.Persona;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -14,10 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.uer.trabajogradofittness.GlobalState;
-import com.example.uer.trabajogradofittness.InformacionPersonal.Informacion;
 import com.example.uer.trabajogradofittness.R;
-import com.example.uer.trabajogradofittness.RegistroEntreno.DetallesEntreno;
 
 import java.util.ArrayList;
 import java.util.List;

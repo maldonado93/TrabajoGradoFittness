@@ -15,11 +15,16 @@
         <item
             android:id="@+id/nav_informacion"
             android:icon="@drawable/ic_info"
-            android:title="Informacion" />
+            android:title="Mi informacion" />
         <item
-            android:id="@+id/nav_rutina"
+            android:id="@+id/nav_rutinas"
             android:icon="@drawable/ic_fitness"
-            android:title="Rutina" />
+            android:title="Mis rutinas" />
+        <item
+            android:id="@+id/nav_ejercicios"
+            android:icon="@drawable/ic_fitness"
+            android:title="Ejercicios" />
+
         <item
             android:id="@+id/nav_nutricion"
             android:icon="@drawable/ic_local_dining"

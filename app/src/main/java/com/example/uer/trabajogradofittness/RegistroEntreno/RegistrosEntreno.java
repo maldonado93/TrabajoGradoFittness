@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
+import com.example.uer.trabajogradofittness.Principal;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -90,6 +91,8 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
         gs = (GlobalState) getActivity().getApplication();
 
+        ((Principal) getActivity()).getSupportActionBar().setTitle("Registros de entreno");
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
         generarHistorial();
@@ -101,11 +104,11 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
         consulta = "historial";
         String url;
         if(gs.getId_alumno() == 0){
-            url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/registro_entrenos/listar_fechas.php?idPersona="+ gs.getSesion_usuario() ;
+            url = "http://"+gs.getIp()+"/registro_entrenos/listar_fechas.php?idPersona="+ gs.getSesion_usuario() ;
 
         }
         else{
-            url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/registro_entrenos/listar_fechas.php?idPersona="+ gs.getId_alumno() ;
+            url = "http://"+gs.getIp()+"/registro_entrenos/listar_fechas.php?idPersona="+ gs.getId_alumno() ;
  }
 
         url = url.replace(" ", "%20");
@@ -118,10 +121,10 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
         consulta = "registros";
         String url;
         if(gs.getId_alumno() == 0) {
-            url = "http://" + gs.getIp() + "/proyectoGrado/query_BD/registro_entrenos/listar_registros.php?idPersona=" + gs.getSesion_usuario() + "&mes=" + mm + "&year=" + yyyy;
+            url = "http://" + gs.getIp() + "/registro_entrenos/listar_registros.php?idPersona=" + gs.getSesion_usuario() + "&mes=" + mm + "&year=" + yyyy;
         }
         else{
-            url = "http://" + gs.getIp() + "/proyectoGrado/query_BD/registro_entrenos/listar_registros.php?idPersona=" + gs.getId_alumno() + "&mes=" + mm + "&year=" + yyyy;
+            url = "http://" + gs.getIp() + "/registro_entrenos/listar_registros.php?idPersona=" + gs.getId_alumno() + "&mes=" + mm + "&year=" + yyyy;
         }
         url = url.replace(" ", "%20");
 
@@ -260,6 +263,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                 if(consulta == "registros"){
 
                     String idRegistro = jsonObject.optString("id");
+                    String idRutina = jsonObject.optString("idRutina");
                     String rutina = jsonObject.optString("rutina");
                     String categoria = jsonObject.optString("categoria");
                     String dia = obtenerDiaSemana(jsonObject.optString("fecha"));
@@ -270,6 +274,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                     String tiempo = jsonObject.optString("tiempo")+" min";
 
                     listaRegistros.add(new ListaRegistros(idRegistro,
+                                                        idRutina,
                                                         rutina,
                                                         categoria,
                                                         dia,

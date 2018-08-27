@@ -19,7 +19,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.Principal;
-import com.example.uer.trabajogradofittness.PrincipalInstructor;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -30,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Rutina extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
+public class CategoriasEjercicio extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     View v;
     GlobalState gs;
@@ -49,18 +48,9 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        v = inflater.inflate(R.layout.fragment_rutina,container,false);
+        v = inflater.inflate(R.layout.fragment_categorias_ejercicios,container,false);
 
         titulo = v.findViewById(R.id.tvTitulo);
-        btnVerRutinas = v.findViewById(R.id.btnVerRutinas);
-
-        btnVerRutinas.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                verRutinas();
-            }
-        });
-
         recyclerCategoriaEjercicios = (RecyclerView)v.findViewById(R.id.rvCategorias);
 
         return v;
@@ -72,12 +62,8 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
 
         gs = (GlobalState) getActivity().getApplication();
 
-        if(gs.getTipo_usuario() == 1){
-            ((Principal) getActivity()).getSupportActionBar().setTitle("Rutina");
-        }
-        else{
-            ((PrincipalInstructor) getActivity()).getSupportActionBar().setTitle("Rutina");
-        }
+        ((Principal) getActivity()).getSupportActionBar().setTitle("Ejercicios");
+
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
         consultarCategorias();
@@ -85,7 +71,7 @@ public class Rutina extends Fragment implements Response.Listener<JSONObject>, R
 
     private void consultarCategorias(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicio/listar_categorias.php";
+        String url = "http://"+gs.getIp()+"/ejercicio/listar_categorias.php";
 
         url = url.replace(" ", "%20");
 

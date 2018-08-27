@@ -94,7 +94,7 @@ public class Personas extends Fragment implements Response.Listener<JSONObject>,
 
     private void listarPersonas(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/instructor/listar_alumnos.php?idInstructor="+gs.getSesion_usuario();
+        String url = "http://"+gs.getIp()+"/instructor/listar_alumnos.php?idInstructor="+gs.getSesion_usuario();
 
         url = url.replace(" ", "%20");
 

@@ -1,13 +1,12 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
-
+import android.content.Intent;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,57 +24,58 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class InformacionEjercicio extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
+public class InformacionEjercicio extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
 
-    View v;
     GlobalState gs;
     ModeloEjercicio modeloEjercicio;
 
     private String idEjercicio;
 
+    ImageButton btnRegresar;
     TextView tvId;
     ImageView ivImagen;
     TextView tvNombre;
     TextView tvDescripcion;
 
-
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_informacion_ejercicio,container,false);
-
-        tvId = v.findViewById(R.id.tvId);
-        tvNombre = v.findViewById(R.id.tvNombre);
-        tvDescripcion = v.findViewById(R.id.tvDescripcion);
-        ivImagen = v.findViewById(R.id.ivImagen);
-
-        return v;
-    }
-
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_informacion_ejercicio);
 
-        gs = (GlobalState) getActivity().getApplication();
+        gs = (GlobalState) getApplication();
 
-        if(getArguments() != null){
-            idEjercicio= getArguments().getString("idEjercicio","");
-        }
+        Bundle datos = this.getIntent().getExtras();
+        idEjercicio = datos.getString("id");
 
-        request = Volley.newRequestQueue(getActivity().getApplicationContext());
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
 
-        consultarEjercicio(idEjercicio);
+        btnRegresar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+
+        tvId = (TextView)findViewById(R.id.tvId);
+        tvNombre = (TextView)findViewById(R.id.tvNombre);
+        tvDescripcion = (TextView)findViewById(R.id.tvDescripcion);
+        ivImagen = (ImageView)findViewById(R.id.ivImagen);
+
+
+
+
+        request = Volley.newRequestQueue(getApplicationContext());
+
+        consultarEjercicio();
     }
 
+    private void consultarEjercicio(){
 
-    private void consultarEjercicio(String id){
-
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicios/consultar_ejercicio.php?id="+id;
+        String url = "http://"+gs.getIp()+"/ejercicios/consultar_ejercicio.php?id="+idEjercicio;
 
         url = url.replace(" ", "%20");
 
@@ -116,7 +116,7 @@ public class InformacionEjercicio extends Fragment implements Response.Listener<
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
 }

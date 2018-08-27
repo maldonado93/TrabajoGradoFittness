@@ -1,6 +1,7 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.uer.trabajogradofittness.Nutricion.InformacionAlimento;
 import com.example.uer.trabajogradofittness.R;
 
 import java.util.List;
@@ -37,15 +40,12 @@ public class AdaptadorListaCategorias extends RecyclerView.Adapter<AdaptadorList
             public void onClick(View view) {
                 String nombreCategoria = categoria.get(holder.getAdapterPosition()).getCategoria();
 
-                Bundle datos = new Bundle();
-                datos.putString("categoria", nombreCategoria);
-                datos.putString("idRutina", "");
-
-                Ejercicios fragment = new Ejercicios();
-                fragment.setArguments(datos);
-                FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
-
+                Intent registro = new Intent(context, Ejercicios.class);
+                registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
+                registro.putExtra("categoria", nombreCategoria);
+                registro.putExtra("idRutina", "");
+                registro.putExtra("rutina", "");
+                context.startActivity(registro);
             }
         });
 

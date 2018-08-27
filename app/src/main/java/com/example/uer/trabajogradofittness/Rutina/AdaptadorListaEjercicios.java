@@ -1,8 +1,10 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -22,13 +24,19 @@ import java.util.List;
 public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorListaEjercicios.MyViewHolder> {
 
     Context context;
-    List<ListaEjercicios> ejercicios;
+    ArrayList<ListaEjercicios> ejercicios;
     List<ListaEjercicios> ejerciciosFiltrados;
 
-    public AdaptadorListaEjercicios(Context context, List<ListaEjercicios> ejercicios) {
+    public AdaptadorListaEjercicios(Context context, ArrayList<ListaEjercicios> ejercicios) {
         this.context = context;
         this.ejercicios = ejercicios;
         ejerciciosFiltrados = new ArrayList<>(ejercicios);
+    }
+
+    public void setFilter(ArrayList<ListaEjercicios> lista){
+        ejercicios = new ArrayList<>();
+        ejercicios.addAll(lista);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -46,10 +54,15 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
                 Bundle datos = new Bundle();
                 datos.putString("idEjercicio", idEjercicio);
 
-                InformacionEjercicio fragment = new InformacionEjercicio();
+                Intent registro = new Intent(context, InformacionEjercicio.class);
+                registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
+                registro.putExtra("idEjercicio", idEjercicio);
+                context.startActivity(registro);
+
+                /*InformacionEjercicioFragment fragment = new InformacionEjercicioFragment();
                 fragment.setArguments(datos);
                 FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
+                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment, fragment.getClass().toString()).addToBackStack(null).commit();*/
             }
         });
 
@@ -104,7 +117,7 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private LinearLayout item_ejercicio;
+        private ConstraintLayout item_ejercicio;
         private TextView tvId;
         private ImageView ivImagen;
         private TextView tvNombre;
@@ -112,7 +125,7 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            item_ejercicio = (LinearLayout)itemView.findViewById(R.id.item_ejercicio);
+            item_ejercicio = (ConstraintLayout)itemView.findViewById(R.id.item_ejercicio);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
             //ivImagen = (ImageView) itemView.findViewById(R.id.ivImagen);
             tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);

@@ -20,6 +20,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
+import com.example.uer.trabajogradofittness.Principal;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -34,7 +35,6 @@ import java.util.List;
  */
 public class Rutinas extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
-    View v;
     GlobalState gs;
 
     private AdaptadorListaRutinas adaptadorRutinas;
@@ -64,13 +64,15 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
+        ((Principal) getActivity()).getSupportActionBar().setTitle("Mis rutinas");
+
         listarEjercicios();
     }
 
 
     private void listarEjercicios(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/ejercicio/listar_rutinas.php?idPersona="+gs.getSesion_usuario();
+        String url = "http://"+gs.getIp()+"/ejercicio/listar_rutinas.php?idPersona="+gs.getSesion_usuario();
 
         url = url.replace(" ", "%20");
 

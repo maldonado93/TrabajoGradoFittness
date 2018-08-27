@@ -1,10 +1,11 @@
 package com.example.uer.trabajogradofittness.Nutricion;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,15 +23,21 @@ import java.util.List;
 public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorListaAlimentos.MyViewHolder> implements Filterable{
 
     Context context;
-    List<ListaAlimentos> alimentos;
+    ArrayList<ListaAlimentos> alimentos;
     List<ListaAlimentos> alimentosFiltrados;
 
 
 
-    public AdaptadorListaAlimentos(Context context, List<ListaAlimentos> alimentos) {
+    public AdaptadorListaAlimentos(Context context, ArrayList<ListaAlimentos> alimentos) {
         this.context = context;
         this.alimentos = alimentos;
         alimentosFiltrados = new ArrayList<>(alimentos);
+    }
+
+    public void setFilter(ArrayList<ListaAlimentos> lista){
+        alimentos = new ArrayList<>();
+        alimentos.addAll(lista);
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -44,15 +51,12 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
             @Override
             public void onClick(View view) {
                 String idAlimento = alimentos.get(holder.getAdapterPosition()).getId();
-                //Toast.makeText(context,"Categoria: "+nombreCategoria, Toast.LENGTH_SHORT).show();
 
-                Bundle datos = new Bundle();
-                datos.putString("idAlimento", idAlimento);
+                Intent registro = new Intent(context, InformacionAlimento.class);
+                registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
+                registro.putExtra("idAlimento", idAlimento);
+                context.startActivity(registro);
 
-                InformacionAlimento fragment = new InformacionAlimento();
-                fragment.setArguments(datos);
-                FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
             }
         });
 
@@ -73,6 +77,9 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
     public int getItemCount() {
         return alimentos.size();
     }
+
+
+
 
     @Override
     public Filter getFilter(){
@@ -111,7 +118,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 
-        private LinearLayout item_alimento;
+        private ConstraintLayout item_alimento;
         private TextView tvId;
         private TextView tvNombre;
         private TextView tvCalorias;
@@ -121,7 +128,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            item_alimento = (LinearLayout)itemView.findViewById(R.id.item_alimento);
+            item_alimento = (ConstraintLayout) itemView.findViewById(R.id.item_alimento);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
             tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
             tvCalorias = (TextView)itemView.findViewById(R.id.tvValCalorias);

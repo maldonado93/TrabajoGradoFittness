@@ -1,6 +1,5 @@
 package com.example.uer.trabajogradofittness.Persona;
 
-import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,24 +17,19 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
 import com.example.uer.trabajogradofittness.RegistroEntreno.RegistrosEntreno;
-import com.example.uer.trabajogradofittness.Rutina.Rutina;
 import com.example.uer.trabajogradofittness.Rutina.Rutinas;
 
 public class InformacionPersona extends AppCompatActivity {
 
     GlobalState gs;
     Perfil perfil;
-    Fisionomia fisionomia;
     RegistrosEntreno entrenos;
     Rutinas rutinas;
-
-
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -80,14 +74,6 @@ public class InformacionPersona extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
-
-        gs = (GlobalState) getApplication();
-
-        if(gs.getId_alumno() == 0){
-            Bundle datos = this.getIntent().getExtras();
-            int id = datos.getInt("idPersona");
-            gs.setId_alumno(id);
-        }
     }
 
 
@@ -168,13 +154,10 @@ public class InformacionPersona extends AppCompatActivity {
                 case 0: perfil = new Perfil();
                     return perfil;
 
-                case 1: fisionomia = new Fisionomia();
-                    return fisionomia;
-
-                case 2: entrenos = new RegistrosEntreno();
+                case 1: entrenos = new RegistrosEntreno();
                     return entrenos;
 
-                case 3: rutinas = new Rutinas();
+                case 2: rutinas = new Rutinas();
                     return rutinas;
             }
             return perfil = new Perfil();
@@ -182,8 +165,8 @@ public class InformacionPersona extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 4 total pages.
-            return 4;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
@@ -193,12 +176,9 @@ public class InformacionPersona extends AppCompatActivity {
                     return "PERFIL";
 
                 case 1:
-                    return "FISIONOMIA";
-
-                case 2:
                     return "ENTRENOS";
 
-                case 3:
+                case 2:
                     return "RUTINAS";
             }
             return null;

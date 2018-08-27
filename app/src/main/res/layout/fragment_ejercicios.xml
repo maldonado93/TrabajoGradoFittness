@@ -6,19 +6,19 @@
     android:layout_marginTop="65dp"
     android:background="@android:color/background_light"
     android:orientation="vertical"
-    android:paddingLeft="15dp"
-    android:paddingRight="15dp"
-    tools:context=".Rutina.Ejercicios">
+    tools:context=".Rutina.EjerciciosFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:background="@android:color/background_light"
         android:orientation="vertical"
         android:padding="10dp">
 
         <TextView
-            android:id="@+id/tvTituloCategoria"
+            android:id="@+id/tvTitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"

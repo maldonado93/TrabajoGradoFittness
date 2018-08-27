@@ -81,7 +81,7 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
 
     private void consultarCategorias(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/nutricion/listar_categorias.php";
+        String url = "http://"+gs.getIp()+"/nutricion/listar_categorias.php";
 
         url = url.replace(" ", "%20");
 

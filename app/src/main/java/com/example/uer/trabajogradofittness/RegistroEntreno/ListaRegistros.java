@@ -3,6 +3,7 @@ package com.example.uer.trabajogradofittness.RegistroEntreno;
 public class ListaRegistros {
 
     private String idRegistro;
+    private String idRutina;
     private String rutina;
     private String categoria;
     private String dia;
@@ -10,8 +11,9 @@ public class ListaRegistros {
     private String hora;
     private String tiempo;
 
-    public ListaRegistros(String idRegistro, String rutina, String categoria, String dia, String fecha, String hora, String tiempo) {
+    public ListaRegistros(String idRegistro, String idRutina, String rutina, String categoria, String dia, String fecha, String hora, String tiempo) {
         this.idRegistro = idRegistro;
+        this.idRutina = idRutina;
         this.rutina = rutina;
         this.categoria = categoria;
         this.dia = dia;
@@ -26,6 +28,14 @@ public class ListaRegistros {
 
     public void setIdRegistro(String idRegistro) {
         this.idRegistro = idRegistro;
+    }
+
+    public String getIdRutina() {
+        return idRutina;
+    }
+
+    public void setIdRutina(String idRutina) {
+        this.idRutina = idRutina;
     }
 
     public String getRutina() {

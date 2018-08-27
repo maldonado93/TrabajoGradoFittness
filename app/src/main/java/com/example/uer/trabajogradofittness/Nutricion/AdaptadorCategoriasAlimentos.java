@@ -1,6 +1,7 @@
 package com.example.uer.trabajogradofittness.Nutricion;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.R;
+import com.example.uer.trabajogradofittness.RegistroEntreno.DetallesEntreno;
 
 import java.util.List;
 
@@ -40,14 +42,10 @@ public class AdaptadorCategoriasAlimentos extends RecyclerView.Adapter<Adaptador
             public void onClick(View view) {
                 String nombreCategoria = categoria.get(holder.getAdapterPosition()).getCategoria();
 
-                Bundle datos = new Bundle();
-                datos.putString("categoria", nombreCategoria);
-
-                Alimentos fragment = new Alimentos();
-                fragment.setArguments(datos);
-                FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment).addToBackStack(null).commit();
-
+                Intent registro = new Intent(context, Alimentos.class);
+                registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
+                registro.putExtra("categoria", nombreCategoria);
+                context.startActivity(registro);
             }
         });
 

@@ -1,9 +1,17 @@
 package com.example.uer.trabajogradofittness;
 
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
@@ -17,23 +25,36 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.Fragment;
 import android.widget.Button;
+import android.widget.Toast;
 
-import com.example.uer.trabajogradofittness.InformacionPersonal.Informacion;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
+import com.example.uer.trabajogradofittness.Persona.InformacionPersona;
+import com.example.uer.trabajogradofittness.Persona.Perfil;
 import com.example.uer.trabajogradofittness.RegistroEntreno.InicioEntreno;
 import com.example.uer.trabajogradofittness.RegistroEntreno.RegistrosEntreno;
-import com.example.uer.trabajogradofittness.Rutina.Ejercicios;
-import com.example.uer.trabajogradofittness.Rutina.Rutina;
+import com.example.uer.trabajogradofittness.Rutina.CategoriasEjercicio;
+import com.example.uer.trabajogradofittness.Rutina.Rutinas;
 
 
 public class Principal extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private static final int REQUEST_ENABLE_BT = 1;
     NavigationView navigationView = null;
     Toolbar toolbar = null;
 
     GlobalState gs;
 
+    private BluetoothAdapter mBluetoothAdapter;
+    private boolean mScanning;
+    private Handler mHandler;
+
+    // Stops scanning after 10 seconds.
+    private static final long SCAN_PERIOD = 10000;
+
+    Fragment fragment = null;
+
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,21 +63,29 @@ public class Principal extends AppCompatActivity
         gs = (GlobalState) getApplication();
 
         //Inicializar fragment
-        InicioEntreno fragment = new InicioEntreno();
-        cambiarFragment(fragment);
+
+
+        if(gs.getFragmentActual() == null){
+            fragment = new InicioEntreno();
+            addFragment();
+        }
+        else{
+            verificarFragment();
+            addFragment();
+        }
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -67,33 +96,43 @@ public class Principal extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        if(savedInstanceState == null){
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.add(R.id.fragment_container, new InicioEntreno());
-            ft.commit();
+        /*if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
+            // El dispositivo soporta BLE, podemos usar su API
+            Toast.makeText(this,"Soporta",Toast.LENGTH_LONG).show();
+        } else {
+            // El dispositivo no soporta. No usar la API de BLE aquí
+            Toast.makeText(this,"No soporta",Toast.LENGTH_LONG).show();
         }
+
+        final BluetoothManager mBluetoothManager=
+                (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        mBluetoothAdapter=mBluetoothManager.getAdapter();
+        if (!mBluetoothAdapter.isEnabled()) {
+            Intent enableBtIntent = new
+                    Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
+        }*/
+
     }
 
-    /*@Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            //drawer.closeDrawer(GravityCompat.START);
-            dialogSalir();
-        } else {
-            super.onBackPressed();
-        }
-    }*/
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() > 1){
-            getFragmentManager().popBackStack();
-        }
-        else{
-            dialogSalir();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if(fragment instanceof InicioEntreno){
+                dialogSalir();
+            }
+            else{
+                gs.setFragmentActual("Inicio");
+                verificarFragment();
+                reemplazarFragment();
+            }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -124,23 +163,22 @@ public class Principal extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_inicio) {
-            InicioEntreno fragment = new InicioEntreno();
-            cambiarFragment(fragment);
+            gs.setFragmentActual("Inicio");
+
         } else if (id == R.id.nav_registros) {
-            RegistrosEntreno fragment = new RegistrosEntreno();
-            cambiarFragment(fragment);
+            gs.setFragmentActual("RegistrosEntreno");
 
         } else if (id == R.id.nav_informacion) {
-            Informacion fragment = new Informacion();
-            cambiarFragment(fragment);
+            gs.setFragmentActual("Informacion");
 
-        } else if (id == R.id.nav_rutina) {
-            Rutina fragment = new Rutina();
-            cambiarFragment(fragment);
+        } else if (id == R.id.nav_rutinas) {
+            gs.setFragmentActual("Rutinas");
+
+        } else if (id == R.id.nav_ejercicios) {
+            gs.setFragmentActual("Ejercicios");
 
         } else if (id == R.id.nav_nutricion) {
-            Nutricion fragment = new Nutricion();
-            cambiarFragment(fragment);
+            gs.setFragmentActual("Nutricion");
 
         } else if (id == R.id.nav_cuenta) {
 
@@ -150,32 +188,54 @@ public class Principal extends AppCompatActivity
 
         }
 
-        Fragment switchTo = null;
-
-        /*if(switchTo != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.fragment_container, switchTo);
-            for(int i=0; i<getSupportFragmentManager().getBackStackEntryCount(); i++){
-                getSupportFragmentManager().popBackStackImmediate();
-            }
-            ft.commit();
-        }*/
-
+        verificarFragment();
+        reemplazarFragment();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void cambiarFragment(Fragment frag){
-        Bundle dato = new Bundle();
-        dato.putString("Principal14", "alumno");
-        frag.setArguments(dato);
+    private void verificarFragment(){
+        switch(gs.getFragmentActual()){
+            case "Inicio": fragment = new InicioEntreno();
+                break;
+            case "RegistrosEntreno": fragment = new RegistrosEntreno();
+                break;
+            case "Informacion": fragment = new Perfil();
+                break;
+            case "Rutinas": fragment = new Rutinas();
+                break;
+            case "Ejercicios": fragment = new CategoriasEjercicio();
+                break;
+            case "Nutricion": fragment = new Nutricion();
+                break;
 
+            default: gs.setFragmentActual("Inicio");
+                fragment = new InicioEntreno();
+                break;
+        }
+    }
+
+    private void addFragment(){
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(R.id.fragment_container, frag).addToBackStack(null);
+        fragmentTransaction.add(R.id.fragment_container, fragment, fragment.getClass().toString()).addToBackStack(null);
         fragmentTransaction.commit();
     }
+
+    private void reemplazarFragment(){
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+        if(!fragment.getClass().toString().equals(currentFragment.getTag()))
+        {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.fragment_container, fragment, fragment.getClass().toString()) // add and tag the new fragment
+                    .commit();
+        }
+    }
+
 
 
     private void dialogSalir(){
@@ -187,6 +247,7 @@ public class Principal extends AppCompatActivity
 
             @Override
             public void onClick(View view) {
+                limpiarDatos();
                 Intent salir = new Intent(Principal.this, Login.class);
                 salir.addFlags(salir.FLAG_ACTIVITY_CLEAR_TOP | salir.FLAG_ACTIVITY_SINGLE_TOP);
 
@@ -196,6 +257,10 @@ public class Principal extends AppCompatActivity
         buider.setView(dView);
         AlertDialog dialog = buider.create();
         dialog.show();
+    }
+
+    private void limpiarDatos(){
+
     }
 
 }

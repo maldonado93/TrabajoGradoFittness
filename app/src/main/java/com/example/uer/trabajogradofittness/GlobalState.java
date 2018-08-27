@@ -2,16 +2,16 @@ package com.example.uer.trabajogradofittness;
 
 import android.app.Application;
 
-import java.io.File;
-
 public class GlobalState extends Application{
 
-    public String ip = "192.168.0.24";
+    public String ip = "piperomero1226.000webhostapp.com";
 
     public int sesion_usuario = 0;
     public int tipo_usuario = 0;
     public int id_registro_entreno = 0;
+    public int id_rutina = 0;
     public int id_alumno = 0;
+    public String fragmentActual = null;
 
     public String getIp() {
         return ip;
@@ -45,11 +45,27 @@ public class GlobalState extends Application{
         this.id_registro_entreno = id_registro_entreno;
     }
 
+    public int getId_rutina() {
+        return id_rutina;
+    }
+
+    public void setId_rutina(int id_rutina) {
+        this.id_rutina = id_rutina;
+    }
+
     public int getId_alumno() {
         return id_alumno;
     }
 
     public void setId_alumno(int id_alumno) {
         this.id_alumno = id_alumno;
+    }
+
+    public String getFragmentActual() {
+        return fragmentActual;
+    }
+
+    public void setFragmentActual(String fragmentActual) {
+        this.fragmentActual = fragmentActual;
     }
 }

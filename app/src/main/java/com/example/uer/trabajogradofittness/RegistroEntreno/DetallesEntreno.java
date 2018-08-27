@@ -1,8 +1,6 @@
 package com.example.uer.trabajogradofittness.RegistroEntreno;
 
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -25,6 +23,10 @@ import com.example.uer.trabajogradofittness.R;
 public class DetallesEntreno extends AppCompatActivity {
 
     GlobalState gs;
+
+    ResumenEntreno resumenEntreno;
+    EjerciciosEntreno ejerciciosEntreno;
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -62,19 +64,19 @@ public class DetallesEntreno extends AppCompatActivity {
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
+        this.getSupportActionBar().setTitle("Detalles de entreno");
 
 
-        int idRegistro = Integer.parseInt(getIntent().getStringExtra("idRegistro"));
+        gs = (GlobalState) getApplication();
 
-        gs.setId_registro_entreno(idRegistro);
+        if(gs.getId_registro_entreno() == 0){
+            Bundle datos = this.getIntent().getExtras();
+            int id = Integer.parseInt(datos.getString("idRegistro"));
+            int idRutina = Integer.parseInt(datos.getString("idRutina"));
+            gs.setId_registro_entreno(id);
+            gs.setId_rutina(idRutina);
+        }
     }
 
 
@@ -146,16 +148,23 @@ public class DetallesEntreno extends AppCompatActivity {
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public Fragment getItem(int posicion) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            return PlaceholderFragment.newInstance(position + 1);
+            switch(posicion) {
+                case 0: resumenEntreno = new ResumenEntreno();
+                    return resumenEntreno;
+
+                case 1: ejerciciosEntreno = new EjerciciosEntreno();
+                    return ejerciciosEntreno;
+            }
+            return  resumenEntreno = new ResumenEntreno();
         }
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 2 total pages.
+            return 2;
         }
     }
 }

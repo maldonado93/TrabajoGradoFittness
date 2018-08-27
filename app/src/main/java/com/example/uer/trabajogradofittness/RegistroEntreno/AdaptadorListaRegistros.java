@@ -2,13 +2,12 @@ package com.example.uer.trabajogradofittness.RegistroEntreno;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.R;
@@ -36,10 +35,12 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
             @Override
             public void onClick(View view) {
                 String idRegistro = registros.get(holder.getAdapterPosition()).getIdRegistro();
+                String idRutina = registros.get(holder.getAdapterPosition()).getIdRutina();
 
                 Intent registro = new Intent(context, DetallesEntreno.class);
                 registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
                 registro.putExtra("idRegistro", idRegistro);
+                registro.putExtra("idRutina", idRutina);
                 context.startActivity(registro);
 
             }
@@ -51,6 +52,7 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
         myViewHolder.tvIdRegistro.setText(registros.get(i).getIdRegistro());
+        myViewHolder.tvIdRutina.setText(registros.get(i).getIdRutina());
         myViewHolder.tvRutina.setText(registros.get(i).getRutina());
         myViewHolder.tvCategoria.setText(registros.get(i).getCategoria());
         myViewHolder.tvDia.setText(registros.get(i).getDia());
@@ -67,8 +69,9 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private LinearLayout item_registro;
+        private ConstraintLayout item_registro;
         private TextView tvIdRegistro;
+        private TextView tvIdRutina;
         private TextView tvRutina;
         private TextView tvCategoria;
         private TextView tvDia;
@@ -79,8 +82,9 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            item_registro = (LinearLayout)itemView.findViewById(R.id.item_registro);
+            item_registro = (ConstraintLayout)itemView.findViewById(R.id.item_registro);
             tvIdRegistro = (TextView)itemView.findViewById(R.id.tvIdRegistro);
+            tvIdRutina = (TextView)itemView.findViewById(R.id.tvIdRutina);
             tvRutina = (TextView)itemView.findViewById(R.id.tvRutina);
             tvCategoria = (TextView)itemView.findViewById(R.id.tvCategoria);
             tvDia = (TextView)itemView.findViewById(R.id.tvDia);

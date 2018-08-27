@@ -1,8 +1,10 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -38,25 +40,14 @@ public class AdaptadorListaRutinas extends RecyclerView.Adapter<AdaptadorListaRu
             @Override
             public void onClick(View view) {
                 String idRutina = rutinas.get(holder.getAdapterPosition()).getId();
+                String rutina = rutinas.get(holder.getAdapterPosition()).getRutina();
 
-                Bundle datos = new Bundle();
-                datos.putString("idRutina", idRutina);
-                datos.putString("categoria", "");
-
-                GlobalState gs = (GlobalState) context.getApplicationContext();
-
-                Ejercicios fragment = new Ejercicios();
-                fragment.setArguments(datos);
-                FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-
-                if(gs.getId_alumno() == 0){
-                    fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).addToBackStack(null).commit();
-                }
-                else{
-                    fragmentManager.beginTransaction().replace(R.id.section_label, fragment).addToBackStack(null).commit();
-                }
-
-
+                Intent registro = new Intent(context, Ejercicios.class);
+                registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
+                registro.putExtra("categoria", "");
+                registro.putExtra("idRutina", idRutina);
+                registro.putExtra("rutina", rutina);
+                context.startActivity(registro);
             }
         });
 
@@ -78,7 +69,7 @@ public class AdaptadorListaRutinas extends RecyclerView.Adapter<AdaptadorListaRu
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 
-        private LinearLayout item_rutina;
+        private ConstraintLayout item_rutina;
         private TextView tvId;
         private TextView tvRutina;
         private TextView tvCategoria;
@@ -87,7 +78,7 @@ public class AdaptadorListaRutinas extends RecyclerView.Adapter<AdaptadorListaRu
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            item_rutina = (LinearLayout)itemView.findViewById(R.id.item_rutina);
+            item_rutina = (ConstraintLayout)itemView.findViewById(R.id.item_rutina);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
             tvRutina = (TextView)itemView.findViewById(R.id.tvRutina);
             tvCategoria = (TextView)itemView.findViewById(R.id.tvCategoria);

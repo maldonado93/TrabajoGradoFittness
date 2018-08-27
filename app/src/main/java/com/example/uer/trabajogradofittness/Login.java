@@ -4,6 +4,7 @@ package com.example.uer.trabajogradofittness;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,7 +20,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.uer.trabajogradofittness.Entidades.Usuario;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -87,9 +87,9 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                 e.printStackTrace();
             }*/
 
-            //String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
+            //String url = "http://"+gs.getIp()+"/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
 
-            String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/usuario/consultar_usuario1.php?usuario="+ usuario;
+            String url = "http://"+gs.getIp()+"/usuario/consultar_usuario1.php?usuario="+ usuario;
 
             url = url.replace(" ", "%20");
 
@@ -97,7 +97,10 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             request.add(jsonObjectRequest);
         }
         else{
-            Toast.makeText(this, "Complete los campos, por favor!",Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Complete los campos, por favor!",Toast.LENGTH_SHORT).show();
+            View view = findViewById(android.R.id.content);
+            Snackbar.make(view, "Complete los campos, por favor!", Snackbar.LENGTH_SHORT)
+                    .setAction("Action", null).show();
         }
     }
 

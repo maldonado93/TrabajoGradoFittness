@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -16,12 +17,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
-
-import com.example.uer.trabajogradofittness.InformacionPersonal.Informacion;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
+import com.example.uer.trabajogradofittness.Persona.Perfil;
 import com.example.uer.trabajogradofittness.Persona.Personas;
 import com.example.uer.trabajogradofittness.RegistroEntreno.InicioEntreno;
-import com.example.uer.trabajogradofittness.Rutina.Rutina;
+import com.example.uer.trabajogradofittness.Rutina.CategoriasEjercicio;
 
 public class PrincipalInstructor extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,6 +31,9 @@ public class PrincipalInstructor extends AppCompatActivity
 
     GlobalState gs;
 
+    Fragment fragment = null;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,10 +42,8 @@ public class PrincipalInstructor extends AppCompatActivity
         gs = (GlobalState) getApplication();
 
         //Inicializar fragment
-        InicioEntreno fragment = new InicioEntreno();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment);
-        fragmentTransaction.commit();
+        fragment = new InicioEntreno();
+        addFragment();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -64,15 +65,28 @@ public class PrincipalInstructor extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
+
 
     @Override
     public void onBackPressed() {
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
+        }
+        else{
+
+            FragmentManager fm = getSupportFragmentManager();
+            Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+            if(currentFragment instanceof InicioEntreno){
+                dialogSalir();
+            }
+            else{
+                super.onBackPressed();
+            }
         }
     }
 
@@ -105,43 +119,54 @@ public class PrincipalInstructor extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_inicio) {
-            InicioEntreno fragment = new InicioEntreno();
-            cambiarFragment(fragment);
+            fragment = new InicioEntreno();
+            reemplazarFragment();
         } else if (id == R.id.nav_alumnos) {
-            Personas fragment = new Personas();
-            cambiarFragment(fragment);
+            fragment = new Personas();
+            reemplazarFragment();
         } else if (id == R.id.nav_informacion) {
-            Informacion fragment = new Informacion();
-            cambiarFragment(fragment);
+            fragment = new Perfil();
+            reemplazarFragment();
 
         } else if (id == R.id.nav_rutina) {
-            Rutina fragment = new Rutina();
-            cambiarFragment(fragment);
+            fragment = new CategoriasEjercicio();
+            reemplazarFragment();
 
         } else if (id == R.id.nav_nutricion) {
-            Nutricion fragment = new Nutricion();
-            cambiarFragment(fragment);
+            fragment = new Nutricion();
+            reemplazarFragment();
 
         } else if (id == R.id.nav_cuenta) {
 
 
         } else if (id == R.id.nav_salir) {
             dialogSalir();
-
         }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void cambiarFragment(Fragment frag){
-        Bundle dato = new Bundle();
-        dato.putString("Principal14", "instructor");
-        frag.setArguments(dato);
+    private void addFragment(){
+
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, frag).addToBackStack(null);
+        fragmentTransaction.add(R.id.fragment_container, fragment, fragment.getClass().toString()).addToBackStack(null);
         fragmentTransaction.commit();
+    }
+
+    private void reemplazarFragment(){
+        FragmentManager fm = getSupportFragmentManager();
+        Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
+        if(!fragment.getClass().toString().equals(currentFragment.getTag()))
+        {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.fragment_container, fragment, fragment.getClass().toString()) // add and tag the new fragment
+                    .commit();
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.uer.trabajogradofittness.Persona;
+package com.example.uer.trabajogradofittness.Rutina;
 
 
 import android.os.Bundle;
@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -26,21 +28,33 @@ import org.json.JSONObject;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class Fisionomia extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
-
+public class InformacionEjercicioFragment extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     View v;
     GlobalState gs;
+    ModeloEjercicio modeloEjercicio;
+
+    private String idEjercicio;
+
+    TextView tvId;
+    ImageView ivImagen;
+    TextView tvNombre;
+    TextView tvDescripcion;
+
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        v = inflater.inflate(R.layout.fragment_informacion_ejercicio,container,false);
 
-        v = inflater.inflate(R.layout.fragment_fisionomia, container, false);
+        tvId = v.findViewById(R.id.tvId);
+        tvNombre = v.findViewById(R.id.tvNombre);
+        tvDescripcion = v.findViewById(R.id.tvDescripcion);
+        ivImagen = v.findViewById(R.id.ivImagen);
+
         return v;
     }
 
@@ -49,14 +63,19 @@ public class Fisionomia extends Fragment implements Response.Listener<JSONObject
 
         gs = (GlobalState) getActivity().getApplication();
 
+        if(getArguments() != null){
+            idEjercicio= getArguments().getString("idEjercicio","");
+        }
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        //listarPersonas();
+        consultarEjercicio(idEjercicio);
     }
 
-    private void listarPersonas(){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/instructor/listar_alumnos.php?idInstructor="+gs.getSesion_usuario();
+    private void consultarEjercicio(String id){
+
+        String url = "http://"+gs.getIp()+"/ejercicios/consultar_ejercicio.php?id="+id;
 
         url = url.replace(" ", "%20");
 
@@ -64,23 +83,34 @@ public class Fisionomia extends Fragment implements Response.Listener<JSONObject
         request.add(jsonObjectRequest);
     }
 
-
-
     @Override
     public void onResponse(JSONObject response) {
-        JSONArray datos = response.optJSONArray("persona");
+        JSONArray datos = response.optJSONArray("ejercicio");
         JSONObject jsonObject = null;
 
         try {
             jsonObject = datos.getJSONObject(0);
 
-                /*listaPersonas.add(new ListaPersonas(jsonObject.optString("id"),
-                        jsonObject.optString("nombres")+" "
-                                +jsonObject.optString("apellidos")));*/
+            modeloEjercicio.setId(jsonObject.optString("id"));
+            modeloEjercicio.setDato(jsonObject.optString("imagen"));
+            modeloEjercicio.setNombre(jsonObject.optString("nombre"));
+            modeloEjercicio.setCategoria(jsonObject.optString("categoria"));
+            modeloEjercicio.setDescripcion(jsonObject.optString("descripcion"));
 
         }
         catch (JSONException e) {
             e.printStackTrace();
+        }
+
+        tvId.setText(modeloEjercicio.getId());
+        tvNombre.setText(modeloEjercicio.getNombre());
+        tvDescripcion.setText(modeloEjercicio.getDescripcion());
+        tvId.setText(modeloEjercicio.getId());
+        if(modeloEjercicio.getImagen() != null){
+            ivImagen.setImageBitmap(modeloEjercicio.getImagen());
+        }
+        else{
+            ivImagen.setImageResource(R.mipmap.foto_defecto_round);
         }
     }
 

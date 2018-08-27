@@ -1,15 +1,15 @@
 package com.example.uer.trabajogradofittness.Nutricion;
 
-
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -30,24 +30,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.List;
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class Alimentos extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
+public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTextListener, Response.Listener<JSONObject>, Response.ErrorListener{
 
-    View v;
+
     GlobalState gs;
-
 
     private String categoria;
     private AdaptadorListaAlimentos adaptadorAlimentos;
-    private List<ListaAlimentos> listaAlimentos;
+    private ArrayList<ListaAlimentos> listaAlimentos = null;
     ArrayList<String> listaOrden;
 
     TextView titulo;
-    android.widget.SearchView svBuscar;
     Spinner spOrden;
     RecyclerView recyclerAlimentos;
 
@@ -55,35 +49,33 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
     JsonObjectRequest jsonObjectRequest;
 
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_alimentos);
 
-        v = inflater.inflate(R.layout.fragment_alimentos,container,false);
+        gs = (GlobalState) getApplication();
 
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
-        titulo = (TextView) v.findViewById(R.id.tvTituloCategoria);
+        Bundle datos = this.getIntent().getExtras();
+        categoria = datos.getString("categoria");
+
+        titulo = (TextView) findViewById(R.id.tvTitulo);
         titulo.setText(categoria);
 
-        svBuscar = (android.widget.SearchView)v.findViewById(R.id.svBuscar);
-        svBuscar.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String texto) {
-                adaptadorAlimentos.getFilter().filter(texto);
+        spOrden = (Spinner)findViewById(R.id.spOrden);
 
-                return false;
-            }
-        });
 
-        spOrden = (Spinner)v.findViewById(R.id.spOrden);
+        listaOrden = new ArrayList<>();
+        listaOrden.add("Nombre");
+        listaOrden.add("Calorias");
+        listaOrden.add("Proteinas");
+        listaOrden.add("Carbohidratos");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_spinner_item, listaOrden);
+        ArrayAdapter<String> adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaOrden);
         spOrden.setAdapter(adapter);
 
 
@@ -101,40 +93,44 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
                     }
                 });
 
-        recyclerAlimentos = (RecyclerView)v.findViewById(R.id.rvAlimentos);
-
-        return v;
-    }
+        recyclerAlimentos = (RecyclerView)findViewById(R.id.rvAlimentos);
 
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        gs = (GlobalState) getActivity().getApplication();
-
-        if(getArguments() != null){
-            categoria = getArguments().getString("categoria"," ");
-        }
-
-        request = Volley.newRequestQueue(getActivity().getApplicationContext());
-
-        listaOrden = new ArrayList<>();
-
-        listaOrden.add("Nombre");
-        listaOrden.add("Calorias");
-        listaOrden.add("Proteinas");
-        listaOrden.add("Carbohidratos");
 
 
+        request = Volley.newRequestQueue(this);
 
         listarAlimentos(categoria, "nombre");
     }
 
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu_buscador, menu);
+        MenuItem item = menu.findItem(R.id.buscador);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+
+        searchView.setOnQueryTextListener(this);
+
+
+        return true;
+
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String s) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String texto) {
+
+        return false;
+    }
+
+
 
     private void listarAlimentos(String categoria, String orden){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/nutricion/listar_alimentosxcategoria.php?categoria="+categoria+"&orden="+orden;
+        String url = "http://"+gs.getIp()+"/nutricion/listar_alimentosxcategoria.php?categoria="+categoria+"&orden="+orden;
 
         url = url.replace(" ", "%20");
 
@@ -168,15 +164,15 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
                 jsonObject = datos.getJSONObject(i);
 
                 listaAlimentos.add(new ListaAlimentos(jsonObject.optString("id"),
-                                                          jsonObject.optString("nombre"),
-                                                          verificarValor(jsonObject.optString("calorias")),
-                                                          verificarValor(jsonObject.optString("proteinas")),
-                                                          verificarValor(jsonObject.optString("carbohidratos"))));
+                        jsonObject.optString("nombre"),
+                        verificarValor(jsonObject.optString("calorias")),
+                        verificarValor(jsonObject.optString("proteinas")),
+                        verificarValor(jsonObject.optString("carbohidratos"))));
             }
 
 
-            adaptadorAlimentos = new AdaptadorListaAlimentos(getContext(), listaAlimentos);
-            recyclerAlimentos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            adaptadorAlimentos = new AdaptadorListaAlimentos(this, listaAlimentos);
+            recyclerAlimentos.setLayoutManager(new GridLayoutManager(this, 1));
 
             recyclerAlimentos.setAdapter(adaptadorAlimentos);
         }
@@ -187,9 +183,10 @@ public class Alimentos extends Fragment implements Response.Listener<JSONObject>
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
+
 
 
 

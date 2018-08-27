@@ -8,7 +8,7 @@
     android:background="@android:color/background_light"
     android:orientation="vertical"
     android:padding="15dp"
-    tools:context=".Rutina.InformacionEjercicio">
+    tools:context=".Rutina.InformacionEjercicioFragment">
 
 
     <LinearLayout

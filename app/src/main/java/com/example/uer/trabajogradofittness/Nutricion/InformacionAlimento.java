@@ -1,16 +1,17 @@
 package com.example.uer.trabajogradofittness.Nutricion;
 
-
-import android.content.Intent;
+import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,24 +22,18 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
-import com.example.uer.trabajogradofittness.Login;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
+public class InformacionAlimento extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
 
-/**
- * A simple {@link Fragment} subclass.
- */
-public class InformacionAlimento extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
-
-    View v;
     GlobalState gs;
     private String idAlimento;
+
+    ImageButton btnRegresar;
 
     TextView tvNombreAlimento;
     TextView tvCategoria;
@@ -89,77 +84,82 @@ public class InformacionAlimento extends Fragment implements Response.Listener<J
     JsonObjectRequest jsonObjectRequest;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        v = inflater.inflate(R.layout.fragment_informacion_alimento,container,false);
-
-        tvNombreAlimento = (TextView) v.findViewById(R.id.tvNombreAlimento);
-        tvCategoria = (TextView) v.findViewById(R.id.tvCategoria);
-        tvValCalorias = (TextView) v.findViewById(R.id.tvValCalorias);
-        tvValProteinas = (TextView) v.findViewById(R.id.tvValProteinas);
-        tvValCarbohidratos = (TextView) v.findViewById(R.id.tvValCarbohidratos);
-        tvValFibra = (TextView) v.findViewById(R.id.tvValFibra);
-        tvValLipidos = (TextView) v.findViewById(R.id.tvValLipidos);
-        tvValFuente = (TextView) v.findViewById(R.id.tvValFuente);
-
-        tvValSodio = (TextView) v.findViewById(R.id.tvValSodio);
-        tvValCalcio = (TextView) v.findViewById(R.id.tvValCalcio);
-        tvValHierro = (TextView) v.findViewById(R.id.tvValHierro);
-        tvValFosforo = (TextView) v.findViewById(R.id.tvValFosforo);
-        tvValFluor = (TextView) v.findViewById(R.id.tvValFluor);
-        tvValSelenio = (TextView) v.findViewById(R.id.tvValSelenio);
-        tvValPotasio = (TextView) v.findViewById(R.id.tvValPotasio);
-        tvValMagnesio = (TextView) v.findViewById(R.id.tvValMagnesio);
-        tvValZinc = (TextView) v.findViewById(R.id.tvValZinc);
-        tvValLodo = (TextView) v.findViewById(R.id.tvValLodo);
-        tvValCobre = (TextView) v.findViewById(R.id.tvValCobre);
-
-        tvValVitA = (TextView) v.findViewById(R.id.tvValVitA);
-        tvValVitE = (TextView) v.findViewById(R.id.tvValVitE);
-        tvValVitB1 = (TextView) v.findViewById(R.id.tvValVitB1);
-        tvValNiacina = (TextView) v.findViewById(R.id.tvValNiacina);
-        tvValVitB12 = (TextView) v.findViewById(R.id.tvValVitB12);
-        tvValVitD = (TextView) v.findViewById(R.id.tvValVitD);
-        tvValVitC = (TextView) v.findViewById(R.id.tvValVitC);
-        tvValVitB2 = (TextView) v.findViewById(R.id.tvValVitB2);
-        tvValVitB6 = (TextView) v.findViewById(R.id.tvValVitB6);
-        tvValAcFolico = (TextView) v.findViewById(R.id.tvValAcFolico);
-
-        tvValAcgSatu = (TextView) v.findViewById(R.id.tvValAcgSatu);
-        tvValC140 = (TextView) v.findViewById(R.id.tvValC140);
-        tvValC160 = (TextView) v.findViewById(R.id.tvValC160);
-        tvValC180 = (TextView) v.findViewById(R.id.tvValC180);
-        tvValAcgMono = (TextView) v.findViewById(R.id.tvValAcgMono);
-        tvValC161 = (TextView) v.findViewById(R.id.tvValC161);
-        tvValC181 = (TextView) v.findViewById(R.id.tvValC181);
-        tvValAcgPoli = (TextView) v.findViewById(R.id.tvValAcgPoli);
-        tvValC182 = (TextView) v.findViewById(R.id.tvValC182);
-        tvValC183 = (TextView) v.findViewById(R.id.tvValC183);
-        tvValColesterol = (TextView) v.findViewById(R.id.tvValColesterol);
-        tvValEtanol = (TextView) v.findViewById(R.id.tvValEtanol);
-
-        return v;
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_informacion_alimento);
 
-        gs = (GlobalState) getActivity().getApplication();
+        gs = (GlobalState) getApplication();
 
-        if(getArguments() != null){
-            idAlimento= getArguments().getString("idAlimento","");
-        }
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
 
-        request = Volley.newRequestQueue(getActivity().getApplicationContext());
+        btnRegresar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        tvNombreAlimento = (TextView) findViewById(R.id.tvNombreAlimento);
+        tvCategoria = (TextView) findViewById(R.id.tvCategoria);
+        tvValCalorias = (TextView) findViewById(R.id.tvValCalorias);
+        tvValProteinas = (TextView) findViewById(R.id.tvValProteinas);
+        tvValCarbohidratos = (TextView) findViewById(R.id.tvValCarbohidratos);
+        tvValFibra = (TextView) findViewById(R.id.tvValFibra);
+        tvValLipidos = (TextView) findViewById(R.id.tvValLipidos);
+        tvValFuente = (TextView) findViewById(R.id.tvValFuente);
+
+        tvValSodio = (TextView) findViewById(R.id.tvValSodio);
+        tvValCalcio = (TextView) findViewById(R.id.tvValCalcio);
+        tvValHierro = (TextView) findViewById(R.id.tvValHierro);
+        tvValFosforo = (TextView) findViewById(R.id.tvValFosforo);
+        tvValFluor = (TextView) findViewById(R.id.tvValFluor);
+        tvValSelenio = (TextView) findViewById(R.id.tvValSelenio);
+        tvValPotasio = (TextView) findViewById(R.id.tvValPotasio);
+        tvValMagnesio = (TextView) findViewById(R.id.tvValMagnesio);
+        tvValZinc = (TextView) findViewById(R.id.tvValZinc);
+        tvValLodo = (TextView) findViewById(R.id.tvValLodo);
+        tvValCobre = (TextView) findViewById(R.id.tvValCobre);
+
+        tvValVitA = (TextView) findViewById(R.id.tvValVitA);
+        tvValVitE = (TextView) findViewById(R.id.tvValVitE);
+        tvValVitB1 = (TextView) findViewById(R.id.tvValVitB1);
+        tvValNiacina = (TextView) findViewById(R.id.tvValNiacina);
+        tvValVitB12 = (TextView) findViewById(R.id.tvValVitB12);
+        tvValVitD = (TextView) findViewById(R.id.tvValVitD);
+        tvValVitC = (TextView) findViewById(R.id.tvValVitC);
+        tvValVitB2 = (TextView) findViewById(R.id.tvValVitB2);
+        tvValVitB6 = (TextView) findViewById(R.id.tvValVitB6);
+        tvValAcFolico = (TextView) findViewById(R.id.tvValAcFolico);
+
+        tvValAcgSatu = (TextView) findViewById(R.id.tvValAcgSatu);
+        tvValC140 = (TextView) findViewById(R.id.tvValC140);
+        tvValC160 = (TextView) findViewById(R.id.tvValC160);
+        tvValC180 = (TextView) findViewById(R.id.tvValC180);
+        tvValAcgMono = (TextView) findViewById(R.id.tvValAcgMono);
+        tvValC161 = (TextView) findViewById(R.id.tvValC161);
+        tvValC181 = (TextView) findViewById(R.id.tvValC181);
+        tvValAcgPoli = (TextView) findViewById(R.id.tvValAcgPoli);
+        tvValC182 = (TextView) findViewById(R.id.tvValC182);
+        tvValC183 = (TextView) findViewById(R.id.tvValC183);
+        tvValColesterol = (TextView) findViewById(R.id.tvValColesterol);
+        tvValEtanol = (TextView) findViewById(R.id.tvValEtanol);
+
+        request = Volley.newRequestQueue(this);
+
+
+
+        Bundle datos = this.getIntent().getExtras();
+        idAlimento = datos.getString("idAlimento");
 
         consultarAlimento(idAlimento);
+
     }
+
 
 
     private void consultarAlimento(String id){
 
-        String url = "http://"+gs.getIp()+"/proyectoGrado/query_BD/nutricion/consultar_alimento.php?id="+id;
+        String url = "http://"+gs.getIp()+"/nutricion/consultar_alimento.php?id="+id;
 
         url = url.replace(" ", "%20");
 
@@ -169,7 +169,7 @@ public class InformacionAlimento extends Fragment implements Response.Listener<J
 
     private String verificarValor(String v){
         String val = v;
-        if(!val.contains("/")){
+        if(val.compareTo("-") != 0 && !val.contains("/")){
             double valor = Double.valueOf(v);
 
             if(valor == -1.00){
@@ -246,7 +246,7 @@ public class InformacionAlimento extends Fragment implements Response.Listener<J
 
     @Override
     public void onErrorResponse(VolleyError error) {
-        Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
 }
