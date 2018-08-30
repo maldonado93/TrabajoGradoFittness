@@ -36,10 +36,12 @@ import java.util.List;
 public class Rutinas extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     GlobalState gs;
+    View v;
 
     private AdaptadorListaRutinas adaptadorRutinas;
     private List<ListaRutinas> listaRutinas;
 
+    TextView tvMensaje;
     RecyclerView recyclerRutinas;
 
     RequestQueue request;
@@ -50,9 +52,11 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_rutinas, container, false);
+        v = inflater.inflate(R.layout.fragment_rutinas, container, false);
 
-        recyclerRutinas = (RecyclerView)v.findViewById(R.id.rvRutinas);
+
+        tvMensaje = v.findViewById(R.id.tvMensaje);
+        recyclerRutinas = v.findViewById(R.id.rvRutinas);
 
         return v;
     }
@@ -83,24 +87,31 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
     @Override
     public void onResponse(JSONObject response) {
         JSONArray datos = response.optJSONArray("rutina");
-
+        JSONObject jsonObject = null;
         try {
-            listaRutinas  = new ArrayList<>();
-            for(int i=0; i<datos.length();i++) {
-                JSONObject jsonObject = null;
-                jsonObject = datos.getJSONObject(i);
+            jsonObject = datos.getJSONObject(0);
+            if(jsonObject.optString("id").compareTo("0") != 0) {
+                listaRutinas  = new ArrayList<>();
+                for(int i=0; i<datos.length();i++) {
+                    jsonObject = datos.getJSONObject(i);
 
-                listaRutinas.add(new ListaRutinas(jsonObject.optString("id"),
-                                                jsonObject.optString("nombre"),
-                                                jsonObject.optString("categoria"),
-                                                jsonObject.optString("cantidad")));
+                    listaRutinas.add(new ListaRutinas(jsonObject.optString("id"),
+                            jsonObject.optString("nombre"),
+                            jsonObject.optString("categoria"),
+                            jsonObject.optString("cantidad")));
+                }
+
+
+                adaptadorRutinas = new AdaptadorListaRutinas(getContext(), listaRutinas);
+                recyclerRutinas.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+
+                recyclerRutinas.setAdapter(adaptadorRutinas);
+            }
+            else{
+                tvMensaje.setVisibility(View.VISIBLE);
+                recyclerRutinas.setVisibility(View.GONE);
             }
 
-
-            adaptadorRutinas = new AdaptadorListaRutinas(getContext(), listaRutinas);
-            recyclerRutinas.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-
-            recyclerRutinas.setAdapter(adaptadorRutinas);
         }
         catch (JSONException e) {
             e.printStackTrace();

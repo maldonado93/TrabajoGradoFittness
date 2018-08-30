@@ -24,7 +24,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
 
     Context context;
     ArrayList<ListaAlimentos> alimentos;
-    List<ListaAlimentos> alimentosFiltrados;
+    ArrayList<ListaAlimentos> alimentosFiltrados;
 
 
 

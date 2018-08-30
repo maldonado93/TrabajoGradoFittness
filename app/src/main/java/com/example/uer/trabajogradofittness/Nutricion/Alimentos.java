@@ -24,6 +24,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
+import com.example.uer.trabajogradofittness.Rutina.ListaEjercicios;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -95,9 +96,6 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
 
         recyclerAlimentos = (RecyclerView)findViewById(R.id.rvAlimentos);
 
-
-
-
         request = Volley.newRequestQueue(this);
 
         listarAlimentos(categoria, "nombre");
@@ -110,7 +108,6 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
 
         searchView.setOnQueryTextListener(this);
 
-
         return true;
 
     }
@@ -122,8 +119,22 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
 
     @Override
     public boolean onQueryTextChange(String texto) {
+        if(texto != ""){
+            texto = texto.toLowerCase();
+            ArrayList<ListaAlimentos> listaFiltrada = new ArrayList<>();
 
-        return false;
+            for(ListaAlimentos lista: listaAlimentos){
+                String nombre = lista.getNombre().toLowerCase();
+                if(nombre.contains(texto)){
+                    listaFiltrada.add(lista);
+                }
+            }
+            adaptadorAlimentos.setFilter(listaFiltrada);
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
 

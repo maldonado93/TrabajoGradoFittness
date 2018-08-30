@@ -18,4 +18,5 @@
     <string name="title_activity_detalles_entreno">DetallesEntreno</string>
     <string name="title_activity_principal_instructor">PrincipalInstructor</string>
     <string name="title_activity_informacion_persona">InformacionPersona</string>
+
 </resources>

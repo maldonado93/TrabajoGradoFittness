@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -20,6 +22,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.uer.trabajogradofittness.Conexion.ConexionSQLiteHelper;
+import com.github.ybq.android.spinkit.style.DoubleBounce;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,12 +42,15 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     private EditText etPassword;
     private Button btnIngresar;
 
+    ProgressDialog progress;
+
     String usuario;
     String password;
 
     boolean salir = false;
 
-    ProgressDialog progreso;
+
+
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -54,6 +61,10 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         setContentView(R.layout.activity_login);
 
         gs = (GlobalState)getApplication();
+
+        progress = new ProgressDialog(Login.this);
+        progress.setMessage("Cargando...");
+
 
         etUsuario = (EditText)findViewById(R.id.etUsuario);
         etUsuario.setText("");
@@ -71,6 +82,8 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                 consultarUsuario();
             }
         });
+
+        ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "proyecto", null, 1);
     }
 
     private void consultarUsuario(){
@@ -89,6 +102,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
             //String url = "http://"+gs.getIp()+"/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
 
+            progress.show();
             String url = "http://"+gs.getIp()+"/usuario/consultar_usuario1.php?usuario="+ usuario;
 
             url = url.replace(" ", "%20");
@@ -122,6 +136,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             if(gs.getSesion_usuario() != 0){
                 if(jsonObject.optString("password").compareTo(password) == 0 ){
 
+
                     Intent ingreso = null;
                     if(gs.getTipo_usuario() == 1){
                         ingreso = new Intent(Login.this, Principal.class);
@@ -140,6 +155,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             else{
                 Toast.makeText(this, "Usuario no registrado!",Toast.LENGTH_SHORT).show();
             }
+            progress.hide();
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -11,7 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -49,6 +51,8 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
     String consulta;
 
+    TextView tvMensaje;
+    LinearLayout layoutHistorial;
     Spinner spHistorial;
     RecyclerView rvEntrenos;
 
@@ -62,6 +66,10 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
         v = inflater.inflate(R.layout.fragment_registros_entreno, container, false);
 
+
+        tvMensaje = v.findViewById(R.id.tvMensaje);
+
+        layoutHistorial = v.findViewById(R.id.layoutHistorial);
         spHistorial = (Spinner)v.findViewById(R.id.spHistorialEntrenos);
 
         spHistorial.setOnItemSelectedListener(
@@ -247,52 +255,62 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
         boolean historial = false;
 
         JSONArray datos = response.optJSONArray("registro_entreno");
+        JSONObject jsonObject = null;
         try {
+            jsonObject = datos.getJSONObject(0);
+            if(jsonObject.optString("id").compareTo("0") != 0) {
+                for (int i = 0; i < datos.length(); i++) {
+                    jsonObject = datos.getJSONObject(i);
 
-            for(int i=0; i<datos.length();i++) {
-                JSONObject jsonObject = null;
-                jsonObject = datos.getJSONObject(i);
+                    if (consulta == "historial") {
+                        fecha = jsonObject.optString("fecha").split("-");
+                        mes = obtenerMes(fecha[1], 1);
+                        listaHistorial.add(mes + "- " + fecha[0]);
+                        layoutHistorial.setVisibility(View.VISIBLE);
+                        historial = true;
+                    }
 
-                if(consulta == "historial"){
-                    fecha = jsonObject.optString("fecha").split("-");
-                    mes = obtenerMes(fecha[1], 1);
-                    listaHistorial.add(mes+"- "+fecha[0]);
-                    historial = true;
+                    if (consulta == "registros") {
+
+                        String idRegistro = jsonObject.optString("id");
+                        String idRutina = jsonObject.optString("idRutina");
+                        String rutina = jsonObject.optString("rutina");
+                        String categoria = jsonObject.optString("categoria");
+                        String dia = obtenerDiaSemana(jsonObject.optString("fecha"));
+                        String fech = jsonObject.optString("fecha");
+                        String[] f = fech.split("-");
+                        fech = (f[2] + "-" + f[1] + "-" + f[0]);
+                        String hora = jsonObject.optString("hora");
+                        ;
+                        String tiempo = jsonObject.optString("tiempo") + " min";
+
+                        listaRegistros.add(new ListaRegistros(idRegistro,
+                                idRutina,
+                                rutina,
+                                categoria,
+                                dia,
+                                fech,
+                                hora,
+                                tiempo));
+                    }
+                }
+                if (consulta == "historial") {
+                    ArrayAdapter<String> adapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_spinner_item, listaHistorial);
+                    spHistorial.setAdapter(adapter);
                 }
 
-                if(consulta == "registros"){
-
-                    String idRegistro = jsonObject.optString("id");
-                    String idRutina = jsonObject.optString("idRutina");
-                    String rutina = jsonObject.optString("rutina");
-                    String categoria = jsonObject.optString("categoria");
-                    String dia = obtenerDiaSemana(jsonObject.optString("fecha"));
-                    String fech  = jsonObject.optString("fecha");
-                    String[] f = fech.split("-");
-                    fech = (f[2]+"-"+f[1]+"-"+f[0]);
-                    String hora = jsonObject.optString("hora");;
-                    String tiempo = jsonObject.optString("tiempo")+" min";
-
-                    listaRegistros.add(new ListaRegistros(idRegistro,
-                                                        idRutina,
-                                                        rutina,
-                                                        categoria,
-                                                        dia,
-                                                        fech,
-                                                        hora,
-                                                        tiempo));
+                if (consulta == "registros") {
+                    AdaptadorListaRegistros adaptador = new AdaptadorListaRegistros(getContext(), listaRegistros);
+                    rvEntrenos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+                    rvEntrenos.setAdapter(adaptador);
                 }
             }
-            if(consulta == "historial"){
-                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_spinner_item, listaHistorial);
-                spHistorial.setAdapter(adapter);
+            else {
+                tvMensaje.setVisibility(View.VISIBLE);
+                layoutHistorial.setVisibility(View.GONE);
+                rvEntrenos.setVisibility(View.GONE);
             }
 
-            if(consulta == "registros"){
-                AdaptadorListaRegistros adaptador = new AdaptadorListaRegistros(getContext(), listaRegistros);
-                rvEntrenos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-                rvEntrenos.setAdapter(adaptador);
-            }
         }
         catch (JSONException e) {
             e.printStackTrace();

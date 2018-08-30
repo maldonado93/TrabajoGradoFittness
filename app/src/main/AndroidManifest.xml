@@ -2,10 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.uer.trabajogradofittness">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -52,16 +53,18 @@
         </activity>
         <activity
             android:name=".Nutricion.InformacionAlimento"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".Nutricion.Alimentos">
+            android:parentActivityName=".Nutricion.Alimentos"
+            android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Nutricion.Alimentos" />
         </activity>
         <activity android:name=".Rutina.Ejercicios" />
-        <activity android:name=".Rutina.InformacionEjercicio"
-                  android:theme="@style/AppTheme.NoActionBar">
-        </activity>
+        <activity
+            android:name=".Rutina.InformacionEjercicio"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".Bluetooth.Cliente" />
+        <activity android:name=".Bluetooth.Dispositivo"></activity>
     </application>
 
 </manifest>
