@@ -7,6 +7,9 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.android.vending.BILLING" />
 
     <uses-feature
         android:name="android.hardware.bluetooth_le"
@@ -64,7 +67,23 @@
             android:name=".Rutina.InformacionEjercicio"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".Bluetooth.Cliente" />
-        <activity android:name=".Bluetooth.Dispositivo"></activity>
+        <activity android:name=".Bluetooth.Dispositivo" />
+        <activity
+            android:name=".Bluetooth.Main"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name="Bluetooth.DeviceActivity"
+            android:label="@string/title_activity_device">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="Bluetooth.Main" />
+        </activity>
+
+        <service
+            android:name=".Bluetooth.BluetoothLeService"
+            android:enabled="true" />
+
+        <activity android:name=".Bluetooth.Main2"></activity>
     </application>
 
 </manifest>
