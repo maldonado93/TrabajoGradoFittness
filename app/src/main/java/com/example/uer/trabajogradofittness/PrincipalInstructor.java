@@ -20,7 +20,7 @@ import android.widget.Button;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
 import com.example.uer.trabajogradofittness.Persona.Perfil;
 import com.example.uer.trabajogradofittness.Persona.Personas;
-import com.example.uer.trabajogradofittness.RegistroEntreno.InicioEntreno;
+import com.example.uer.trabajogradofittness.RegistroEntreno.Inicio;
 import com.example.uer.trabajogradofittness.Rutina.CategoriasEjercicio;
 
 public class PrincipalInstructor extends AppCompatActivity
@@ -42,7 +42,7 @@ public class PrincipalInstructor extends AppCompatActivity
         gs = (GlobalState) getApplication();
 
         //Inicializar fragment
-        fragment = new InicioEntreno();
+        fragment = new Inicio();
         addFragment();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -81,7 +81,7 @@ public class PrincipalInstructor extends AppCompatActivity
 
             FragmentManager fm = getSupportFragmentManager();
             Fragment currentFragment = fm.findFragmentById(R.id.fragment_container);
-            if(currentFragment instanceof InicioEntreno){
+            if(currentFragment instanceof Inicio){
                 dialogSalir();
             }
             else{
@@ -119,7 +119,7 @@ public class PrincipalInstructor extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_inicio) {
-            fragment = new InicioEntreno();
+            fragment = new Inicio();
             reemplazarFragment();
         } else if (id == R.id.nav_alumnos) {
             fragment = new Personas();

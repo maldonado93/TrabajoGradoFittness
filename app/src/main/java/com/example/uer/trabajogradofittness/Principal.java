@@ -20,10 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.uer.trabajogradofittness.Bluetooth.Main2;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
 import com.example.uer.trabajogradofittness.Persona.Perfil;
-import com.example.uer.trabajogradofittness.RegistroEntreno.InicioEntreno;
+import com.example.uer.trabajogradofittness.RegistroEntreno.Inicio;
 import com.example.uer.trabajogradofittness.RegistroEntreno.RegistrosEntreno;
 import com.example.uer.trabajogradofittness.Rutina.CategoriasEjercicio;
 import com.example.uer.trabajogradofittness.Rutina.Rutinas;
@@ -59,7 +58,7 @@ public class Principal extends AppCompatActivity
 
 
         if(gs.getFragmentActual() == null){
-            fragment = new InicioEntreno();
+            fragment = new Inicio();
             addFragment();
         }
         else{
@@ -115,7 +114,7 @@ public class Principal extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(fragment instanceof InicioEntreno){
+            if(fragment instanceof Inicio){
                 dialogSalir();
             }
             else{
@@ -155,8 +154,6 @@ public class Principal extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        boolean i = false;
-
         if (id == R.id.nav_inicio) {
             gs.setFragmentActual("Inicio");
 
@@ -176,21 +173,14 @@ public class Principal extends AppCompatActivity
             gs.setFragmentActual("Nutricion");
 
         } else if (id == R.id.nav_cuenta) {
-            i = true;
-            Intent intent = new Intent(Principal.this, Main2.class);
-
-            intent.addFlags(intent.FLAG_ACTIVITY_CLEAR_TOP | intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(intent);
 
         } else if (id == R.id.nav_salir) {
             dialogSalir();
 
         }
 
-        if(!i){
-            verificarFragment();
-            reemplazarFragment();
-        }
+        verificarFragment();
+        reemplazarFragment();
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -200,7 +190,7 @@ public class Principal extends AppCompatActivity
 
     private void verificarFragment(){
         switch(gs.getFragmentActual()){
-            case "Inicio": fragment = new InicioEntreno();
+            case "Inicio": fragment = new Inicio();
                 break;
             case "RegistrosEntreno": fragment = new RegistrosEntreno();
                 break;
@@ -214,7 +204,7 @@ public class Principal extends AppCompatActivity
                 break;
 
             default: gs.setFragmentActual("Inicio");
-                fragment = new InicioEntreno();
+                fragment = new Inicio();
                 break;
         }
     }

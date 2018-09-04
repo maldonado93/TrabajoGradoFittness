@@ -2,19 +2,24 @@ package com.example.uer.trabajogradofittness.BD;
 
 public class Usuario {
 
+    public static final String TABLA_USUARIO = "usuario";
+
+    public static final String ID = "id";
+    public static final String USUARIO = "usuario";
+    public static final String PASSWORD = "password";
+    public static final String ID_TIPO_USUARIO = "id_tipo_usuario";
+    public static final String ID_PERSONA = "id_persona";
+
+    public static final String CREAR_TABLA_USUARIO="create table "+TABLA_USUARIO+"("+ID+" INTEGER, "+USUARIO+" TEXT, "+
+            ""+PASSWORD+" TEXT, "+ID_TIPO_USUARIO+" INTEGER, "+ID_PERSONA+" INTEGER)";
+
+
     private int id;
     private String usuario;
     private String password;
     private int id_tipo_usuario;
     private int id_persona;
 
-    public Usuario(int id, String usuario, String password, int id_tipo_usuario, int id_persona) {
-        this.id = id;
-        this.usuario = usuario;
-        this.password = password;
-        this.id_tipo_usuario = id_tipo_usuario;
-        this.id_persona = id_persona;
-    }
 
     public int getId() {
         return id;

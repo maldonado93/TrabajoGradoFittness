@@ -2,19 +2,25 @@ package com.example.uer.trabajogradofittness.RegistroEntreno;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
@@ -31,18 +37,21 @@ import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.listener.OnChartGestureListener;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ColorTemplate;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ResumenEntreno extends Fragment {
+public class ResumenEntreno extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     private static String TAG = "ResumenEntreno";
+    GlobalState gs;
     View v;
 
     private LineChart graficaPulsaciones;
@@ -52,8 +61,14 @@ public class ResumenEntreno extends Fragment {
     TextView tvActividad;
     TextView tvDescanso;
 
+    String consulta;
+
     float cantSuperior;
     float cantInferior;
+    ArrayList<Integer> registroPulsaciones;
+
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,15 +83,23 @@ public class ResumenEntreno extends Fragment {
         tvActividad = v.findViewById(R.id.tvActividad);
         tvDescanso = v.findViewById(R.id.tvDescanso);
 
-        initGraficaPulsaciones();
-        initGraficaPorcentaje(v);
 
         return v;
     }
 
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        gs = (GlobalState) getActivity().getApplication();
+
+        request = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+        registroPulsaciones = new ArrayList<>();
+
+        consultarDatosEntreno();
+    }
+
     private void initGraficaPulsaciones(){
-        /*grafica.setOnChartGestureListener(ResumenEntreno.this);
-        grafica.setOnChartValueSelectedListener(ResumenEntreno.this);*/
 
         graficaPulsaciones.setDragEnabled(true);
         graficaPulsaciones.setScaleEnabled(true);
@@ -84,33 +107,21 @@ public class ResumenEntreno extends Fragment {
         graficaPulsaciones.getDescription().setText("Frecuencia cardiaca");
 
         ArrayList<Entry> valoresy = new ArrayList<>();
-        int nRegistros = 5000;
-        int numero= 170;
         int val = 0;
         int prom = 0;
-        int ope = 0;
         cantSuperior = 0;
         cantInferior = 0;
 
-        int[] valores = new int[nRegistros];
 
-        for(int i = 0; i < nRegistros; i++){
-            val = (int)(1 + (Math.random() * 2));
-            ope = (int)Math.round(Math.random() * 1);
-            if(ope == 0){
-                numero -= val;
-            }
-            else{
-                numero += val;
-            }
-            valores[i] = numero;
-            valoresy.add(new Entry(i,numero));
-            prom += numero;
+        for(int i = 0; i < registroPulsaciones.size(); i++){
+            val = registroPulsaciones.get(i);
+            valoresy.add(new Entry(i,val));
+            prom += val;
         }
-        prom = (int)(prom/nRegistros);
+        prom = (int)(prom/registroPulsaciones.size());
 
-        for(int j = 0; j< nRegistros; j++){
-            if(valores[j] > prom){
+        for(int j = 0; j< registroPulsaciones.size(); j++){
+            if(registroPulsaciones.get(j) > prom){
                 cantSuperior++;
             }
             else{
@@ -126,11 +137,10 @@ public class ResumenEntreno extends Fragment {
         tvActividad.setText(actividad + " min");
         tvDescanso.setText(descanso + " min");
 
-        cantSuperior = (cantSuperior/nRegistros*100);
-        cantInferior = (cantInferior/nRegistros*100);
+        cantSuperior = (cantSuperior/registroPulsaciones.size()*100);
+        cantInferior = (cantInferior/registroPulsaciones.size()*100);
 
         LineDataSet datos = new LineDataSet(valoresy, "Pulsaciones/minuto");
-
         datos.setFillAlpha(110);
         datos.setDrawCircles(false);
         datos.setColor(Color.GREEN);
@@ -161,7 +171,7 @@ public class ResumenEntreno extends Fragment {
         graficaPulsaciones.animateX(1000, Easing.EasingOption.EaseOutSine);
     }
 
-    private void initGraficaPorcentaje(View v){
+    private void initGraficaPorcentaje(){
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -208,4 +218,43 @@ public class ResumenEntreno extends Fragment {
     }
 
 
+    private void consultarDatosEntreno(){
+        consulta = "datos_entreno";
+
+        String url = "http://"+gs.getIp()+"/registro_entrenos/listar_datos_entreno.php?idRegistro="+gs.getId_registro_entreno();
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+    @Override
+    public void onResponse(JSONObject response) {
+        int resultado = 0;
+
+        JSONArray datos = response.optJSONArray(consulta);
+
+        try {
+            if(consulta == "datos_entreno"){
+                for(int i=0; i<datos.length();i++) {
+                    JSONObject jsonObject = null;
+                    jsonObject = datos.getJSONObject(i);
+                    registroPulsaciones.add(jsonObject.optInt("bpm"));
+                }
+            }
+
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+        initGraficaPulsaciones();
+        initGraficaPorcentaje();
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
+        Log.i("ERROR", error.toString());
+    }
 }

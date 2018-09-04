@@ -9,6 +9,8 @@ import android.bluetooth.BluetoothGattDescriptor;
 import android.bluetooth.BluetoothGattService;
 import android.util.Log;
 
+import com.example.uer.trabajogradofittness.RegistroEntreno.Inicio;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -20,16 +22,16 @@ import java.util.UUID;
 @SuppressLint("NewApi")
 public class H7ConnectThread  extends Thread{
 
-    Main2 ac;
+    Inicio ac;
     private BluetoothGatt gat; //gat server
     private final String HRUUID = "0000180D-0000-1000-8000-00805F9B34FB";
     static BluetoothGattDescriptor descriptor;
     static BluetoothGattCharacteristic cc;
 
-    public H7ConnectThread(BluetoothDevice device, Main2 ac) {
-        Log.i("H7ConnectThread", "Starting H7 reader BTLE");
+    public H7ConnectThread(BluetoothDevice device, Inicio ac) {
+        Log.i("H7ConnectThread", "Iniciando lectura de datos!");
         this.ac=ac;
-        gat = device.connectGatt(ac, false, btleGattCallback); // Connect to the device and store the server (gatt)
+        gat = device.connectGatt(ac.getContext(), false, btleGattCallback); // Connect to the device and store the server (gatt)
     }
 
 
@@ -54,7 +56,7 @@ public class H7ConnectThread  extends Thread{
             byte[] data = characteristic.getValue();
             int bmp = data[1] & 0xFF; // To unsign the value
             DataHandler.getInstance().cleanInput(bmp);
-            Log.v("H7ConnectThread", "Data received from HR "+bmp);
+            Log.v("H7ConnectThread", "Pulsaciones por minuto: "+bmp);
         }
 
         //called on the successful connection
@@ -62,7 +64,7 @@ public class H7ConnectThread  extends Thread{
         public void onConnectionStateChange(final BluetoothGatt gatt, final int status, final int newState) {
             if (newState ==  BluetoothGatt.STATE_DISCONNECTED)
             {
-                Log.e("H7ConnectThread", "device Disconnected");
+                Log.e("H7ConnectThread", "Dispositivo desconectado");
                 ac.connectionError();
             }
             else{

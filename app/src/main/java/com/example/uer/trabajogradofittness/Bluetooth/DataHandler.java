@@ -5,7 +5,7 @@ import com.androidplot.xy.SimpleXYSeries;
 import java.util.Observable;
 
 /**
- * This handler is specalised for decoding my polar hart rate monitor and get the data from it
+ * This handler is specalised for decoding my polar heart rate monitor and get the data from it
  * Data format is something like this
  *
  *
@@ -32,8 +32,8 @@ public class DataHandler extends Observable{
     private static DataHandler dd = new DataHandler();
 
     //DATA FOR SAVING
-    boolean newValue = true;
-    SimpleXYSeries series1;
+    public boolean newValue = true;
+    SimpleXYSeries series;
     ConnectThread reader;
     H7ConnectThread H7;
 
@@ -82,7 +82,7 @@ public class DataHandler extends Observable{
 
     public String getLastValue(){
 
-        return val + " BPM";
+        return val+"";
     }
 
     public int getLastIntValue(){
@@ -91,12 +91,12 @@ public class DataHandler extends Observable{
     }
 
     public String getMin(){
-        return "Min " + min + " BPM";
+        return min + "";
     }
 
     public String getMax(){
 
-        return "Max " + max + " BPM";
+        return max + "";
     }
 
     public String getAvg(){
@@ -110,11 +110,11 @@ public class DataHandler extends Observable{
     }
 
     public SimpleXYSeries getSeries1() {
-        return series1;
+        return series;
     }
 
     public void setSeries1(SimpleXYSeries series1) {
-        this.series1 = series1;
+        this.series = series1;
     }
 
     public ConnectThread getReader() {

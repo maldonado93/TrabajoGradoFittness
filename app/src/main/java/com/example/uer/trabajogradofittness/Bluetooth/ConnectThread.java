@@ -6,6 +6,8 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.util.Log;
 
+import com.example.uer.trabajogradofittness.RegistroEntreno.Inicio;
+
 import java.io.IOException;
 import java.util.UUID;
 
@@ -16,17 +18,17 @@ import java.util.UUID;
  */
 public class ConnectThread extends Thread {
 
-    BluetoothAdapter mBluetoothAdapter;
-    private final BluetoothSocket mmSocket;
-    Main2 ac;
+    BluetoothAdapter adaptadorBluetooth;
+    private final BluetoothSocket Socket;
+    Inicio inicio;
 
-    public ConnectThread(BluetoothDevice device, Main2 ac) {
+    public ConnectThread(BluetoothDevice device, Inicio ac) {
         // Use a temporary object that is later assigned to mmSocket,
         // because mmSocket is final
         Log.i("ConnectThread", "Starting connectThread");
-        this.ac=ac;
+        this.inicio=ac;
         BluetoothSocket tmp = null;
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        adaptadorBluetooth = BluetoothAdapter.getDefaultAdapter();
 
         // Get a BluetoothSocket to connect with the given BluetoothDevice
         try {
@@ -34,9 +36,9 @@ public class ConnectThread extends Thread {
             UUID MY_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
             tmp = device.createRfcommSocketToServiceRecord(MY_UUID);
         } catch (IOException ignored) {
-            Log.e("ConnectThread", "Error on getting the device");
+            Log.e("ConnectThread", "Error al obtener los dispositivos");
         }
-        mmSocket = tmp;
+        Socket = tmp;
 
     }
 
@@ -44,26 +46,26 @@ public class ConnectThread extends Thread {
 
         Log.i("ConnectThread", "Starting the thread for connectThread");
         // Cancel discovery because it will slow down the connection
-        mBluetoothAdapter.cancelDiscovery();
+        adaptadorBluetooth.cancelDiscovery();
         int ok =0;
         while(ok<2)//loop to try to connect
             try {
                 // Connect the device through the socket. This will block
                 // until it succeeds or throws an exception
-                if(mmSocket.isConnected())
-                    mmSocket.close();
-                mmSocket.connect();
+                if(Socket.isConnected())
+                    Socket.close();
+                Socket.connect();
                 ok=5;
             } catch (IOException connectException) {
                 // Unable to connect; close the socket and get out
                 if (ok==0)// try 2 times
                     ok++;
                 else{
-                    ac.connectionError();
+                    inicio.connectionError();
                     Log.e("ConnectThread","Error with the BT stack " + connectException.toString());
 
                     try {
-                        mmSocket.close();
+                        Socket.close();
                     } catch (IOException closeException) {
                         Log.e("ConnectThread", "Error on getting the stack");
                     }
@@ -74,14 +76,14 @@ public class ConnectThread extends Thread {
         // Do work to manage the connection (in a separate thread)
         while (true){ //reading loop
             try {
-                DataHandler.getInstance().acqui(mmSocket.getInputStream().read()); //read value
+                DataHandler.getInstance().acqui(Socket.getInputStream().read()); //read value
             } catch (IOException e) {
-                ac.connectionError();
+                inicio.connectionError();
                 Log.e("ConnectThread","Error with the BT stack " + e.toString());
 
                 try {
-                    mmSocket.getInputStream().close();
-                    mmSocket.close();
+                    Socket.getInputStream().close();
+                    Socket.close();
                 } catch (IOException closeException) {
                     Log.e("ConnectThread", "Error on getting the stack");
                 }
@@ -94,8 +96,8 @@ public class ConnectThread extends Thread {
     public void cancel() {
         Log.i("ConnectThread","Closing BT connection");
         try {
-            if(mmSocket!=null && mmSocket.isConnected())
-                mmSocket.close();
+            if(Socket!=null && Socket.isConnected())
+                Socket.close();
         } catch (IOException e) {
             Log.e("ConnectThread", "Error on closing bluetooth");
         }

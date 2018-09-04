@@ -3,17 +3,14 @@ package com.example.uer.trabajogradofittness;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -23,7 +20,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.Conexion.ConexionSQLiteHelper;
-import com.github.ybq.android.spinkit.style.DoubleBounce;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,8 +44,6 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     String password;
 
     boolean salir = false;
-
-
 
 
     RequestQueue request;

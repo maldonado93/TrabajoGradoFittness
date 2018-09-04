@@ -1,8 +1,12 @@
 package com.example.uer.trabajogradofittness.RegistroEntreno;
 
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -21,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.uer.trabajogradofittness.Conexion.ConexionSQLiteHelper;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.Principal;
 import com.example.uer.trabajogradofittness.R;
@@ -58,6 +63,9 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
+
+    ConexionSQLiteHelper conn;
+    SQLiteDatabase db;
 
 
     @Override
@@ -103,6 +111,8 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
+        conn = new ConexionSQLiteHelper(getContext(), "proyecto", null, 1);
+
         generarHistorial();
 
     }
@@ -123,6 +133,37 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
+    }
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    private void consultaBD(int mm, int yyyy){
+        SQLiteDatabase db = conn.getReadableDatabase();
+
+        //Cursor cursor = db.query(RegistroEntreno.TABLA_REGISTRO_ENTRENO, campos, RegistroEntreno.ID_PERSONA+"=?", parametros, null, null, null);
+        Cursor cursor = db.rawQuery("SELECT id, id_rutina, tiempo, fecha, hora FROM registro_entreno  WHERE id_persona = "+gs.getSesion_usuario()+";",null,null);
+        if(cursor.moveToFirst()){
+            do {
+                try {
+                    listaRegistros.add(new ListaRegistros(cursor.getString(0),
+                            cursor.getString(1),
+                            "Pecho Volumen",
+                           "Pecho",
+                            obtenerDiaSemana(cursor.getString(3)),
+                            cursor.getString(3),
+                            cursor.getString(4),
+                            cursor.getString(2)));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }while(cursor.moveToNext());
+
+            AdaptadorListaRegistros adaptador = new AdaptadorListaRegistros(getContext(), listaRegistros);
+            rvEntrenos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            rvEntrenos.setAdapter(adaptador);
+        }
+
+
+
+
     }
 
     private void consultarRegistros(int mm, int yyyy){
@@ -245,6 +286,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
         return posicion;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onResponse(JSONObject response) {
 
@@ -281,8 +323,8 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                         String[] f = fech.split("-");
                         fech = (f[2] + "-" + f[1] + "-" + f[0]);
                         String hora = jsonObject.optString("hora");
-                        ;
-                        String tiempo = jsonObject.optString("tiempo") + " min";
+
+                        String tiempo = (int)(Math.ceil((Integer.parseInt(jsonObject.optString("tiempo")))/60)) + " min";
 
                         listaRegistros.add(new ListaRegistros(idRegistro,
                                 idRutina,
@@ -327,6 +369,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
             spHistorial.setSelection(obtenerPosicionItem(spHistorial, mes+"- "+fecha[0] ));
 
             consultarRegistros(mm, yyyy);
+            //consultaBD(mm, yyyy);
         }
     }
 

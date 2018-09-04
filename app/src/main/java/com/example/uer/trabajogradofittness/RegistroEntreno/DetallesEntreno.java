@@ -72,10 +72,8 @@ public class DetallesEntreno extends AppCompatActivity {
 
         if(gs.getId_registro_entreno() == 0){
             Bundle datos = this.getIntent().getExtras();
-            int id = Integer.parseInt(datos.getString("idRegistro"));
-            int idRutina = Integer.parseInt(datos.getString("idRutina"));
-            gs.setId_registro_entreno(id);
-            gs.setId_rutina(idRutina);
+            gs.setId_registro_entreno(Integer.parseInt(datos.getString("idRegistro")));
+            gs.setId_rutina(Integer.parseInt(datos.getString("idRutina")));
         }
     }
 
