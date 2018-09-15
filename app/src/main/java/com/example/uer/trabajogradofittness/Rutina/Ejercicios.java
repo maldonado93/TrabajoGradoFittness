@@ -1,9 +1,8 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -22,7 +21,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
-import com.example.uer.trabajogradofittness.Nutricion.ListaAlimentos;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -59,8 +57,6 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
 
         gs = (GlobalState) getApplication();
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
         Bundle datos = this.getIntent().getExtras();
         categoria = datos.getString("categoria");
@@ -76,9 +72,24 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
             }
         });
 
-        tvVista = (TextView) findViewById(R.id.tvVista);
+        tvVista = findViewById(R.id.tvVista);
 
-        svBuscar = (android.widget.SearchView)findViewById(R.id.svBuscar);
+        svBuscar = findViewById(R.id.svBuscar);
+        svBuscar.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tvVista.setVisibility(View.GONE);
+            }
+        });
+
+        svBuscar.setOnCloseListener(new android.widget.SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                tvVista.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+
         svBuscar.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -87,8 +98,8 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
 
             @Override
             public boolean onQueryTextChange(String texto) {
-                tvVista.setVisibility(View.GONE);
                 if(texto != ""){
+                    tvVista.setVisibility(View.GONE);
                     texto = texto.toLowerCase();
                     ArrayList<ListaEjercicios> listaFiltrada = new ArrayList<>();
 
@@ -102,6 +113,7 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
                     return true;
                 }
                 else{
+                    tvVista.setVisibility(View.VISIBLE);
                     return false;
                 }
             }

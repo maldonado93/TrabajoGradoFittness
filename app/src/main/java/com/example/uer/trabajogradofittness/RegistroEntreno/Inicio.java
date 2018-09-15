@@ -50,8 +50,6 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.google.android.gms.ads.AdRequest;
-import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,12 +76,15 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     Drawable d;
     TextView tvEntreno;
     TextView tvDispositivos;
+    Spinner spDispositivos;
     Button btnRutina;
     TextView tvResultado;
     TextView tvHoras;
     TextView tvMinutos;
     TextView tvSegundos;
     Button btnIniciar;
+    TextView tvBpm;
+
     Button btnEscanear;
 
     LineChart graficaPulsaciones;
@@ -96,25 +97,24 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     int[] tiempo;
     int tiempoTotal;
     boolean estadoEntreno;
+    boolean bluetooth;
 
     ArrayList<String> registroPulsaciones;
+    ArrayList<String> registroFrecuenciaReposo;
     int indPulsaciones;
+    int contReposo;
 
 
-
-    private FirebaseAnalytics mFirebaseAnalytics;
     private int MAX_SIZE = 60; //graph max size
-    boolean bluetooth;
+
     BluetoothAdapter mBluetoothAdapter;
     List<BluetoothDevice> pairedDevices = new ArrayList<>();
     boolean menuBool = false; //display or not the disconnect option
     boolean h7 = false; //Was the BTLE tested
     boolean normal = false; //Was the BT tested
-    private Spinner spDispositivos;
 
     private AdaptadorListaEjercicioRutina adaptadorEjercicios;
     private List<ListaEjercicioRutina> listaEjercicios;
-
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -128,6 +128,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         estadoEntreno = false;
         registroPulsaciones = new ArrayList<>();
+        registroFrecuenciaReposo = new ArrayList<>();
 
         tvDispositivos = v.findViewById(R.id.tvDispositivos);
         spDispositivos = v.findViewById(R.id.spDispositivos);
@@ -140,6 +141,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         tvResultado = v.findViewById(R.id.tvResultado);
         btnRutina = v.findViewById(R.id.btnRutina);
         btnIniciar = v.findViewById(R.id.btnIniciar);
+
+        tvBpm = v.findViewById(R.id.tvBpm);
 
         btnEscanear = v.findViewById(R.id.btnEscanear);
 
@@ -168,27 +171,30 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     cronometro = null;
                     estadoEntreno = false;
                     spDispositivos.setEnabled(true);
-
-
-                    //registrarEntreno();
                 }
                 else{
                     if(mBluetoothAdapter != null){
                         if (mBluetoothAdapter.isEnabled()){
                             if(spDispositivos.getSelectedItemPosition() != 0){
-                                if(idRutina != 0){
-                                    d = getResources().getDrawable(R.drawable.ic_stop);
-                                    btnIniciar.setBackgroundDrawable(d);
-                                    estadoEntreno = true;
-                                    graficaPulsaciones.setVisibility(View.VISIBLE);
-                                    spDispositivos.setEnabled(false);
-                                    registrarEntreno();
+                                if(h7 || normal){
+                                    if(idRutina != 0){
+                                        d = getResources().getDrawable(R.drawable.ic_stop);
+                                        btnIniciar.setBackgroundDrawable(d);
+                                        estadoEntreno = true;
 
-                                    cronometro = new Cronometro();
-                                    cronometro.execute();
+                                        spDispositivos.setEnabled(false);
+                                        //registrarEntreno();
+                                        contReposo = 0;
+                                        cronometro = new Cronometro();
+                                        cronometro.execute();
+                                    }
+                                    else{
+                                        Snackbar.make(view, "No tienes alguna rutina para realizar el entreno!", Snackbar.LENGTH_LONG)
+                                                .setAction("Action", null).show();
+                                    }
                                 }
                                 else{
-                                    Snackbar.make(view, "No tienes alguna rutina para realizar el entreno!", Snackbar.LENGTH_LONG)
+                                    Snackbar.make(view, "No se ha establecido conexion!", Snackbar.LENGTH_LONG)
                                             .setAction("Action", null).show();
                                 }
                             }
@@ -198,6 +204,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                             }
                         }
                         else{
+                            btnEscanear.setVisibility(View.VISIBLE);
                             Snackbar.make(view, "Debe encender el bluetooth para realizar el entreno!", Snackbar.LENGTH_LONG)
                                     .setAction("Action", null).show();
                         }
@@ -208,6 +215,14 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 }
             }
         });
+
+
+        graficaPulsaciones = v.findViewById(R.id.graficaPeso);
+
+        setupChart();
+        setupAxes();
+        setupData();
+        setLegend();
 
 
         return v;
@@ -225,74 +240,72 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         consultarRutina();
     }
 
+    private void obtenerFrecuenciaReposo(){
+        float promedioFrecuencia = 0;
+        for(int i = 0; i<registroFrecuenciaReposo.size();i++){
+            promedioFrecuencia += Float.parseFloat(registroFrecuenciaReposo.get(i));
+        }
+        promedioFrecuencia = promedioFrecuencia / registroFrecuenciaReposo.size();
+
+        registrarFrecuenciaReposo(promedioFrecuencia);
+    }
+
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void verificarBluetooth(){
         Log.i("Main Activity", "Starting Polar HR monitor main activity");
         DataHandler.getInstance().addObserver(this);
 
-        AdRequest adRequestBanner = new AdRequest.Builder().build();
-
         //Verify if device is to old for BTLE
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR2) {
 
             Log.i("Main Activity", "old device H7 disabled");
-            h7 = true;
+            h7 = false;
         }
 
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (DataHandler.getInstance().newValue) {
-
-            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-            if(mBluetoothAdapter != null){
-                if (!mBluetoothAdapter.isEnabled()) {
-                    new android.app.AlertDialog.Builder(getContext())
-                            .setTitle(R.string.bluetooth)
-                            .setMessage(R.string.bluetoothOff)
-                            .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mBluetoothAdapter.enable();
-                                    bluetooth = true;
-                                    try {
-                                        Thread.sleep(2000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-                                    listarDispositivos();
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter != null){
+            if (!mBluetoothAdapter.isEnabled()) {
+                new android.app.AlertDialog.Builder(getContext())
+                        .setTitle(R.string.bluetooth)
+                        .setMessage(R.string.bluetoothOff)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
+                            public void onClick(DialogInterface dialog, int which) {
+                                mBluetoothAdapter.enable();
+                                bluetooth = true;
+                                try {
+                                    Thread.sleep(2000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
                                 }
-                            })
-                            .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    bluetooth= false;
-                                }
-                            })
-                            .show();
-                } else {
-                    listarDispositivos();
-                }
+                                listarDispositivos();
+                            }
+                        })
+                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                bluetooth= false;
+                            }
+                        })
+                        .show();
+            } else {
+                bluetooth = true;
+                listarDispositivos();
             }
-
-            // Create Graph
-            graficaPulsaciones = v.findViewById(R.id.graficaPulsaciones);
-
-            if (graficaPulsaciones.getLineData() == null) {
-                Number[] series1Numbers = {};
-                DataHandler.getInstance().setSeries1(new SimpleXYSeries(Arrays.asList(series1Numbers), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Heart Rate"));
-            }
-
-            DataHandler.getInstance().setNewValue(false);
-
-        } else {
-            listarDispositivos();
-            graficaPulsaciones = v.findViewById(R.id.graficaPulsaciones);
-
         }
 
-        setupChart();
-        setupAxes();
-        setupData();
-        setLegend();
+        // Create Graph
+
+        if (graficaPulsaciones.getLineData() == null) {
+            Number[] series1Numbers = {};
+            DataHandler.getInstance().setSeries1(new SimpleXYSeries(Arrays.asList(series1Numbers), SimpleXYSeries.ArrayFormat.Y_VALS_ONLY, "Heart Rate"));
+        }
+
+        DataHandler.getInstance().setNewValue(false);
+
     }
 
 
@@ -326,7 +339,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         YAxis rightAxis = graficaPulsaciones.getAxisRight();
         rightAxis.setEnabled(false);
-
     }
 
     private void setupData() {
@@ -368,49 +380,63 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 data.addDataSet(set);
             }
 
-            TextView rpm = (TextView) v.findViewById(R.id.rpm);
-            rpm.setText(bpm);
+            tvBpm.setText(bpm + " BPM");
 
             int dato = Integer.parseInt(bpm);
 
             if(estadoEntreno){
                 registroPulsaciones.add(bpm);
+                registroFrecuenciaReposo.add(bpm);
+                contReposo++;
             }
 
             data.addEntry(new Entry(set.getEntryCount(), dato), 0);
 
             data.notifyDataChanged();
             graficaPulsaciones.notifyDataSetChanged();
-
             graficaPulsaciones.setVisibleXRangeMaximum(15);
             graficaPulsaciones.setMaxVisibleValueCount(Integer.parseInt(DataHandler.getInstance().getLastValue())+5);
 
             graficaPulsaciones.moveViewToX(data.getEntryCount());
+            if(contReposo == 10){
+                obtenerFrecuenciaReposo();
+            }
         }
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void onItemSelected(AdapterView<?> arg0, View arg1, int indice,
                                long arg3) {
         normal = false;
         menuBool = false;
-        if (indice != 0) {
-            //Actual work
-            DataHandler.getInstance().setID(indice);
-            if (!h7 && ((BluetoothDevice) pairedDevices.toArray()[DataHandler.getInstance().getID() - 1]).getName().contains("H7") && DataHandler.getInstance().getReader() == null) {
+        if(bluetooth){
+            if (indice != 0) {
+                //Actual work
+                DataHandler.getInstance().setID(indice);
+                if (!h7 && ((BluetoothDevice) pairedDevices.toArray()[DataHandler.getInstance().getID() - 1]).getName().contains("H7") && DataHandler.getInstance().getReader() == null) {
 
-                Log.i("Main Activity", "Starting h7");
-                DataHandler.getInstance().setH7(new H7ConnectThread((BluetoothDevice) pairedDevices.toArray()[DataHandler.getInstance().getID() - 1], this));
-                h7 = true;
-                graficaPulsaciones.setVisibility(View.VISIBLE);
-            } else if (!normal && DataHandler.getInstance().getH7() == null) {
+                    Log.i("Main Activity", "Conexion polar");
+                    DataHandler.getInstance().setH7(new H7ConnectThread((BluetoothDevice) pairedDevices.toArray()[DataHandler.getInstance().getID() - 1], this));
+                    h7 = true;
+                    graficaPulsaciones.setVisibility(View.VISIBLE);
+                } else if (!normal && DataHandler.getInstance().getH7() == null) {
 
-                Log.i("Main Activity", "Starting normal");
-                DataHandler.getInstance().setReader(new ConnectThread((BluetoothDevice) pairedDevices.toArray()[indice - 1], this));
-                DataHandler.getInstance().getReader().start();
-                normal = true;
+                    Log.i("Main Activity", "Conexion normal");
+                    DataHandler.getInstance().setReader(new ConnectThread((BluetoothDevice) pairedDevices.toArray()[indice - 1], this));
+                    DataHandler.getInstance().getReader().start();
+                    graficaPulsaciones.setVisibility(View.VISIBLE);
+                    normal = true;
+                }
+                menuBool = true;
             }
-            menuBool = true;
+            else{
+                graficaPulsaciones.setVisibility(View.GONE);
+            }
         }
+        else{
+            verificarBluetooth();
+        }
+
     }
 
     public void onNothingSelected(AdapterView<?> arg0) {
@@ -429,19 +455,17 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             runOnUiThread(new Runnable() {
                 public void run() {
                     Toast.makeText(getContext(), getString(R.string.couldnotconnect), Toast.LENGTH_SHORT).show();
-                    //TextView rpm = (TextView) findViewById(R.id.rpm);
-                    //rpm.setText("0 BMP");
                     if (DataHandler.getInstance().getID() < spDispositivos.getCount())
                         spDispositivos.setSelection(DataHandler.getInstance().getID());
 
                     if (!h7) {
 
-                        Log.w("Main Activity", "starting H7 after error");
+                        Log.w("Main Activity", "Reanudando conexion con polar");
                         DataHandler.getInstance().setReader(null);
                         DataHandler.getInstance().setH7(new H7ConnectThread((BluetoothDevice) pairedDevices.toArray()[DataHandler.getInstance().getID() - 1], ac));
                         h7 = true;
                     } else if (!normal) {
-                        Log.w("Main Activity", "Starting normal after error");
+                        Log.w("Main Activity", "Reanudando conexion normal");
                         DataHandler.getInstance().setH7(null);
                         DataHandler.getInstance().setReader(new ConnectThread((BluetoothDevice) pairedDevices.toArray()[DataHandler.getInstance().getID() - 1], ac));
                         DataHandler.getInstance().getReader().start();
@@ -460,15 +484,14 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         runOnUiThread(new Runnable() {
             public void run() {
-                //menuBool=true;
 
-                addEntry(DataHandler.getInstance().getLastValue());
+                //addEntry(DataHandler.getInstance().getLastValue());
+
 
                 if (DataHandler.getInstance().getLastIntValue() != 0) {
                     DataHandler.getInstance().getSeries1().addLast(0, DataHandler.getInstance().getLastIntValue());
                     if (DataHandler.getInstance().getSeries1().size() > MAX_SIZE)
                         DataHandler.getInstance().getSeries1().removeFirst();//Previene que la grafica se sobrecargue de datos
-
                 }
             }
         });
@@ -480,6 +503,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     public void onDestroy() {
         super.onDestroy();
+        h7 = false;
+        normal = false;
         DataHandler.getInstance().deleteObserver(this);
     }
 
@@ -489,7 +514,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     public void listarDispositivos() {
-        Log.d("Main Activity", "Listando dispositivos Bluetooth");
+        Log.d("Inicio", "Listando dispositivos Bluetooth");
         if (bluetooth) {
             //Discover bluetooth devices
             final List<String> list = new ArrayList<>();
@@ -504,11 +529,11 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 }
             }
             if (!h7) {
-                Log.d("Main Activity", "Listando dispositivos");
+                Log.d("Inicio", "Listando dispositivos");
                 final BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
                     public void onLeScan(final BluetoothDevice device, final int rssi, final byte[] scanRecord) {
                         if (!list.contains(device.getName() + "\n" + device.getAddress())) {
-                            Log.d("Main Activity", "Agregando " + device.getName());
+                            Log.d("Inicio", "Agregando " + device.getName());
                             list.add(device.getName() + "\n" + device.getAddress());
                             pairedDevices.add(device);
                         }
@@ -518,14 +543,14 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
                 Thread scannerBTLE = new Thread() {
                     public void run() {
-                        Log.d("Main Activity", "Iniciando escaneo");
+                        Log.d("Inicio", "Iniciando escaneo");
                         mBluetoothAdapter.startLeScan(leScanCallback);
                         try {
                             Thread.sleep(5000);
-                            Log.d("Main Activity", "Deteniendo escaneo");
+                            Log.d("Inicio", "Deteniendo escaneo");
                             mBluetoothAdapter.stopLeScan(leScanCallback);
                         } catch (InterruptedException e) {
-                            Log.e("Main Activity", "Error de escaneo");
+                            Log.e("Inicio", "Error de escaneo");
                         }
                     }
                 };
@@ -543,6 +568,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             }
             else{
                 btnEscanear.setVisibility(View.VISIBLE);
+                graficaPulsaciones.setVisibility(View.GONE);
+
             }
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(),
@@ -578,31 +605,18 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         request.add(jsonObjectRequest);
     }
 
+    private void rutinaRealizada(){
+        consulta = "rutina";
+
+        String url = "http://"+gs.getIp()+"/ejercicio/actualizarRutinaRealizada.php?idRutina="+idRutina;
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
     private void registrarEntreno(){
-
-        /*db = conn.getWritableDatabase();
-        ContentValues values = new ContentValues();
-
-        DateFormat df = new SimpleDateFormat("dd/MM/yyyy, HH:mm");
-        String[] fechaActual = df.format(Calendar.getInstance().getTime()).split(", ");
-
-        values.put(RegistroEntreno.ID_RUTINA, idRutina);
-        values.put(RegistroEntreno.ID_PERSONA, gs.getSesion_usuario());
-        values.put(RegistroEntreno.FECHA, fechaActual[0]);
-        values.put(RegistroEntreno.HORA, fechaActual[1]);
-
-        idRegistroEntreno = db.insert(RegistroEntreno.TABLA_REGISTRO_ENTRENO, RegistroEntreno.ID, values);
-
-        Toast.makeText(getContext(), "Id: "+idRegistroEntreno, Toast.LENGTH_SHORT ).show();
-
-        try {
-            conn.BD_backup();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        db.close();*/
-
 
         consulta = "registro_entreno";
         String url = "http://"+gs.getIp()+"/registro_entrenos/registrar_entreno.php?idRutina="+idRutina+"&idPersona="+gs.getSesion_usuario()+"&tiempo="+tiempoTotal;
@@ -637,6 +651,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     private void actualizarTiempoEntreno() {
         consulta = "registro_entreno";
+        tiempoTotal = (int)(Math.ceil(tiempoTotal/60));
         String url = "http://" + gs.getIp() + "/registro_entrenos/actualizar_tiempo.php?idEntreno=" + idRegistroEntreno + "&tiempo=" + tiempoTotal;
 
         url = url.replace(" ", "%20");
@@ -644,6 +659,17 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
  }
+
+    private void registrarFrecuenciaReposo(float frecuencia){
+
+        consulta = "condicion_fisica";
+        String url = "http://"+gs.getIp()+"/persona/actualizar_frecuencia_reposo.php?idPersona="+gs.getSesion_usuario()+"&frecuencia="+frecuencia;
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
 
     private void listarEjercicios(){
         consulta = "ejercicio";
@@ -669,7 +695,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         JSONArray datos = response.optJSONArray(consulta);
 
         try {
-
             if(consulta == "rutina"){
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(0);
@@ -682,8 +707,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     tvResultado.setVisibility(View.GONE);
                 }
                 else{
-                    tvEntreno.setVisibility(View.GONE);
-                    btnRutina.setVisibility(View.GONE);
+                    tvEntreno.setVisibility(View.INVISIBLE);
+                    btnRutina.setVisibility(View.INVISIBLE);
                     tvResultado.setVisibility(View.VISIBLE);
                 }
             }
@@ -691,6 +716,10 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(0);
                 idRegistroEntreno = jsonObject.optInt("id");
+            }
+            if(consulta == "condicion fisica"){
+                Snackbar.make(v, "Se ha registrado la frecuencia de reposo!", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
             }
             if(consulta == "datos_entreno"){
                 JSONObject jsonObject = null;
@@ -707,7 +736,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     jsonObject = datos.getJSONObject(i);
                     listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
                                                                  jsonObject.optString("nombre"),
-                                                                "4*12"));
+                                                                 jsonObject.optString("series")+" * "+
+                                                                 jsonObject.optString("repeticiones")));
                 }
 
                 adaptadorEjercicios = new AdaptadorListaEjercicioRutina(getContext(), listaEjercicios);
@@ -807,7 +837,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             if(resultado){
 
                 indPulsaciones = 0;
-                registrarDatosEntreno(indPulsaciones);
+                //registrarDatosEntreno(indPulsaciones);
             }
         }
 
@@ -819,5 +849,4 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         }
 
     }
-
 }

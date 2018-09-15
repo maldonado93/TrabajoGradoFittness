@@ -6,16 +6,18 @@ public class ListaRegistros {
     private String idRutina;
     private String rutina;
     private String categoria;
+    private String promedioFrecuencia;
     private String dia;
     private String fecha;
     private String hora;
     private String tiempo;
 
-    public ListaRegistros(String idRegistro, String idRutina, String rutina, String categoria, String dia, String fecha, String hora, String tiempo) {
+    public ListaRegistros(String idRegistro, String idRutina, String rutina, String categoria, String promedioFrecuencia, String dia, String fecha, String hora, String tiempo) {
         this.idRegistro = idRegistro;
         this.idRutina = idRutina;
         this.rutina = rutina;
         this.categoria = categoria;
+        this.promedioFrecuencia = promedioFrecuencia;
         this.dia = dia;
         this.fecha = fecha;
         this.hora = hora;
@@ -52,6 +54,14 @@ public class ListaRegistros {
 
     public String getCategoria() {
         return categoria;
+    }
+
+    public String getPromedioFrecuencia() {
+        return promedioFrecuencia;
+    }
+
+    public void setPromedioFrecuencia(String promedioFrecuencia) {
+        this.promedioFrecuencia = promedioFrecuencia;
     }
 
     public String getDia() {

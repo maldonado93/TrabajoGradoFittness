@@ -70,14 +70,6 @@ public class Principal extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
-        /*FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -87,23 +79,6 @@ public class Principal extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        /*if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE)) {
-            // El dispositivo soporta BLE, podemos usar su API
-            Toast.makeText(this,"Soporta",Toast.LENGTH_LONG).show();
-        } else {
-            // El dispositivo no soporta. No usar la API de BLE aquí
-            Toast.makeText(this,"No soporta",Toast.LENGTH_LONG).show();
-        }
-
-        final BluetoothManager mBluetoothManager=
-                (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-        mBluetoothAdapter=mBluetoothManager.getAdapter();
-        if (!mBluetoothAdapter.isEnabled()) {
-            Intent enableBtIntent = new
-                    Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
-        }*/
 
     }
 

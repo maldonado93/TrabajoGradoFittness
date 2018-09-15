@@ -2,17 +2,14 @@ package com.example.uer.trabajogradofittness.Nutricion;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.R;
@@ -130,7 +127,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
 
             item_alimento = (ConstraintLayout) itemView.findViewById(R.id.item_alimento);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
-            tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
+            tvNombre = (TextView)itemView.findViewById(R.id.tvNombres);
             tvCalorias = (TextView)itemView.findViewById(R.id.tvValCalorias);
             tvProteinas = (TextView)itemView.findViewById(R.id.tvValProteinas);
             tvCarbohidratos = (TextView)itemView.findViewById(R.id.tvValCarbohidratos);

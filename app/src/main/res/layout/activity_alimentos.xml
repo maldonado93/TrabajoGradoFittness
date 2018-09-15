@@ -6,6 +6,56 @@
     android:layout_height="match_parent"
     tools:context=".Nutricion.Alimentos">
 
+    <LinearLayout
+        android:id="@+id/linearLayout8"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/colorPrimary"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnRegresar"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00ffffff"
+            android:src="@drawable/ic_arrow_back" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tvVista"
+                android:layout_width="270dp"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="25dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:text="Nutricion"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:textColor="@android:color/background_light"
+                android:textSize="21sp"
+                android:visibility="visible" />
+
+            <SearchView
+                android:id="@+id/svBuscar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:showAsAction="always|collapseActionView"
+                android:title="Buscar" />
+        </LinearLayout>
+
+    </LinearLayout>
+
     <TextView
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
@@ -14,7 +64,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="20dp"
         android:layout_weight="1"
         android:gravity="center_horizontal"
         android:text="Titulo"
@@ -22,7 +72,7 @@
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout8" />
 
     <TextView
         android:id="@+id/textView5"
@@ -49,18 +99,24 @@
         app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/tvTitulo" />
 
+    <View
+        android:id="@+id/divider19"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spOrden" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvAlimentos"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spOrden" />
+        app:layout_constraintTop_toBottomOf="@+id/divider19" />
 
 </android.support.constraint.ConstraintLayout>

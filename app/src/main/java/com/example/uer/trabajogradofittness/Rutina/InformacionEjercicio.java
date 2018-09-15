@@ -1,7 +1,5 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
-import android.content.Intent;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -61,7 +59,7 @@ public class InformacionEjercicio extends AppCompatActivity implements Response.
 
 
         tvId = (TextView)findViewById(R.id.tvId);
-        tvNombre = (TextView)findViewById(R.id.tvNombre);
+        tvNombre = (TextView)findViewById(R.id.tvNombres);
         tvDescripcion = (TextView)findViewById(R.id.tvDescripcion);
         ivImagen = (ImageView)findViewById(R.id.ivImagen);
 

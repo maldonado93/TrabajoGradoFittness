@@ -5,15 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.R;
@@ -58,11 +55,6 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
                 registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
                 registro.putExtra("idEjercicio", idEjercicio);
                 context.startActivity(registro);
-
-                /*InformacionEjercicioFragment fragment = new InformacionEjercicioFragment();
-                fragment.setArguments(datos);
-                FragmentManager fragmentManager = ((AppCompatActivity)context).getSupportFragmentManager();
-                fragmentManager.beginTransaction().add(R.id.fragment_container, fragment, fragment.getClass().toString()).addToBackStack(null).commit();*/
             }
         });
 
@@ -128,7 +120,7 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
             item_ejercicio = (ConstraintLayout)itemView.findViewById(R.id.item_ejercicio);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
             //ivImagen = (ImageView) itemView.findViewById(R.id.ivImagen);
-            tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
+            tvNombre = (TextView)itemView.findViewById(R.id.tvNombres);
 
         }
     }

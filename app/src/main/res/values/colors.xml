@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#00c130</color>
+    <color name="colorPrimary">#008f4f</color>
+    <color name="colorPrimaryDark">#017b44</color>
+    <color name="colorAccent">#1fc77c</color>
     <color name="background">#f2f2f2</color>
+
+    //Colores del menu principal
+    <color name="dividerColor">#80CBC4</color>
+    <color name="list_item_tittle">#AAAAAA</color>
+    <color name="list_group_tittle">#AAAAAA</color>
+
+    <color name="color1">#1fc77c</color>
+    <color name="color2">#FF008080</color>
 </resources>

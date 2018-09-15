@@ -2,7 +2,6 @@ package com.example.uer.trabajogradofittness.Nutricion;
 
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -10,8 +9,10 @@ import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +25,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
-import com.example.uer.trabajogradofittness.Rutina.ListaEjercicios;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,6 +36,10 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
 
 
     GlobalState gs;
+
+    ImageButton btnRegresar;
+    TextView tvVista;
+    android.widget.SearchView svBuscar;
 
     private String categoria;
     private AdaptadorListaAlimentos adaptadorAlimentos;
@@ -57,11 +61,68 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
 
         gs = (GlobalState) getApplication();
 
-        ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
+
+        btnRegresar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
+        tvVista = findViewById(R.id.tvVista);
+
+        svBuscar = findViewById(R.id.svBuscar);
+        svBuscar.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tvVista.setVisibility(View.GONE);
+            }
+        });
+
+        svBuscar.setOnCloseListener(new android.widget.SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                tvVista.setVisibility(View.VISIBLE);
+                return false;
+            }
+        });
+
+        svBuscar.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String texto) {
+                if(texto != ""){
+                    tvVista.setVisibility(View.GONE);
+                    texto = texto.toLowerCase();
+                    ArrayList<ListaAlimentos> listaFiltrada = new ArrayList<>();
+
+                    for(ListaAlimentos lista: listaAlimentos){
+                        String nombre = lista.getNombre().toLowerCase();
+                        if(nombre.contains(texto)){
+                            listaFiltrada.add(lista);
+                        }
+                    }
+                    adaptadorAlimentos.setFilter(listaFiltrada);
+                    return true;
+                }
+                else{
+                    tvVista.setVisibility(View.VISIBLE);
+                    return false;
+                }
+            }
+        });
+
+
 
         Bundle datos = this.getIntent().getExtras();
         categoria = datos.getString("categoria");
+
+
 
         titulo = (TextView) findViewById(R.id.tvTitulo);
         titulo.setText(categoria);

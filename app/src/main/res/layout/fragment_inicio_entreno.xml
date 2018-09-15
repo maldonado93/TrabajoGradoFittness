@@ -5,7 +5,7 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="65dp"
+    android:background="@color/background"
     tools:context=".RegistroEntreno.Inicio">
 
     <TextView
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:text="Dispositivos:"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
@@ -28,7 +28,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="5dp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tvDispositivos"
@@ -45,6 +45,7 @@
         android:layout_marginTop="10dp"
         android:text="Tu entreno:"
         android:textStyle="bold"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spDispositivos" />
@@ -54,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvEntreno" />
@@ -75,15 +76,15 @@
         android:id="@+id/linearLayout2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
         android:layout_marginEnd="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/btnIniciar"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnRutina">
 
         <TextView
             android:id="@+id/tvHoras"
@@ -139,33 +140,29 @@
         android:id="@+id/btnIniciar"
         android:layout_width="80dp"
         android:layout_height="80dp"
+        android:layout_marginTop="8dp"
         android:background="@drawable/ic_play"
         android:gravity="center_vertical|center_horizontal"
         android:textAllCaps="true"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
 
     <TextView
-        android:id="@+id/rpm"
+        android:id="@+id/tvBpm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:paddingTop="20dp"
         android:text="@string/rpm"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorPrimary"
         android:textSize="40sp"
-        app:layout_constraintEnd_toStartOf="@+id/btnIniciar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+        app:layout_constraintTop_toBottomOf="@+id/btnIniciar" />
 
     <com.androidplot.xy.XYPlot
         android:id="@+id/dynamicPlot"
@@ -184,16 +181,16 @@
         app:layout_constraintTop_toTopOf="parent"></com.androidplot.xy.XYPlot>
 
     <com.github.mikephil.charting.charts.LineChart
-        android:id="@+id/graficaPulsaciones"
+        android:id="@+id/graficaPeso"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginBottom="10dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnIniciar">
+        app:layout_constraintTop_toBottomOf="@+id/tvBpm">
 
     </com.github.mikephil.charting.charts.LineChart>
 
@@ -202,7 +199,6 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
         android:text="Escanear dispositivos"
         android:textColor="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -213,7 +209,6 @@
         android:id="@+id/divider12"
         android:layout_width="368dp"
         android:layout_height="1dp"
-        android:layout_marginBottom="5dp"
         android:layout_marginEnd="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"

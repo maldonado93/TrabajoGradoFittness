@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -15,7 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,7 +33,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
-import com.example.uer.trabajogradofittness.Principal;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -62,8 +59,10 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     ImageView ivImagen;
 
     LinearLayout layout_datos;
+    TextView tvTipoIdentificacion;
     TextView tvIdentificacion;
     TextView tvNombre;
+    TextView tvFecha;
     TextView tvEmail;
     TextView tvMovil;
     TextView tvLocalidad;
@@ -73,15 +72,14 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     EditText etEmail;
     EditText etMovil;
 
-    LinearLayout layout_datos_fisonomia;
+    LinearLayout layout_fisonomia;
     TextView tvEdad;
     TextView tvPeso;
-    TextView tvAltura;
-    TextView tvMetabolismo;
+    TextView tvEstatura;
 
     LinearLayout layout_campos_fisonomia;
     EditText etPeso;
-    EditText etAltura;
+    EditText etEstatura;
 
     TextView division1;
 
@@ -108,8 +106,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         ivImagen = v.findViewById(R.id.ivImagen);
 
-
-
         fbBorrar = v.findViewById(R.id.fbBorrar);
         fbBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +124,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         layout_datos = v.findViewById(R.id.layout_datos);
         tvIdentificacion = v.findViewById(R.id.tvIdentificacion);
-        tvNombre = v.findViewById(R.id.tvNombre);
+        tvNombre = v.findViewById(R.id.tvNombres);
         tvEmail = v.findViewById(R.id.tvEmail);
         tvMovil = v.findViewById(R.id.tvMovil);
         tvLocalidad = v.findViewById(R.id.tvLocalidad);
@@ -138,15 +134,13 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         etEmail = v.findViewById(R.id.etEmail);
         etMovil = v.findViewById(R.id.etMovil);
 
-        layout_datos_fisonomia = v.findViewById(R.id.layout_datos_fisonomia);
-        tvEdad = v.findViewById(R.id.tvEdad);
+        layout_fisonomia = v.findViewById(R.id.layout_fisonomia);
         tvPeso = v.findViewById(R.id.tvPeso);
-        tvAltura = v.findViewById(R.id.tvAltura);
-        tvMetabolismo = v.findViewById(R.id.tvMetabolismo);
+        tvEstatura = v.findViewById(R.id.tvEstatura);
 
         layout_campos_fisonomia = v.findViewById(R.id.layout_campos_fisonomia);
         etPeso = v.findViewById(R.id.etPeso);
-        etAltura = v.findViewById(R.id.etAltura);
+        etEstatura = v.findViewById(R.id.etEstatura);
 
         division1 = v.findViewById(R.id.division);
 
@@ -211,7 +205,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         gs = (GlobalState) getActivity().getApplication();
 
-        ((Principal) getActivity()).getSupportActionBar().setTitle("Mi informacion");
+        //((Principal) getActivity()).getSupportActionBar().setTitle("Mi informacion");
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
@@ -250,7 +244,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         if(accion == 1){
             layout_datos.setVisibility(View.GONE);
             layout_campos.setVisibility(View.VISIBLE);
-            layout_datos_fisonomia.setVisibility(View.GONE);
+            layout_fisonomia.setVisibility(View.GONE);
             layout_campos_fisonomia.setVisibility(View.VISIBLE);
             fbEditar.setVisibility(View.GONE);
             fbConfirmar.setVisibility(View.VISIBLE);
@@ -259,7 +253,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
             layout_campos.setVisibility(View.GONE);
             layout_datos.setVisibility(View.VISIBLE);
             layout_campos_fisonomia.setVisibility(View.GONE);
-            layout_datos_fisonomia.setVisibility(View.VISIBLE);
+            layout_fisonomia.setVisibility(View.VISIBLE);
             fbConfirmar.setVisibility(View.GONE);
             fbEditar.setVisibility(View.VISIBLE);
         }
@@ -272,7 +266,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         tvMovil.setText(etMovil.getText());
         tvLocalidad.setText(spCiudad.getSelectedItem().toString()+", "+spDepartamento.getSelectedItem().toString());
         tvPeso.setText(etPeso.getText());
-        tvAltura.setText(etAltura.getText());
+        tvEstatura.setText(etEstatura.getText());
     }
 
     private void consultarPersona(){
@@ -350,14 +344,17 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                         modeloPerfil.setNombre(jsonObject.optString("nombres")+" "
                                 +jsonObject.optString("apellidos"));
                         modeloPerfil.setEmail(jsonObject.optString("email"));
-                        modeloPerfil.setMovil(jsonObject.optString("movil"));
+                        if(jsonObject.optString("movil") != null){
+                            modeloPerfil.setMovil(jsonObject.optString("movil"));
+                        }
+                        else{
+                            modeloPerfil.setMovil(" ");
+                        }
                         modeloPerfil.setDato(jsonObject.optString("foto"));
                         modeloPerfil.setLocalidad(jsonObject.optString("localidad"));
 
-                        modeloPerfil.setEdad(jsonObject.optString("edad"));
                         modeloPerfil.setPeso(jsonObject.optString("peso"));
-                        modeloPerfil.setAltura(jsonObject.optString("altura"));
-                        modeloPerfil.setMetabolismo(jsonObject.optString("metabolismo"));
+                        modeloPerfil.setEstatura(jsonObject.optString("estatura"));
 
                     }
                     if(consulta.compareTo("departamento") == 0){
@@ -393,13 +390,11 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 etEmail.setText(modeloPerfil.getEmail());
                 etMovil.setText(modeloPerfil.getMovil());
 
-                tvEdad.setText(modeloPerfil.getEdad());
                 tvPeso.setText(modeloPerfil.getPeso());
-                tvAltura.setText(modeloPerfil.getAltura());
-                tvMetabolismo.setText(modeloPerfil.getMetabolismo());
+                tvEstatura.setText(modeloPerfil.getEstatura());
 
                 etPeso.setText(modeloPerfil.getPeso());
-                etAltura.setText(modeloPerfil.getAltura());
+                etEstatura.setText(modeloPerfil.getEstatura().toString());
                 cargarDepartamentos();
             }
             if(consulta.compareTo("departamento") == 0){

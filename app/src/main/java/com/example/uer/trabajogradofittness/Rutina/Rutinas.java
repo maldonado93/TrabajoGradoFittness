@@ -20,7 +20,6 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
-import com.example.uer.trabajogradofittness.Principal;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -68,7 +67,6 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        ((Principal) getActivity()).getSupportActionBar().setTitle("Mis rutinas");
 
         listarEjercicios();
     }
@@ -97,7 +95,7 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
 
                     listaRutinas.add(new ListaRutinas(jsonObject.optString("id"),
                             jsonObject.optString("nombre"),
-                            jsonObject.optString("categoria"),
+                            jsonObject.optString("orientacion"),
                             jsonObject.optString("cantidad")));
                 }
 

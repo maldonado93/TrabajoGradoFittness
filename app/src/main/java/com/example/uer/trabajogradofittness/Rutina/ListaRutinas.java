@@ -4,13 +4,13 @@ public class ListaRutinas {
 
     private String id;
     private String rutina;
-    private String categoria;
+    private String orientacion;
     private String cantidad;
 
-    public ListaRutinas(String id, String rutina, String categoria, String cantidad) {
+    public ListaRutinas(String id, String rutina, String orientacion, String cantidad) {
         this.id = id;
         this.rutina = rutina;
-        this.categoria = categoria;
+        this.orientacion = orientacion;
         this.cantidad = cantidad;
     }
 
@@ -32,11 +32,11 @@ public class ListaRutinas {
     }
 
     public String getCategoria() {
-        return categoria;
+        return orientacion;
     }
 
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
+    public void setCategoria(String orientacion) {
+        this.orientacion = orientacion;
     }
 
     public String getCantidad() {

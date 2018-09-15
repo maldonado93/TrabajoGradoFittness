@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Persona.InformacionObjetivo">
+
+
+    <ImageButton
+        android:id="@+id/btnRegresar"
+        android:layout_width="40dp"
+        android:layout_height="44dp"
+        android:background="#00ffffff"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_chevron_left"
+        tools:ignore="VectorDrawableCompat" />
+
+    <TextView
+        android:id="@+id/tvTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Objetivo"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="@+id/divider14"
+        app:layout_constraintEnd_toStartOf="@+id/btnSiguiente"
+        app:layout_constraintStart_toEndOf="@+id/btnRegresar"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/btnSiguiente"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        android:background="#00ffffff"
+        app:layout_constraintBottom_toTopOf="@+id/divider14"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_chevron"
+        tools:ignore="VectorDrawableCompat" />
+
+    <View
+        android:id="@+id/divider14"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnRegresar" />
+
+    <TextView
+        android:id="@+id/tvObjetivo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:text="¿Cual es tu objetivo?"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/rgroupobjetivo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider14" />
+
+    <RadioGroup
+        android:id="@+id/rgroupobjetivo"
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider14">
+
+        <RadioButton
+            android:id="@+id/rbPerder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Perder Peso"
+            android:textSize="18sp" />
+
+        <RadioButton
+            android:id="@+id/rbMantener"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Mantener Peso"
+            android:textSize="18sp" />
+
+
+        <RadioButton
+            android:id="@+id/rbGanar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ganar Peso"
+            android:textSize="18sp" />
+
+    </RadioGroup>
+
+</android.support.constraint.ConstraintLayout>

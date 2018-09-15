@@ -15,10 +15,8 @@ public class ModeloPerfil {
     private String movil;
     private String localidad;
 
-    private String edad;
     private String peso;
-    private String altura;
-    private String metabolismo;
+    private String estatura;
 
 
     public Bitmap getFoto() {
@@ -92,14 +90,6 @@ public class ModeloPerfil {
         }
     }
 
-    public String getEdad() {
-        return edad;
-    }
-
-    public void setEdad(String edad) {
-        this.edad = edad;
-    }
-
     public String getPeso() {
         return peso;
     }
@@ -108,19 +98,12 @@ public class ModeloPerfil {
         this.peso = peso;
     }
 
-    public String getAltura() {
-        return altura;
+    public String getEstatura() {
+        return estatura;
     }
 
-    public void setAltura(String altura) {
-        this.altura = altura;
+    public void setEstatura(String estatura) {
+        this.estatura = estatura;
     }
 
-    public String getMetabolismo() {
-        return metabolismo;
-    }
-
-    public void setMetabolismo(String metabolismo) {
-        this.metabolismo = metabolismo;
-    }
 }

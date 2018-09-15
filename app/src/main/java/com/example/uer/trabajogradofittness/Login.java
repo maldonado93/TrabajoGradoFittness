@@ -19,7 +19,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.uer.trabajogradofittness.Conexion.ConexionSQLiteHelper;
+import com.example.uer.trabajogradofittness.MenuPrincipal.Menu;
+import com.example.uer.trabajogradofittness.Persona.InformacionPersonal;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,9 +35,10 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
     GlobalState gs;
 
-    private EditText etUsuario;
-    private EditText etPassword;
-    private Button btnIngresar;
+    EditText etUsuario;
+    EditText etPassword;
+    Button btnIngresar;
+    Button btnRegistro;
 
     ProgressDialog progress;
 
@@ -55,6 +57,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         setContentView(R.layout.activity_login);
 
         gs = (GlobalState)getApplication();
+        request = Volley.newRequestQueue(getApplicationContext());
 
         progress = new ProgressDialog(Login.this);
         progress.setMessage("Cargando...");
@@ -67,20 +70,24 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         etPassword.setText("");
 
         btnIngresar = (Button)findViewById(R.id.btnIngresar);
-
-        request = Volley.newRequestQueue(getApplicationContext());
-
         btnIngresar.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                consultarUsuario();
+            public void onClick(View view) {
+                consultarUsuario(view);
             }
         });
 
-        ConexionSQLiteHelper conn = new ConexionSQLiteHelper(this, "proyecto", null, 1);
+
+        btnRegistro = findViewById(R.id.btnRegistro);
+        btnRegistro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Registrar(view);
+            }
+        });
     }
 
-    private void consultarUsuario(){
+    private void consultarUsuario(View view){
         etUsuario = (EditText)findViewById(R.id.etUsuario);
         usuario = etUsuario.getText().toString().trim();
 
@@ -105,10 +112,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             request.add(jsonObjectRequest);
         }
         else{
-            //Toast.makeText(this, "Complete los campos, por favor!",Toast.LENGTH_SHORT).show();
-            View view = findViewById(android.R.id.content);
-            Snackbar.make(view, "Complete los campos, por favor!", Snackbar.LENGTH_SHORT)
-                    .setAction("Action", null).show();
+            Snackbar.make(view, "Complete los campos, por favor!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         }
     }
 
@@ -133,7 +137,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
                     Intent ingreso = null;
                     if(gs.getTipo_usuario() == 1){
-                        ingreso = new Intent(Login.this, Principal.class);
+                        ingreso = new Intent(Login.this, Menu.class);
                     }
                     else{
                         ingreso = new Intent(Login.this, PrincipalInstructor.class);
@@ -163,9 +167,9 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     }
 
 
-    public void Registrar(View v) throws NoSuchAlgorithmException {
+    public void Registrar(View v){
 
-        Intent registro = new Intent(Login.this, RegistroPersona.class);
+        Intent registro = new Intent(this, InformacionPersonal.class);
         registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
 
         startActivity(registro);

@@ -23,7 +23,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Login">
+        <activity
+            android:name=".Login"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,16 +46,8 @@
             android:label="@string/title_activity_principal_instructor"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".Persona.InformacionPersona"
-            android:label="@string/title_activity_informacion_persona"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".Nutricion.Alimentos"
-            android:parentActivityName=".Principal">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Principal" />
-        </activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Nutricion.InformacionAlimento"
             android:parentActivityName=".Nutricion.Alimentos"
@@ -62,10 +56,28 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Nutricion.Alimentos" />
         </activity>
-        <activity android:name=".Rutina.Ejercicios" />
+        <activity
+            android:name=".Rutina.Ejercicios"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".Rutina.InformacionEjercicio"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Persona.Registrar"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Persona.InformacionObjetivo"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Persona.InformacionPersonal"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Persona.InformacionFisica"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Persona.InformacionActividad"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".MenuPrincipal.Menu"></activity>
     </application>
 
 </manifest>

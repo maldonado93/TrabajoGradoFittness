@@ -1,7 +1,6 @@
 package com.example.uer.trabajogradofittness.Persona;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,10 +42,10 @@ public class AdaptadorListaPersonas extends RecyclerView.Adapter<AdaptadorListaP
 
                 int idPersona = Integer.parseInt(personas.get(holder.getAdapterPosition()).getId());
 
-                Intent registro = new Intent(context, InformacionPersona.class);
+                /*Intent registro = new Intent(context, InformacionPersona.class);
                 registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
                 registro.putExtra("idPersona", idPersona);
-                context.startActivity(registro);
+                context.startActivity(registro);*/
             }
         });
 
@@ -112,7 +111,7 @@ public class AdaptadorListaPersonas extends RecyclerView.Adapter<AdaptadorListaP
             item_persona = (LinearLayout) itemView.findViewById(R.id.item_persona);
             tvId = (TextView) itemView.findViewById(R.id.tvId);
             //ivImagen = (ImageView) itemView.findViewById(R.id.ivImagen);
-            tvNombre = (TextView) itemView.findViewById(R.id.tvNombre);
+            tvNombre = (TextView) itemView.findViewById(R.id.tvNombres);
         }
     }
 }

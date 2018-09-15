@@ -22,7 +22,7 @@
             app:layout_constraintGuide_begin="193dp" />
 
         <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/graficaPulsaciones"
+            android:id="@+id/graficaPeso"
             android:layout_width="352dp"
             android:layout_height="259dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,7 +41,8 @@
             android:layout_marginStart="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvDescanso">
 
         </com.github.mikephil.charting.charts.PieChart>
 
@@ -74,7 +75,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@+id/guideline4"
-            app:layout_constraintTop_toBottomOf="@+id/graficaPulsaciones" />
+            app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
 
         <TextView
             android:id="@+id/textView28"
@@ -92,7 +93,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/guideline4"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/graficaPulsaciones" />
+            app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
 
         <TextView
             android:id="@+id/tvActividad"

@@ -1,33 +1,15 @@
 package com.example.uer.trabajogradofittness.Rutina;
 
-import android.app.Application;
 import android.content.Context;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.List;
 
@@ -65,7 +47,7 @@ public class AdaptadorListaEjercicioRutina extends RecyclerView.Adapter<Adaptado
     public void onBindViewHolder(@NonNull AdaptadorListaEjercicioRutina.MyViewHolder myViewHolder, int i) {
         myViewHolder.tvId.setText(ejercicio.get(i).getId());
         myViewHolder.tvNombre.setText(ejercicio.get(i).getNombre());
-        myViewHolder.tvSerie.setText(ejercicio.get(i).getSerie());
+        myViewHolder.tvSerie.setText(ejercicio.get(i).getSeries());
     }
 
     @Override
@@ -86,7 +68,7 @@ public class AdaptadorListaEjercicioRutina extends RecyclerView.Adapter<Adaptado
 
             item_ejercicio = itemView.findViewById(R.id.item_ejercicio_rutina);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
-            tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
+            tvNombre = (TextView)itemView.findViewById(R.id.tvNombres);
             tvSerie = (TextView)itemView.findViewById(R.id.tvSerie);
         }
     }

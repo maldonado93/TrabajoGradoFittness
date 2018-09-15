@@ -1,5 +1,6 @@
 package com.example.uer.trabajogradofittness.RegistroEntreno;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -54,6 +55,8 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     GlobalState gs;
     View v;
 
+    ProgressDialog progress;
+
     private LineChart graficaPulsaciones;
     private PieChart graficaPorcentaje;
 
@@ -76,8 +79,7 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
         v = inflater.inflate(R.layout.fragment_resumen_entreno, container, false);
 
-        graficaPulsaciones = v.findViewById(R.id.graficaPulsaciones);
-        graficaPorcentaje = v.findViewById(R.id.graficaPorcentaje);
+
 
         tvTiempo = v.findViewById(R.id.tvTiempo);
         tvActividad = v.findViewById(R.id.tvActividad);
@@ -100,6 +102,8 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     }
 
     private void initGraficaPulsaciones(){
+
+        graficaPulsaciones = v.findViewById(R.id.graficaPeso);
 
         graficaPulsaciones.setDragEnabled(true);
         graficaPulsaciones.setScaleEnabled(true);
@@ -129,9 +133,9 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
             }
         }
 
-        int entreno = (int)Math.floor((cantSuperior+cantInferior)/60);
-        int actividad = (int)Math.floor(cantSuperior/60);
-        int descanso = (int)Math.floor(cantInferior/60);
+        int entreno = (int)Math.ceil((cantSuperior+cantInferior)/60);
+        int actividad = (int)Math.ceil(cantSuperior/60);
+        int descanso = (int)Math.ceil(cantInferior/60);
 
         tvTiempo.setText(entreno + " min");
         tvActividad.setText(actividad + " min");
@@ -145,6 +149,27 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         datos.setDrawCircles(false);
         datos.setColor(Color.GREEN);
 
+        int FCmax = 0;
+        int FCrep = 65;
+        int edad = 22;
+        float peso = 67;
+        int CF = 0;
+        String genero = "Femenino";
+
+        if(genero.compareTo("Femenino") == 0){
+            FCmax= (int)Math.round(204.8 - (0.718 * edad) + (0.162 * FCrep) - (0.105 * peso) - (6.2 * CF));
+        }
+        else{
+            FCmax= (int)Math.round(203.9 - (0.812 * edad) + (0.276* FCrep) - (0.084 * peso) - (4.5*CF));
+        }
+
+        LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
+        frecuenciaMaxima.setLineColor(Color.RED);
+        frecuenciaMaxima.setLineWidth(2f);
+        frecuenciaMaxima.enableDashedLine(10f, 1f, 0);
+        frecuenciaMaxima.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaMaxima.setTextSize(8f);
+
         LimitLine lineaPromedio = new LimitLine(prom,"Promedio: "+prom);
         lineaPromedio.setLineColor(Color.CYAN);
         lineaPromedio.setLineWidth(2f);
@@ -154,8 +179,10 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
         XAxis xAxis = graficaPulsaciones.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+
         YAxis yAxis = graficaPulsaciones.getAxisLeft();
         yAxis.removeAllLimitLines();
+        yAxis.addLimitLine(frecuenciaMaxima);
         yAxis.addLimitLine(lineaPromedio);
         yAxis.enableGridDashedLine(10f,10f,0);
         yAxis.setDrawLimitLinesBehindData(true);
@@ -172,6 +199,7 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     }
 
     private void initGraficaPorcentaje(){
+        graficaPorcentaje = v.findViewById(R.id.graficaPorcentaje);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -216,7 +244,6 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         l.setDrawInside(false);
 
     }
-
 
     private void consultarDatosEntreno(){
         consulta = "datos_entreno";

@@ -4,12 +4,12 @@ public class ListaEjercicioRutina {
 
     private String id;
     private String nombre;
-    private String serie;
+    private String series;
 
-    public ListaEjercicioRutina(String id, String nombre, String serie) {
+    public ListaEjercicioRutina(String id, String nombre, String series) {
         this.id = id;
         this.nombre = nombre;
-        this.serie = serie;
+        this.series = series;
     }
 
     public String getId() {
@@ -28,11 +28,11 @@ public class ListaEjercicioRutina {
         this.nombre = nombre;
     }
 
-    public String getSerie() {
-        return serie;
+    public String getSeries() {
+        return series;
     }
 
-    public void setSerie(String serie) {
-        this.serie = serie;
+    public void setSeries(String series) {
+        this.series = series;
     }
 }

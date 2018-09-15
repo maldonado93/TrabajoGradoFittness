@@ -1,8 +1,7 @@
 package com.example.uer.trabajogradofittness.RegistroEntreno;
 
 
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.app.ProgressDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +9,7 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -25,9 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.uer.trabajogradofittness.Conexion.ConexionSQLiteHelper;
 import com.example.uer.trabajogradofittness.GlobalState;
-import com.example.uer.trabajogradofittness.Principal;
 import com.example.uer.trabajogradofittness.R;
 
 import org.json.JSONArray;
@@ -51,6 +50,8 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
     View v;
 
+    ProgressDialog progress;
+
     private List<ListaRegistros> listaRegistros;
     ArrayList<String> listaHistorial;
 
@@ -64,8 +65,6 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
-    ConexionSQLiteHelper conn;
-    SQLiteDatabase db;
 
 
     @Override
@@ -74,6 +73,9 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
         v = inflater.inflate(R.layout.fragment_registros_entreno, container, false);
 
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando registros...");
+        progress.show();
 
         tvMensaje = v.findViewById(R.id.tvMensaje);
 
@@ -107,11 +109,9 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
         gs = (GlobalState) getActivity().getApplication();
 
-        ((Principal) getActivity()).getSupportActionBar().setTitle("Registros de entreno");
+        //((Principal) getActivity()).getSupportActionBar().setTitle("Registros de entreno");
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
-
-        conn = new ConexionSQLiteHelper(getContext(), "proyecto", null, 1);
 
         generarHistorial();
 
@@ -120,61 +120,21 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
     private void generarHistorial(){
         consulta = "historial";
-        String url;
-        if(gs.getId_alumno() == 0){
-            url = "http://"+gs.getIp()+"/registro_entrenos/listar_fechas.php?idPersona="+ gs.getSesion_usuario() ;
 
-        }
-        else{
-            url = "http://"+gs.getIp()+"/registro_entrenos/listar_fechas.php?idPersona="+ gs.getId_alumno() ;
- }
+        String url = "http://"+gs.getIp()+"/registro_entrenos/listar_fechas.php?idPersona="+ gs.getSesion_usuario() ;
 
         url = url.replace(" ", "%20");
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    private void consultaBD(int mm, int yyyy){
-        SQLiteDatabase db = conn.getReadableDatabase();
 
-        //Cursor cursor = db.query(RegistroEntreno.TABLA_REGISTRO_ENTRENO, campos, RegistroEntreno.ID_PERSONA+"=?", parametros, null, null, null);
-        Cursor cursor = db.rawQuery("SELECT id, id_rutina, tiempo, fecha, hora FROM registro_entreno  WHERE id_persona = "+gs.getSesion_usuario()+";",null,null);
-        if(cursor.moveToFirst()){
-            do {
-                try {
-                    listaRegistros.add(new ListaRegistros(cursor.getString(0),
-                            cursor.getString(1),
-                            "Pecho Volumen",
-                           "Pecho",
-                            obtenerDiaSemana(cursor.getString(3)),
-                            cursor.getString(3),
-                            cursor.getString(4),
-                            cursor.getString(2)));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-            }while(cursor.moveToNext());
-
-            AdaptadorListaRegistros adaptador = new AdaptadorListaRegistros(getContext(), listaRegistros);
-            rvEntrenos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-            rvEntrenos.setAdapter(adaptador);
-        }
-
-
-
-
-    }
 
     private void consultarRegistros(int mm, int yyyy){
         consulta = "registros";
-        String url;
-        if(gs.getId_alumno() == 0) {
-            url = "http://" + gs.getIp() + "/registro_entrenos/listar_registros.php?idPersona=" + gs.getSesion_usuario() + "&mes=" + mm + "&year=" + yyyy;
-        }
-        else{
-            url = "http://" + gs.getIp() + "/registro_entrenos/listar_registros.php?idPersona=" + gs.getId_alumno() + "&mes=" + mm + "&year=" + yyyy;
-        }
+
+        String url = "http://" + gs.getIp() + "/registro_entrenos/listar_registros.php?idPersona=" + gs.getSesion_usuario() + "&mes=" + mm + "&year=" + yyyy;
+
         url = url.replace(" ", "%20");
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
@@ -318,18 +278,20 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                         String idRutina = jsonObject.optString("idRutina");
                         String rutina = jsonObject.optString("rutina");
                         String categoria = jsonObject.optString("categoria");
+                        String promedioFrecuencia = jsonObject.optString("promedio_frecuencia");
                         String dia = obtenerDiaSemana(jsonObject.optString("fecha"));
                         String fech = jsonObject.optString("fecha");
                         String[] f = fech.split("-");
                         fech = (f[2] + "-" + f[1] + "-" + f[0]);
                         String hora = jsonObject.optString("hora");
 
-                        String tiempo = (int)(Math.ceil((Integer.parseInt(jsonObject.optString("tiempo")))/60)) + " min";
+                        String tiempo = jsonObject.optString("tiempo") + " min";
 
                         listaRegistros.add(new ListaRegistros(idRegistro,
                                 idRutina,
                                 rutina,
                                 categoria,
+                                promedioFrecuencia,
                                 dia,
                                 fech,
                                 hora,
@@ -345,12 +307,14 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                     AdaptadorListaRegistros adaptador = new AdaptadorListaRegistros(getContext(), listaRegistros);
                     rvEntrenos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                     rvEntrenos.setAdapter(adaptador);
+                    progress.hide();
                 }
             }
             else {
                 tvMensaje.setVisibility(View.VISIBLE);
                 layoutHistorial.setVisibility(View.GONE);
                 rvEntrenos.setVisibility(View.GONE);
+                progress.hide();
             }
 
         }
@@ -371,11 +335,14 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
             consultarRegistros(mm, yyyy);
             //consultaBD(mm, yyyy);
         }
+
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
-
+        Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
+        Log.i("ERROR", error.toString());
+        progress.hide();
     }
 
 

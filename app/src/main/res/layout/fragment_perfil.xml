@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="55dp"
     android:fillViewport="true">
 
 
@@ -29,8 +28,8 @@
             android:id="@+id/fbBorrar"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_alignParentTop="true"
             android:layout_alignLeft="@+id/ivImagen"
+            android:layout_alignParentTop="true"
             android:layout_marginTop="17dp"
             android:clickable="true"
             android:src="@drawable/ic_highlight_off"
@@ -81,7 +80,7 @@
                 android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/tvNombre"
+                    android:id="@+id/tvNombres"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
@@ -90,18 +89,6 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tvIdentificacion" />
-
-                <TextView
-                    android:id="@+id/tvGenero"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="10dp"
-                    android:text="Genero"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
 
                 <TextView
                     android:id="@+id/tvLocalidad"
@@ -238,7 +225,7 @@
                 android:text="Fisonomía" />
 
             <LinearLayout
-                android:id="@+id/layout_datos_fisonomia"
+                android:id="@+id/layout_fisonomia"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
@@ -246,7 +233,7 @@
                 android:visibility="visible">
 
                 <TextView
-                    android:id="@+id/Altura"
+                    android:id="@+id/Estatura"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
@@ -254,27 +241,10 @@
                     android:text="Altura" />
 
                 <TextView
-                    android:id="@+id/tvAltura"
+                    android:id="@+id/tvEstatura"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/Edad"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="Edad" />
-
-                <TextView
-                    android:id="@+id/tvEdad"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="TextView" />
+                    android:layout_marginLeft="20dp" />
 
                 <TextView
                     android:id="@+id/Peso"
@@ -289,23 +259,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="TextView" />
+                    android:layout_marginLeft="20dp" />
 
-                <TextView
-                    android:id="@+id/Metabolismo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:text="Metabolismo" />
-
-                <TextView
-                    android:id="@+id/tvMetabolismo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginLeft="20dp"
-                    android:text="TextView" />
             </LinearLayout>
 
             <LinearLayout
@@ -337,7 +292,7 @@
                     android:layout_height="wrap_content">
 
                     <EditText
-                        android:id="@+id/etAltura"
+                        android:id="@+id/etEstatura"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:ems="10"

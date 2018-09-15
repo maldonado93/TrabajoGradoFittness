@@ -1,20 +1,18 @@
 package com.example.uer.trabajogradofittness.RegistroEntreno;
 
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.GlobalState;
@@ -26,6 +24,7 @@ public class DetallesEntreno extends AppCompatActivity {
 
     ResumenEntreno resumenEntreno;
     EjerciciosEntreno ejerciciosEntreno;
+    ImageButton btnRegresar;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -49,8 +48,16 @@ public class DetallesEntreno extends AppCompatActivity {
 
         gs = (GlobalState) getApplication();
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
+
+        btnRegresar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gs.setId_registro_entreno(0);
+                finish();
+            }
+        });
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -63,9 +70,6 @@ public class DetallesEntreno extends AppCompatActivity {
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
-
-        this.getSupportActionBar().setTitle("Detalles de entreno");
 
 
         gs = (GlobalState) getApplication();
