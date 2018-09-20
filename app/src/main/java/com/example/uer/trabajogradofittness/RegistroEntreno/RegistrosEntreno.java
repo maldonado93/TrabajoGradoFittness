@@ -277,7 +277,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                         String idRegistro = jsonObject.optString("id");
                         String idRutina = jsonObject.optString("idRutina");
                         String rutina = jsonObject.optString("rutina");
-                        String categoria = jsonObject.optString("categoria");
+                        String orientacion = jsonObject.optString("orientacion");
                         String promedioFrecuencia = jsonObject.optString("promedio_frecuencia");
                         String dia = obtenerDiaSemana(jsonObject.optString("fecha"));
                         String fech = jsonObject.optString("fecha");
@@ -290,7 +290,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                         listaRegistros.add(new ListaRegistros(idRegistro,
                                 idRutina,
                                 rutina,
-                                categoria,
+                                orientacion,
                                 promedioFrecuencia,
                                 dia,
                                 fech,

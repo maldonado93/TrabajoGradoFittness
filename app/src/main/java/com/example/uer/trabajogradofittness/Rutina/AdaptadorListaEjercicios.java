@@ -9,25 +9,21 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorListaEjercicios.MyViewHolder> {
 
     Context context;
     ArrayList<ListaEjercicios> ejercicios;
-    List<ListaEjercicios> ejerciciosFiltrados;
 
     public AdaptadorListaEjercicios(Context context, ArrayList<ListaEjercicios> ejercicios) {
         this.context = context;
         this.ejercicios = ejercicios;
-        ejerciciosFiltrados = new ArrayList<>(ejercicios);
     }
 
     public void setFilter(ArrayList<ListaEjercicios> lista){
@@ -72,40 +68,6 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
     public int getItemCount() {
         return ejercicios.size();
     }
-
-    public Filter getFilter(){
-        return ejerciciosFiltro;
-    }
-
-    private Filter ejerciciosFiltro = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            List<ListaEjercicios> filtroEjercicios = new ArrayList<>();
-            if(charSequence == null || charSequence.length() == 0){
-                filtroEjercicios.addAll(ejerciciosFiltrados);
-            }
-            else{
-                String filterPattern = charSequence.toString().toLowerCase().trim();
-
-                for(ListaEjercicios item : ejerciciosFiltrados){
-                    if(item.getNombre().toLowerCase().contains(filterPattern)){
-                        filtroEjercicios.add(item);
-                    }
-                }
-            }
-            FilterResults results = new FilterResults();
-            results.values = filtroEjercicios;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            ejercicios.clear();
-            ejercicios.addAll((List) filterResults.values);
-            notifyDataSetChanged();
-        }
-    };
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
 

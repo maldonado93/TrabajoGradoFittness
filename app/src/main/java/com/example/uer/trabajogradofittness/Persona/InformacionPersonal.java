@@ -112,7 +112,7 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
 
         Calendar calendario = Calendar.getInstance();
         año = calendario.get(Calendar.YEAR);
-        mes = calendario.get(Calendar.MONTH) ;
+        mes = calendario.get(Calendar.MONTH+1) ;
         dia = calendario.get(Calendar.DAY_OF_MONTH);
 
         mostrarfecha();
@@ -149,6 +149,8 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
                 });
 
         spCiudad = findViewById(R.id.spCiudad);
+
+
 
         cargarCampos();
         cargarTiposIdentificacion();
@@ -188,8 +190,14 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         else{
             rbFemenino.setChecked(true);
         }
-        String[] fecha = gs.getFecha().split("-");
-        etFechaNato.setText(fecha[2]+"/"+fecha[1]+"/"+fecha[0]);
+        String[] fecha;
+        if(gs.getFecha() != ""){
+            fecha = gs.getFecha().split("-");
+            etFechaNato.setText(fecha[2]+"/"+fecha[1]+"/"+fecha[0]);
+        }
+        else{
+            etFechaNato.setText("00/00/0000");
+        }
 
     }
 
@@ -216,7 +224,7 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         int idCiudad = (spCiudad.getSelectedItemPosition()+1);
 
         if(usuario.compareTo("") != 0 && password.compareTo("") != 0 && identificacion.compareTo("") != 0 && nombres.compareTo("") != 0 && apellidos.compareTo("") != 0
-                && email.compareTo("") != 0 && genero.compareTo("") != 0 && fecha.compareTo("") != 0){
+                && email.compareTo("") != 0 && genero.compareTo("") != 0 && fecha.compareTo("00/00/0000") != 0){
 
             gs.setRegistro(1);
             gs.setUsuario(usuario);

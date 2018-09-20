@@ -78,6 +78,7 @@ public class DetallesEntreno extends AppCompatActivity {
             Bundle datos = this.getIntent().getExtras();
             gs.setId_registro_entreno(Integer.parseInt(datos.getString("idRegistro")));
             gs.setId_rutina(Integer.parseInt(datos.getString("idRutina")));
+            gs.setOrientacion(datos.getString("orientacion"));
         }
     }
 

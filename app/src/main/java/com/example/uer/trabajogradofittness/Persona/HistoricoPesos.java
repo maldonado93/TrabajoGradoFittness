@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -130,10 +129,10 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
             if(i == 0){
                 valoresy.add(new Entry(i,val));
-                fechas[i] = obtenerMes(mes-1)+"- "+res[1];
+                fechas[i] = res[3] +"-"+ obtenerMes(mes-1)+"-"+res[1];
             }
             valoresy.add(new Entry(i+1,val));
-            fechas[i+1] = obtenerMes(mes)+"- "+res[1];
+            fechas[i+1] = res[3]+"-"+obtenerMes(mes)+"-"+res[1];
         }
 
         LineDataSet datos = new LineDataSet(valoresy, "Pesos");
@@ -157,6 +156,7 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(datos);
+
         verificarFecha();
         progress.hide();
 
@@ -213,13 +213,14 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
     private void verificarFecha(){
         final Calendar c = Calendar.getInstance();
         int mm = c.get(Calendar.MONTH)+1;
+        int dd = c.get(Calendar.DAY_OF_WEEK)-1;
 
         String[] datos = registroPesos.get(registroPesos.size()-1).split("-");
 
         int mes = Integer.parseInt(datos[2]);
+        int dia = Integer.parseInt(datos[3]);
 
-        String peso;
-        if(mes != mm){
+        if(dia != dd || (dia == dd && mes != mm)){
             tvPeso.setVisibility(View.VISIBLE);
             etPeso.setVisibility(View.VISIBLE);
             btnActualizar.setVisibility(View.VISIBLE);
@@ -266,8 +267,7 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
                     registroPesos.add(jsonObject.optString("peso")+ "-"+jsonObject.optString("fecha"));
 
                     if(indConsulta == 2){
-                        Snackbar.make(v, "Peso actualizado!", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+                        Toast.makeText(getContext(), "Peso actualizado!",Toast.LENGTH_SHORT).show();
                     }
                     tvPeso.setVisibility(View.GONE);
                     etPeso.setVisibility(View.GONE);

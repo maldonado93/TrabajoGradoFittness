@@ -36,10 +36,9 @@ public class InformacionActividad extends AppCompatActivity implements Response.
 
     ImageButton btnRegresar;
 
-    RadioButton rbNoActivo;
-    RadioButton rbLigeramente;
-    RadioButton rbActivo;
-    RadioButton rbMuyActivo;
+    RadioButton rbNovato;
+    RadioButton rbIntermedio;
+    RadioButton rbAvanzado;
 
     RadioButton rbNo;
     RadioButton rbSi;
@@ -71,10 +70,9 @@ public class InformacionActividad extends AppCompatActivity implements Response.
             }
         });
 
-        rbNoActivo= findViewById(R.id.rbNoActivo);
-        rbLigeramente= findViewById(R.id.rbLigeramente);
-        rbActivo= findViewById(R.id.rbActivo);
-        rbMuyActivo= findViewById(R.id.rbMuyActivo);
+        rbNovato= findViewById(R.id.rbNovato);
+        rbIntermedio= findViewById(R.id.rbIntermedio);
+        rbAvanzado= findViewById(R.id.rbAvanzado);
 
         rbNo= findViewById(R.id.rbNo);
         rbSi= findViewById(R.id.rbSi);
@@ -96,17 +94,14 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         String fumador = "";
         boolean registrar = true;
 
-        if(rbNoActivo.isChecked()){
-            actividad = "No activo";
+        if(rbNovato.isChecked()){
+            actividad = "Novato";
         }
-        if(rbLigeramente.isChecked()){
-            actividad = "Ligeramente activo";
+        if(rbIntermedio.isChecked()){
+            actividad = "Intermedio";
         }
-        if(rbActivo.isChecked()){
-            actividad = "Activo";
-        }
-        if(rbMuyActivo.isChecked()){
-            actividad = "Muy activo";
+        if(rbAvanzado.isChecked()){
+            actividad = "Avanzado";
         }
 
         if(rbNo.isChecked()){
@@ -116,7 +111,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
             fumador = "Si";
         }
         if (actividad.compareTo("") != 0) {
-            gs.setActividad(actividad);
+            gs.setNivelActividad(actividad);
         }
         else{
             registrar = false;
@@ -140,17 +135,14 @@ public class InformacionActividad extends AppCompatActivity implements Response.
 
 
     public void cargarDatos(){
-        if (gs.getActividad().compareTo("No activo") == 0){
-            rbNoActivo.setChecked(true);
+        if (gs.getNivelActividad().compareTo("Novato") == 0){
+            rbNovato.setChecked(true);
         }
-        if (gs.getActividad().compareTo("Ligeramente activo") == 0){
-            rbLigeramente.setChecked(true);
+        if (gs.getNivelActividad().compareTo("Intermedio") == 0){
+            rbIntermedio.setChecked(true);
         }
-        if (gs.getActividad().compareTo("Activo") == 0){
-            rbActivo.setChecked(true);
-        }
-        if (gs.getActividad().compareTo("Muy activo") == 0){
-            rbMuyActivo.setChecked(true);
+        if (gs.getNivelActividad().compareTo("Avanzado") == 0){
+            rbAvanzado.setChecked(true);
         }
 
         if (gs.getFumador().compareTo("No") == 0){
@@ -203,7 +195,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
 
     private void registrarDatos(){
         consulta = "datos";
-        String url = "http://"+gs.getIp()+"/persona/registrar_datos.php?idPersona="+idPersona+"&peso="+gs.getPeso()+"&descripcion="+gs.getObjetivo()+"&fuma="+gs.getFumador();
+        String url = "http://"+gs.getIp()+"/persona/registrar_datos.php?idPersona="+idPersona+"&peso="+gs.getPeso()+"&descripcion="+gs.getObjetivo()+"&nivel="+gs.getNivelActividad()+"&fuma="+gs.getFumador();
 
         url = url.replace(" ", "%20");
 

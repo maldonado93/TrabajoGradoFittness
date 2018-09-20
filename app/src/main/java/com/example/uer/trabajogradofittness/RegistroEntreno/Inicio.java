@@ -44,6 +44,7 @@ import com.example.uer.trabajogradofittness.Rutina.AdaptadorListaEjercicioRutina
 import com.example.uer.trabajogradofittness.Rutina.ListaEjercicioRutina;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
+import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -55,8 +56,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
@@ -103,7 +106,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     ArrayList<String> registroFrecuenciaReposo;
     int indPulsaciones;
     int contReposo;
-
 
     private int MAX_SIZE = 60; //graph max size
 
@@ -160,7 +162,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             }
         });
 
-
         btnIniciar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -180,11 +181,9 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                                     if(idRutina != 0){
                                         d = getResources().getDrawable(R.drawable.ic_stop);
                                         btnIniciar.setBackgroundDrawable(d);
-                                        estadoEntreno = true;
 
                                         spDispositivos.setEnabled(false);
-                                        //registrarEntreno();
-                                        contReposo = 0;
+                                        registrarEntreno();
                                         cronometro = new Cronometro();
                                         cronometro.execute();
                                     }
@@ -216,14 +215,12 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             }
         });
 
-
         graficaPulsaciones = v.findViewById(R.id.graficaPeso);
 
         setupChart();
         setupAxes();
         setupData();
         setLegend();
-
 
         return v;
     }
@@ -246,12 +243,10 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             promedioFrecuencia += Float.parseFloat(registroFrecuenciaReposo.get(i));
         }
         promedioFrecuencia = promedioFrecuencia / registroFrecuenciaReposo.size();
+        generarLimitesFrecuencias((int)promedioFrecuencia);
 
         registrarFrecuenciaReposo(promedioFrecuencia);
     }
-
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     private void verificarBluetooth(){
@@ -308,7 +303,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     }
 
-
     private void setupChart() {
         // disable description text
         graficaPulsaciones.getDescription().setEnabled(false);
@@ -323,8 +317,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         graficaPulsaciones.setBackgroundColor(Color.WHITE);
     }
 
-
     private void setupAxes() {
+
         XAxis xl = graficaPulsaciones.getXAxis();
         xl.setTextColor(Color.DKGRAY);
         xl.setDrawGridLines(true);
@@ -351,10 +345,52 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     private void setLegend() {
         Legend l = graficaPulsaciones.getLegend();
-
         l.setForm(Legend.LegendForm.CIRCLE);
         l.setTextColor(Color.DKGRAY);
     }
+
+    private void generarLimitesFrecuencias(int frecuenciaReposo){
+
+        int FCmax = 0;
+        int FCrep = frecuenciaReposo;
+        int FCRMin = 0;
+        int FCRMax = 0;
+
+        String genero = gs.getGenero();
+        int edad = gs.getEdad();
+        float peso = gs.getPeso();
+        int CF;
+        String nivelActividad = gs.getNivelActividad();
+
+        if(gs.getFumador().compareTo("Si") == 0){
+            CF = 1;
+        }
+        else{
+            CF = 0;
+        }
+
+        if(genero.compareTo("Femenino") == 0){
+            FCmax= (int)Math.round(204.8 - (0.718 * edad) + (0.162 * FCrep) - (0.105 * peso) - (6.2 * CF));
+        }
+        else{
+            FCmax= (int)Math.round(203.9 - (0.812 * edad) + (0.276* FCrep) - (0.084 * peso) - (4.5*CF));
+        }
+        Toast.makeText(getContext(), "FCMx: "+FCmax, Toast.LENGTH_SHORT).show();
+
+
+
+        LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
+        frecuenciaMaxima.setLineColor(Color.RED);
+        frecuenciaMaxima.setLineWidth(1.5f);
+        frecuenciaMaxima.enableDashedLine(10f, 1.5f, 0);
+        frecuenciaMaxima.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaMaxima.setTextSize(4f);
+
+        YAxis yAxis = graficaPulsaciones.getAxisLeft();
+        yAxis.removeAllLimitLines();
+        yAxis.addLimitLine(frecuenciaMaxima);
+    }
+
 
     private LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Pulsaciones/minuto");
@@ -385,9 +421,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             int dato = Integer.parseInt(bpm);
 
             if(estadoEntreno){
-                registroPulsaciones.add(bpm);
-                registroFrecuenciaReposo.add(bpm);
-                contReposo++;
+                registrarDatosEntreno(dato);
             }
 
             data.addEntry(new Entry(set.getEntryCount(), dato), 0);
@@ -398,8 +432,15 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             graficaPulsaciones.setMaxVisibleValueCount(Integer.parseInt(DataHandler.getInstance().getLastValue())+5);
 
             graficaPulsaciones.moveViewToX(data.getEntryCount());
-            if(contReposo == 10){
-                obtenerFrecuenciaReposo();
+            if(contReposo < 10){
+                registroFrecuenciaReposo.add(bpm);
+                contReposo++;
+            }
+            else{
+                if(contReposo == 10){
+                    obtenerFrecuenciaReposo();
+                    contReposo++;
+                }
             }
         }
     }
@@ -418,22 +459,28 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     Log.i("Main Activity", "Conexion polar");
                     DataHandler.getInstance().setH7(new H7ConnectThread((BluetoothDevice) pairedDevices.toArray()[DataHandler.getInstance().getID() - 1], this));
                     h7 = true;
+                    spDispositivos.setEnabled(false);
+                    contReposo = 0;
                     graficaPulsaciones.setVisibility(View.VISIBLE);
                 } else if (!normal && DataHandler.getInstance().getH7() == null) {
 
                     Log.i("Main Activity", "Conexion normal");
                     DataHandler.getInstance().setReader(new ConnectThread((BluetoothDevice) pairedDevices.toArray()[indice - 1], this));
                     DataHandler.getInstance().getReader().start();
+                    contReposo = 0;
+                    spDispositivos.setEnabled(false);
                     graficaPulsaciones.setVisibility(View.VISIBLE);
                     normal = true;
                 }
                 menuBool = true;
             }
             else{
+                spDispositivos.setEnabled(true);
                 graficaPulsaciones.setVisibility(View.GONE);
             }
         }
         else{
+            spDispositivos.setEnabled(true);
             verificarBluetooth();
         }
 
@@ -485,14 +532,14 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         runOnUiThread(new Runnable() {
             public void run() {
 
-                //addEntry(DataHandler.getInstance().getLastValue());
+                addEntry(DataHandler.getInstance().getLastValue());
 
 
-                if (DataHandler.getInstance().getLastIntValue() != 0) {
+                /*if (DataHandler.getInstance().getLastIntValue() != 0) {
                     DataHandler.getInstance().getSeries1().addLast(0, DataHandler.getInstance().getLastIntValue());
                     if (DataHandler.getInstance().getSeries1().size() > MAX_SIZE)
                         DataHandler.getInstance().getSeries1().removeFirst();//Previene que la grafica se sobrecargue de datos
-                }
+                }*/
             }
         });
     }
@@ -539,7 +586,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                         }
                     }
                 };
-
 
                 Thread scannerBTLE = new Thread() {
                     public void run() {
@@ -619,7 +665,12 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     private void registrarEntreno(){
 
         consulta = "registro_entreno";
-        String url = "http://"+gs.getIp()+"/registro_entrenos/registrar_entreno.php?idRutina="+idRutina+"&idPersona="+gs.getSesion_usuario()+"&tiempo="+tiempoTotal;
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String[] fecha = sdf.format(c.getTime()).split(" ");
+
+        String url = "http://"+gs.getIp()+"/registro_entrenos/registrar_entreno.php?idRutina="+idRutina+"&idPersona="+gs.getSesion_usuario()+"&hora="+fecha[1]+"&tiempo="+tiempoTotal+"&fecha="+fecha[0];
 
         url = url.replace(" ", "%20");
 
@@ -627,30 +678,19 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         request.add(jsonObjectRequest);
     }
 
-    private void registrarDatosEntreno(int nDato){
+    private void registrarDatosEntreno(int bpm){
+        consulta = "datos_entreno";
+        String url = "http://"+gs.getIp()+"/registro_entrenos/registrar_datos_entreno.php?idEntreno="+idRegistroEntreno+"&bpm="+bpm;
 
-        if(nDato < registroPulsaciones.size()){
-            Snackbar.make(getView(), "Registrando datos...", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+        url = url.replace(" ", "%20");
 
-            consulta = "datos_entreno";
-            String url = "http://"+gs.getIp()+"/registro_entrenos/registrar_datos_entreno.php?idEntreno="+idRegistroEntreno+"&bpm="+registroPulsaciones.get(nDato);
-
-            url = url.replace(" ", "%20");
-
-            jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
-            request.add(jsonObjectRequest);
-        }
-        else{
-            actualizarTiempoEntreno();
-        }
-
-
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
 
     }
 
     private void actualizarTiempoEntreno() {
-        consulta = "registro_entreno";
+        consulta = "registro_actualizado";
         tiempoTotal = (int)(Math.ceil(tiempoTotal/60));
         String url = "http://" + gs.getIp() + "/registro_entrenos/actualizar_tiempo.php?idEntreno=" + idRegistroEntreno + "&tiempo=" + tiempoTotal;
 
@@ -680,7 +720,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
-
 
     @Override
     public void onResume() {
@@ -716,9 +755,14 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(0);
                 idRegistroEntreno = jsonObject.optInt("id");
+                if(idRegistroEntreno == 0){
+                    Toast.makeText(getContext(), "Error al registrar el entreno", Toast.LENGTH_SHORT).show();
+                }
             }
-            if(consulta == "condicion fisica"){
-                Snackbar.make(v, "Se ha registrado la frecuencia de reposo!", Snackbar.LENGTH_LONG)
+            if(consulta == "registro_actualizado"){
+                JSONObject jsonObject = null;
+
+                Snackbar.make(v, "Datos de entreno registrados!!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
             if(consulta == "datos_entreno"){
@@ -726,7 +770,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 jsonObject = datos.getJSONObject(0);
                 resultado = jsonObject.optInt("id");
                 if(resultado == 0){
-                    Toast.makeText(null, "Error al registrar", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Error al registrar", Toast.LENGTH_SHORT).show();
                 }
             }
             if(consulta == "ejercicio"){
@@ -751,10 +795,9 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         catch (JSONException e) {
             e.printStackTrace();
         }
-
-        if(consulta.compareTo("datos_entreno") == 0){
-            indPulsaciones++;
-            registrarDatosEntreno(indPulsaciones);
+        if(consulta == "registro_entreno" && idRegistroEntreno != 0){
+            indPulsaciones = 0;
+            estadoEntreno = true;
         }
     }
 
@@ -833,12 +876,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         @Override
         protected void onPostExecute(Boolean resultado) {
-            //super.onPostExecute(resultado);
-            if(resultado){
-
-                indPulsaciones = 0;
-                //registrarDatosEntreno(indPulsaciones);
-            }
+            super.onPostExecute(resultado);
+            actualizarTiempoEntreno();
         }
 
         @Override

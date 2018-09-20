@@ -8,27 +8,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.R;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorListaAlimentos.MyViewHolder> implements Filterable{
+public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorListaAlimentos.MyViewHolder>{
 
     Context context;
     ArrayList<ListaAlimentos> alimentos;
-    ArrayList<ListaAlimentos> alimentosFiltrados;
-
-
 
     public AdaptadorListaAlimentos(Context context, ArrayList<ListaAlimentos> alimentos) {
         this.context = context;
         this.alimentos = alimentos;
-        alimentosFiltrados = new ArrayList<>(alimentos);
     }
 
     public void setFilter(ArrayList<ListaAlimentos> lista){
@@ -75,43 +68,6 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
         return alimentos.size();
     }
 
-
-
-
-    @Override
-    public Filter getFilter(){
-        return alimentosFiltro;
-    }
-
-    private Filter alimentosFiltro = new Filter() {
-        @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            List<ListaAlimentos> filtroAlimentos = new ArrayList<>();
-            if(charSequence == null || charSequence.length() == 0){
-                filtroAlimentos.addAll(alimentosFiltrados);
-            }
-            else{
-                String filterPattern = charSequence.toString().toLowerCase().trim();
-
-                for(ListaAlimentos item : alimentosFiltrados){
-                    if(item.getNombre().toLowerCase().contains(filterPattern)){
-                        filtroAlimentos.add(item);
-                    }
-                }
-            }
-            FilterResults results = new FilterResults();
-            results.values = filtroAlimentos;
-
-            return results;
-        }
-
-        @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            alimentos.clear();
-            alimentos.addAll((List) filterResults.values);
-            notifyDataSetChanged();
-        }
-    };
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{
 

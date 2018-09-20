@@ -12,34 +12,61 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="35dp"
         android:text="Peso actual:"
         android:textSize="18sp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
         android:id="@+id/etPeso"
-        android:layout_width="70dp"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="numberDecimal"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/tvPeso"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView31"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="35dp"
+        android:text="(Kg)"
+        android:textSize="18sp"
+        app:layout_constraintStart_toEndOf="@+id/etPeso"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnActualizar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="16dp"
+        android:background="@color/colorPrimaryDark"
+        android:drawableLeft="@drawable/ic_loop"
+        android:text="Actualizar"
+        android:textColor="@android:color/background_light"
+        android:visibility="visible"
+        app:layout_constraintStart_toEndOf="@+id/textView31"
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/graficaPeso"
-        android:layout_width="352dp"
-        android:layout_height="139dp"
-        android:layout_marginEnd="25dp"
-        android:layout_marginLeft="35dp"
-        android:layout_marginRight="35dp"
-        android:layout_marginStart="25dp"
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.452"
@@ -47,21 +74,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
     </com.github.mikephil.charting.charts.LineChart>
-
-    <Button
-        android:id="@+id/btnActualizar"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="16dp"
-        android:background="@color/colorPrimaryDark"
-        android:drawableLeft="@drawable/ic_loop"
-        android:text="Actualizar"
-        android:textColor="@android:color/background_light"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/etPeso"
-        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

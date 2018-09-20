@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -21,8 +20,8 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
-import com.example.uer.trabajogradofittness.Rutina.AdaptadorListaEjercicios;
-import com.example.uer.trabajogradofittness.Rutina.ListaEjercicios;
+import com.example.uer.trabajogradofittness.Rutina.AdaptadorListaEjercicioRutina;
+import com.example.uer.trabajogradofittness.Rutina.ListaEjercicioRutina;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,8 +37,8 @@ public class EjerciciosEntreno extends Fragment implements Response.Listener<JSO
     View v;
     GlobalState gs;
 
-    private AdaptadorListaEjercicios adaptadorEjercicios;
-    private ArrayList<ListaEjercicios> listaEjercicios;
+    private AdaptadorListaEjercicioRutina adaptadorEjercicios;
+    private ArrayList<ListaEjercicioRutina> listaEjercicios;
 
     RecyclerView recyclerEjercicios;
 
@@ -89,11 +88,13 @@ public class EjerciciosEntreno extends Fragment implements Response.Listener<JSO
             for(int i=0; i<datos.length();i++) {
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
-                listaEjercicios.add(new ListaEjercicios(jsonObject.optString("id"),
-                        jsonObject.optString("nombre")));
+                listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
+                                jsonObject.optString("nombre"),
+                         jsonObject.optString("series")+" * "+
+                                jsonObject.optString("repeticiones")));
             }
 
-            adaptadorEjercicios = new AdaptadorListaEjercicios(getContext(), listaEjercicios);
+            adaptadorEjercicios = new AdaptadorListaEjercicioRutina(getContext(), listaEjercicios);
             recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
             recyclerEjercicios.setAdapter(adaptadorEjercicios);

@@ -54,6 +54,9 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     private static String TAG = "ResumenEntreno";
     GlobalState gs;
     View v;
+    String consulta;
+    int frecuenciaReposo;
+    String orientacionRutina;
 
     ProgressDialog progress;
 
@@ -63,8 +66,6 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     TextView tvTiempo;
     TextView tvActividad;
     TextView tvDescanso;
-
-    String consulta;
 
     float cantSuperior;
     float cantInferior;
@@ -79,12 +80,9 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
         v = inflater.inflate(R.layout.fragment_resumen_entreno, container, false);
 
-
-
         tvTiempo = v.findViewById(R.id.tvTiempo);
         tvActividad = v.findViewById(R.id.tvActividad);
         tvDescanso = v.findViewById(R.id.tvDescanso);
-
 
         return v;
     }
@@ -98,7 +96,7 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
         registroPulsaciones = new ArrayList<>();
 
-        consultarDatosEntreno();
+        consultarFrecuenciaReposo();
     }
 
     private void initGraficaPulsaciones(){
@@ -149,43 +147,10 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         datos.setDrawCircles(false);
         datos.setColor(Color.GREEN);
 
-        int FCmax = 0;
-        int FCrep = 65;
-        int edad = 22;
-        float peso = 67;
-        int CF = 0;
-        String genero = "Femenino";
-
-        if(genero.compareTo("Femenino") == 0){
-            FCmax= (int)Math.round(204.8 - (0.718 * edad) + (0.162 * FCrep) - (0.105 * peso) - (6.2 * CF));
-        }
-        else{
-            FCmax= (int)Math.round(203.9 - (0.812 * edad) + (0.276* FCrep) - (0.084 * peso) - (4.5*CF));
-        }
-
-        LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
-        frecuenciaMaxima.setLineColor(Color.RED);
-        frecuenciaMaxima.setLineWidth(2f);
-        frecuenciaMaxima.enableDashedLine(10f, 1f, 0);
-        frecuenciaMaxima.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        frecuenciaMaxima.setTextSize(8f);
-
-        LimitLine lineaPromedio = new LimitLine(prom,"Promedio: "+prom);
-        lineaPromedio.setLineColor(Color.CYAN);
-        lineaPromedio.setLineWidth(2f);
-        lineaPromedio.enableDashedLine(10f, 10f, 0);
-        lineaPromedio.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        lineaPromedio.setTextSize(8f);
+        calcularFrecEsfuerzo(prom);
 
         XAxis xAxis = graficaPulsaciones.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-
-        YAxis yAxis = graficaPulsaciones.getAxisLeft();
-        yAxis.removeAllLimitLines();
-        yAxis.addLimitLine(frecuenciaMaxima);
-        yAxis.addLimitLine(lineaPromedio);
-        yAxis.enableGridDashedLine(10f,10f,0);
-        yAxis.setDrawLimitLinesBehindData(true);
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(datos);
@@ -196,6 +161,107 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         graficaPulsaciones.setVisibleXRangeMinimum(60);
         graficaPulsaciones.setVisibleXRangeMaximum(600);
         graficaPulsaciones.animateX(1000, Easing.EasingOption.EaseOutSine);
+    }
+
+    private void calcularFrecEsfuerzo(int promedio){
+        int FCmax = 0;
+        int FCrep = frecuenciaReposo;
+        String nivelActividad = gs.getNivelActividad();
+        String orientacion = gs.getOrientacion();
+        int edad = gs.getEdad();
+        float peso = gs.getPeso();
+        int CF;
+
+        int FCRMin;
+        int FCRMax;
+
+        double FCEsfMin = 0;
+        double FCEsfMax = 0;
+
+        if(gs.getFumador().compareTo("Si") == 0){
+            CF = 1;
+        }
+        else{
+            CF = 0;
+        }
+        String genero = gs.getGenero();
+
+        if(genero.compareTo("Femenino") == 0){
+            FCmax= (int)Math.round(204.8 - (0.718 * edad) + (0.162 * FCrep) - (0.105 * peso) - (6.2 * CF));
+        }
+        else{
+            FCmax= (int)Math.round(203.9 - (0.812 * edad) + (0.276* FCrep) - (0.084 * peso) - (4.5*CF));
+        }
+
+        if((nivelActividad.compareTo("Novato") == 0) || (nivelActividad.compareTo("Intermedio") == 0)){
+            if(orientacion.compareTo("Metabólica") == 0){
+                FCEsfMin = 0.5;
+                FCEsfMax = 0.6;
+            }
+            if(orientacion.compareTo("Estructural") == 0){
+                FCEsfMin = 0.6;
+                FCEsfMax = 0.7;
+            }
+            if(orientacion.compareTo("Neural") == 0){
+                FCEsfMin = 0.7;
+                FCEsfMax = 0.8;
+            }
+        }
+        else{
+            if(orientacion.compareTo("Metabólica") == 0){
+                FCEsfMin = 0.5;
+                FCEsfMax = 0.6;
+            }
+            if(orientacion.compareTo("Estructural") == 0){
+                FCEsfMin = 0.7;
+                FCEsfMax = 0.75;
+            }
+            if(orientacion.compareTo("Neural") == 0){
+                FCEsfMin = 0.8;
+                FCEsfMax = 0.9;
+            }
+        }
+
+        FCRMin = (int)((FCmax - FCrep) * FCEsfMin + FCrep);
+        FCRMax = (int)((FCmax - FCrep) * FCEsfMax + FCrep);
+
+
+        LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
+        frecuenciaMaxima.setLineColor(Color.RED);
+        frecuenciaMaxima.setLineWidth(1.5f);
+        frecuenciaMaxima.enableDashedLine(10f, 1.5f, 0);
+        frecuenciaMaxima.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaMaxima.setTextSize(8f);
+
+        LimitLine frecuenciaReservaMin = new LimitLine(FCRMin,"Frecuencia reserva minima: "+FCRMin);
+        frecuenciaReservaMin.setLineColor(Color.RED);
+        frecuenciaReservaMin.setLineWidth(1.5f);
+        frecuenciaReservaMin.enableDashedLine(10f, 1.5f, 0);
+        frecuenciaReservaMin.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaReservaMin.setTextSize(8f);
+
+        LimitLine frecuenciaReservaMax = new LimitLine(FCRMax,"Frecuencia reserva máxima: "+FCRMax);
+        frecuenciaReservaMax.setLineColor(Color.RED);
+        frecuenciaReservaMax.setLineWidth(1.5f);
+        frecuenciaReservaMax.enableDashedLine(10f, 1.5f, 0);
+        frecuenciaReservaMax.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaReservaMax.setTextSize(8f);
+
+        LimitLine lineaPromedio = new LimitLine(promedio,"Promedio: "+promedio);
+        lineaPromedio.setLineColor(Color.CYAN);
+        lineaPromedio.setLineWidth(2f);
+        lineaPromedio.enableDashedLine(10f, 10f, 0);
+        lineaPromedio.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        lineaPromedio.setTextSize(8f);
+
+        YAxis yAxis = graficaPulsaciones.getAxisLeft();
+        yAxis.removeAllLimitLines();
+        yAxis.addLimitLine(frecuenciaMaxima);
+        yAxis.addLimitLine(frecuenciaReservaMin);
+        yAxis.addLimitLine(frecuenciaReservaMax);
+        yAxis.addLimitLine(lineaPromedio);
+        yAxis.enableGridDashedLine(10f,10f,0);
+        yAxis.setDrawLimitLinesBehindData(true);
     }
 
     private void initGraficaPorcentaje(){
@@ -245,6 +311,17 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
     }
 
+    private void consultarFrecuenciaReposo(){
+        consulta = "frecuencia";
+
+        String url = "http://"+gs.getIp()+"/registro_entrenos/consultar_frecuencia_reposo.php?idPersona="+gs.getSesion_usuario();
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
     private void consultarDatosEntreno(){
         consulta = "datos_entreno";
 
@@ -263,20 +340,30 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         JSONArray datos = response.optJSONArray(consulta);
 
         try {
-            if(consulta == "datos_entreno"){
-                for(int i=0; i<datos.length();i++) {
-                    JSONObject jsonObject = null;
-                    jsonObject = datos.getJSONObject(i);
+            for(int i=0; i<datos.length();i++) {
+                JSONObject jsonObject = null;
+                jsonObject = datos.getJSONObject(i);
+                if(consulta.compareTo("frecuencia") == 0) {
+                    frecuenciaReposo = jsonObject.optInt("frecuencia_reposo");
+                }
+                if(consulta.compareTo("datos_entreno") == 0) {
                     registroPulsaciones.add(jsonObject.optInt("bpm"));
                 }
-            }
 
+            }
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-        initGraficaPulsaciones();
-        initGraficaPorcentaje();
+        if(consulta.compareTo("frecuencia") == 0) {
+            consultarDatosEntreno();
+        }
+        else{
+            if(consulta.compareTo("datos_entreno") == 0){
+                initGraficaPulsaciones();
+                initGraficaPorcentaje();
+            }
+        }
     }
 
     @Override

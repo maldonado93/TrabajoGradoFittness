@@ -208,7 +208,7 @@ public class Principal extends AppCompatActivity
     private void dialogSalir(){
         AlertDialog.Builder buider = new AlertDialog.Builder(Principal.this);
         View dView = getLayoutInflater().inflate(R.layout.dialog_salir, null);
-        Button btnSalir = (Button)dView.findViewById(R.id.btnSalir);
+        Button btnSalir = dView.findViewById(R.id.btnSalir);
 
         btnSalir.setOnClickListener(new View.OnClickListener(){
 

@@ -43,7 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
         android:gravity="center_horizontal"
-        android:text="¿Que tan activo eres?"
+        android:text="¿Cual es tu nivel de acondicionamiento??"
         android:textSize="18sp"
         android:textStyle="italic"
         app:layout_constraintEnd_toEndOf="parent"
@@ -63,32 +63,25 @@
         app:layout_constraintTop_toBottomOf="@+id/textView19">
 
         <RadioButton
-            android:id="@+id/rbNoActivo"
+            android:id="@+id/rbNovato"
             android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="No muy activo" />
+            android:text="Novato" />
 
         <RadioButton
-            android:id="@+id/rbLigeramente"
+            android:id="@+id/rbIntermedio"
             android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Ligeramente activo" />
+            android:text="Intermedio" />
 
         <RadioButton
-            android:id="@+id/rbActivo"
+            android:id="@+id/rbAvanzado"
             android:layout_width="145dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Activo" />
-
-        <RadioButton
-            android:id="@+id/rbMuyActivo"
-            android:layout_width="145dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Muy activo" />
+            android:text="Avanzado" />
 
     </RadioGroup>
 

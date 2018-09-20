@@ -28,12 +28,16 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Login extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener {
 
     String TAG = this.getClass().getName();
 
     GlobalState gs;
+
+    String consulta;
 
     EditText etUsuario;
     EditText etPassword;
@@ -46,7 +50,6 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     String password;
 
     boolean salir = false;
-
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -103,6 +106,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
             //String url = "http://"+gs.getIp()+"/usuario/consultar_usuario.php?usuario="+ usuario +"&password="+ password+"";
 
+            consulta = "usuario";
             progress.show();
             String url = "http://"+gs.getIp()+"/usuario/consultar_usuario1.php?usuario="+ usuario;
 
@@ -116,56 +120,37 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         }
     }
 
+    public void obtenerDatosUsuario(){
 
-    @Override
-    public void onResponse(JSONObject response) {
-        //progreso.hide();
-        int tipoUsuario = 0;
+        consulta = "datos";
+        String url = "http://"+gs.getIp()+"/usuario/consultar_datos_usuario.php?usuario="+ usuario;
 
-        JSONArray datos = response.optJSONArray("usuario");
-        JSONObject jsonObject = null;
+        url = url.replace(" ", "%20");
 
-        try {
-            jsonObject = datos.getJSONObject(0);
-            if(jsonObject != null){
-                gs.setSesion_usuario(jsonObject.optInt("id_persona"));
-                gs.setTipo_usuario(jsonObject.optInt("id_tipo_usuario"));
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+    private void calcularEdad(String fecha){
+        Date fechaActual = new Date();
+        SimpleDateFormat formato = new SimpleDateFormat("yyyy-MM-dd");
+
+        String hoy = formato.format(fechaActual);
+        String[] dat1 = fecha.split("-");
+        String[] dat2 = hoy.split("-");
+
+        int edad = Integer.parseInt(dat2[0]) - Integer.parseInt(dat1[0]);
+        int mes = Integer.parseInt(dat2[1]) - Integer.parseInt(dat1[1]);
+        if (mes < 0) {
+            edad = edad - 1;
+        } else if (mes == 0) {
+            int dia = Integer.parseInt(dat2[2]) - Integer.parseInt(dat1[2]);
+            if (dia > 0) {
+                edad = edad - 1;
             }
-            if(gs.getSesion_usuario() != 0){
-                if(jsonObject.optString("password").compareTo(password) == 0 ){
-
-
-                    Intent ingreso = null;
-                    if(gs.getTipo_usuario() == 1){
-                        ingreso = new Intent(Login.this, Menu.class);
-                    }
-                    else{
-                        ingreso = new Intent(Login.this, PrincipalInstructor.class);
-                    }
-
-                    ingreso.addFlags(ingreso.FLAG_ACTIVITY_CLEAR_TOP | ingreso.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(ingreso);
-                }
-                else{
-                    Toast.makeText(this, "Contraseña erronea!",Toast.LENGTH_SHORT).show();
-                }
-            }
-            else{
-                Toast.makeText(this, "Usuario no registrado!",Toast.LENGTH_SHORT).show();
-            }
-            progress.hide();
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+        gs.setEdad(edad);
     }
-
-    @Override
-    public void onErrorResponse(VolleyError error) {
-        //progreso.hide();
-        Toast.makeText(getApplicationContext(), "Error de login "+ error.toString(), Toast.LENGTH_SHORT).show();
-        Log.i("ERROR", error.toString());
-    }
-
 
     public void Registrar(View v){
 
@@ -211,5 +196,80 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             }
         },3000);
     }
+
+
+
+    @Override
+    public void onResponse(JSONObject response) {
+
+        int tipoUsuario = 0;
+        boolean usuarioValido = false;
+
+        JSONArray datos = response.optJSONArray(consulta);
+        JSONObject jsonObject = null;
+
+        try {
+            jsonObject = datos.getJSONObject(0);
+            if(jsonObject != null){
+                if(consulta.compareTo("usuario") == 0){
+                    gs.setSesion_usuario(jsonObject.optInt("id_persona"));
+                    gs.setTipo_usuario(jsonObject.optInt("id_tipo_usuario"));
+                    if(gs.getSesion_usuario() != 0){
+                        if(jsonObject.optString("password").compareTo(password) == 0 ){
+                            usuarioValido = true;
+                        }
+                        else{
+                            progress.hide();
+                            Toast.makeText(this, "Contraseña erronea!",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else{
+                        progress.hide();
+                        Toast.makeText(this, "Usuario no registrado!",Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+                if(consulta.compareTo("datos") == 0){
+                    gs.setGenero(jsonObject.optString("genero"));
+                    gs.setPeso(Float.parseFloat(jsonObject.optString("peso")));
+                    gs.setNivelActividad(jsonObject.optString("nivel_actividad"));
+                    gs.setFumador(jsonObject.optString("fuma"));
+                    calcularEdad(jsonObject.optString("fecha_nacimiento"));
+                    usuarioValido = true;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if(usuarioValido){
+            if(consulta.compareTo("usuario") == 0){
+                obtenerDatosUsuario();
+            }
+            else{
+                progress.hide();
+                Intent ingreso = null;
+                if(gs.getTipo_usuario() == 1){
+                    ingreso = new Intent(Login.this, Menu.class);
+                }
+                else{
+                    ingreso = new Intent(Login.this, PrincipalInstructor.class);
+                }
+
+                ingreso.addFlags(ingreso.FLAG_ACTIVITY_CLEAR_TOP | ingreso.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(ingreso);
+            }
+        }
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError error) {
+        progress.hide();
+        Toast.makeText(getApplicationContext(), "Error de login "+ error.toString(), Toast.LENGTH_SHORT).show();
+        Log.i("ERROR", error.toString());
+    }
+
+
+
 
 }

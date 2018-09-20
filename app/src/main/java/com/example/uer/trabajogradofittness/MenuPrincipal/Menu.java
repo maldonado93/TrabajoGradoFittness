@@ -18,6 +18,7 @@ import android.widget.ExpandableListView;
 
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
+import com.example.uer.trabajogradofittness.Nutricion.PlanesNutricionales;
 import com.example.uer.trabajogradofittness.Persona.HistoricoPesos;
 import com.example.uer.trabajogradofittness.Persona.Perfil;
 import com.example.uer.trabajogradofittness.R;
@@ -92,7 +93,6 @@ public class Menu extends AppCompatActivity {
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         drawerToggle.syncState();
-
     }
 
     @Override
@@ -217,6 +217,8 @@ public class Menu extends AppCompatActivity {
             case "Mis rutinas": fragment = new Rutinas();
                 break;
             case "Ejercicios": fragment = new CategoriasEjercicio();
+                break;
+            case "Planes nutricionales": fragment = new PlanesNutricionales();
                 break;
             case "Alimentos": fragment = new Nutricion();
                 break;

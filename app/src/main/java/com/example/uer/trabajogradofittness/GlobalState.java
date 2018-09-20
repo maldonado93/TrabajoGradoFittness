@@ -10,8 +10,11 @@ public class GlobalState extends Application{
     public int tipo_usuario = 0;
     public int id_registro_entreno = 0;
     public int id_rutina = 0;
+    public String orientacion = "";
     public int id_alumno = 0;
     public String fragmentActual = null;
+
+    public int edad = 0;
 
     public int registro = 0;
     public String usuario = "";
@@ -29,9 +32,10 @@ public class GlobalState extends Application{
     public String objetivo = "";
     public int estatura = 0;
     public float peso = 0;
-    public String actividad = "";
+    public String nivelActividad = "";
     public String fumador = "";
 
+    public int[] alimentos = null;
 
 
     public String getIp() {
@@ -74,6 +78,14 @@ public class GlobalState extends Application{
         this.id_rutina = id_rutina;
     }
 
+    public String getOrientacion() {
+        return orientacion;
+    }
+
+    public void setOrientacion(String orientacion) {
+        this.orientacion = orientacion;
+    }
+
     public int getId_alumno() {
         return id_alumno;
     }
@@ -90,6 +102,13 @@ public class GlobalState extends Application{
         this.fragmentActual = fragmentActual;
     }
 
+    public int getEdad() {
+        return edad;
+    }
+
+    public void setEdad(int edad) {
+        this.edad = edad;
+    }
 
     public int getRegistro() {
         return registro;
@@ -219,12 +238,12 @@ public class GlobalState extends Application{
         this.peso = peso;
     }
 
-    public String getActividad() {
-        return actividad;
+    public String getNivelActividad() {
+        return nivelActividad;
     }
 
-    public void setActividad(String actividad) {
-        this.actividad = actividad;
+    public void setNivelActividad(String nivelActividad) {
+        this.nivelActividad = nivelActividad;
     }
 
     public String getFumador() {
@@ -233,5 +252,20 @@ public class GlobalState extends Application{
 
     public void setFumador(String fumador) {
         this.fumador = fumador;
+    }
+
+    public void insAlimentos(int cant){
+        this.alimentos = new int[cant];
+        for(int i = 0; i< this.alimentos.length; i++){
+            this.alimentos[i] = 0;
+        }
+    }
+
+    public int[] getAlimentos() {
+        return alimentos;
+    }
+
+    public void setAlimentos(int[] alimentos) {
+        this.alimentos = alimentos;
     }
 }

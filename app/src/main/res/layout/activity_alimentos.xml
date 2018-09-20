@@ -50,6 +50,7 @@
                 android:layout_marginRight="10dp"
                 android:layout_weight="1"
                 android:orientation="vertical"
+                android:queryHint="Buscar..."
                 android:showAsAction="always|collapseActionView"
                 android:title="Buscar" />
         </LinearLayout>

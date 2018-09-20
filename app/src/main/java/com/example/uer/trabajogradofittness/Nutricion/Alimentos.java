@@ -236,12 +236,12 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
                 jsonObject = datos.getJSONObject(i);
 
                 listaAlimentos.add(new ListaAlimentos(jsonObject.optString("id"),
+                        "0",
                         jsonObject.optString("nombre"),
                         verificarValor(jsonObject.optString("calorias")),
                         verificarValor(jsonObject.optString("proteinas")),
                         verificarValor(jsonObject.optString("carbohidratos"))));
             }
-
 
             adaptadorAlimentos = new AdaptadorListaAlimentos(this, listaAlimentos);
             recyclerAlimentos.setLayoutManager(new GridLayoutManager(this, 1));

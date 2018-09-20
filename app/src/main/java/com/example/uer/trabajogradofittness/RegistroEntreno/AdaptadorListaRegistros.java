@@ -36,11 +36,13 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
             public void onClick(View view) {
                 String idRegistro = registros.get(holder.getAdapterPosition()).getIdRegistro();
                 String idRutina = registros.get(holder.getAdapterPosition()).getIdRutina();
+                String orientacion = registros.get(holder.getAdapterPosition()).getCategoria();
 
                 Intent registro = new Intent(context, DetallesEntreno.class);
                 registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
                 registro.putExtra("idRegistro", idRegistro);
                 registro.putExtra("idRutina", idRutina);
+                registro.putExtra("orientacion", orientacion);
                 context.startActivity(registro);
 
             }

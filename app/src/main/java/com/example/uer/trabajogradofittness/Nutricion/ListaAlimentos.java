@@ -3,13 +3,15 @@ package com.example.uer.trabajogradofittness.Nutricion;
 public class ListaAlimentos {
 
     private String id;
+    private String plan;
     private String nombre;
     private String valorCalorias;
     private String valorProteinas;
     private String valorCarbohidratos;
 
-    public ListaAlimentos(String id, String nombre, String valorCalorias, String valorProteinas, String valorCarbohidratos) {
+    public ListaAlimentos(String id, String plan, String nombre, String valorCalorias, String valorProteinas, String valorCarbohidratos) {
         this.id = id;
+        this.plan = plan;
         this.nombre = nombre;
         this.valorCalorias = valorCalorias;
         this.valorProteinas = valorProteinas;
@@ -22,6 +24,14 @@ public class ListaAlimentos {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getPlan() {
+        return plan;
+    }
+
+    public void setPlan(String plan) {
+        this.plan = plan;
     }
 
     public String getNombre() {
