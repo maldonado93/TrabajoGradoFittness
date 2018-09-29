@@ -79,7 +79,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
         tvMensaje = v.findViewById(R.id.tvMensaje);
 
-        layoutHistorial = v.findViewById(R.id.layoutHistorial);
+        layoutHistorial = v.findViewById(R.id.layoutFiltro);
         spHistorial = (Spinner)v.findViewById(R.id.spHistorialEntrenos);
 
         spHistorial.setOnItemSelectedListener(
@@ -114,7 +114,6 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
         generarHistorial();
-
     }
 
 
@@ -285,7 +284,11 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                         fech = (f[2] + "-" + f[1] + "-" + f[0]);
                         String hora = jsonObject.optString("hora");
 
-                        String tiempo = jsonObject.optString("tiempo") + " min";
+                        int tiempoEntreno = Integer.parseInt(jsonObject.optString("tiempo"));
+                        int minutos = (int)Math.ceil(tiempoEntreno / 60);
+                        int segundos = tiempoEntreno - (minutos * 60);
+
+                        String tiempo = minutos + " min "+ segundos + " seg";
 
                         listaRegistros.add(new ListaRegistros(idRegistro,
                                 idRutina,

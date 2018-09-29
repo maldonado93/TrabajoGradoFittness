@@ -25,6 +25,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class InformacionActividad extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     GlobalState gs;
@@ -66,7 +69,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
             @Override
             public void onClick(View view) {
                 verificarCampos(view, 1);
-                regresar(view);
+                regresar();
             }
         });
 
@@ -154,11 +157,37 @@ public class InformacionActividad extends AppCompatActivity implements Response.
     }
 
 
-    public void regresar(View view) {
+    public void regresar() {
         Intent intent = new Intent(this, InformacionFisica.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        regresar();
+    }
+
+    private void limpiarDatos(){
+        gs.setRegistro(0);
+        gs.setTipoIdentificacion(0);
+        gs.setIdentificacion("");
+        gs.setNombres("");
+        gs.setApellidos("");
+        gs.setGenero("");
+        gs.setFecha("");
+        gs.setEmail("");
+        gs.setEstatura(0);
+        gs.setDepartamento(0);
+        gs.setCiudad("");
+        gs.setIdCiudad(0);
+        gs.setUsuario("");
+        gs.setPassword("");
+        gs.setPeso(0);
+        gs.setObjetivo("");
+        gs.setNivelActividad("");
+        gs.setFumador("");
     }
 
     private void registrarPersona(){
@@ -184,8 +213,13 @@ public class InformacionActividad extends AppCompatActivity implements Response.
     }
 
     private void registrarPeso(){
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String fecha = sdf.format(c.getTime());
+
         consulta = "historico_peso";
-        String url = "http://"+gs.getIp()+"/persona/registrar_peso.php?idPersona="+idPersona+"&peso="+gs.getPeso();
+        String url = "http://"+gs.getIp()+"/persona/registrar_peso.php?idPersona="+idPersona+"&peso="+gs.getPeso()+"&fecha="+fecha;
 
         url = url.replace(" ", "%20");
 
@@ -195,7 +229,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
 
     private void registrarDatos(){
         consulta = "datos";
-        String url = "http://"+gs.getIp()+"/persona/registrar_datos.php?idPersona="+idPersona+"&peso="+gs.getPeso()+"&descripcion="+gs.getObjetivo()+"&nivel="+gs.getNivelActividad()+"&fuma="+gs.getFumador();
+        String url = "http://"+gs.getIp()+"/persona/registrar_datos.php?idPersona="+idPersona+"&objetivo="+gs.getObjetivo()+" peso&nivel="+gs.getNivelActividad()+"&fuma="+gs.getFumador();
 
         url = url.replace(" ", "%20");
 
@@ -232,6 +266,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
                 else{
                     if(consulta.compareTo("datos") == 0){
                         progress.hide();
+                        limpiarDatos();
                         finish();
                     }
                 }

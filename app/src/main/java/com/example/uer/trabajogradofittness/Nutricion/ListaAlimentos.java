@@ -2,36 +2,37 @@ package com.example.uer.trabajogradofittness.Nutricion;
 
 public class ListaAlimentos {
 
-    private String id;
-    private String plan;
+    private int id;
+    private String cantidad;
     private String nombre;
-    private String valorCalorias;
-    private String valorProteinas;
-    private String valorCarbohidratos;
+    private float calorias;
+    private float proteinas;
+    private float carbohidratos;
 
-    public ListaAlimentos(String id, String plan, String nombre, String valorCalorias, String valorProteinas, String valorCarbohidratos) {
+    public ListaAlimentos(int id, String cantidad, String nombre, float calorias, float proteinas, float carbohidratos) {
         this.id = id;
-        this.plan = plan;
+        this.cantidad = cantidad;
         this.nombre = nombre;
-        this.valorCalorias = valorCalorias;
-        this.valorProteinas = valorProteinas;
-        this.valorCarbohidratos = valorCarbohidratos;
+        this.calorias = calorias;
+        this.proteinas = proteinas;
+        this.carbohidratos = carbohidratos;
     }
 
-    public String getId() {
+
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
-    public String getPlan() {
-        return plan;
+    public String getCantidad() {
+        return cantidad;
     }
 
-    public void setPlan(String plan) {
-        this.plan = plan;
+    public void setCantidad(String cantidad) {
+        this.cantidad = cantidad;
     }
 
     public String getNombre() {
@@ -42,27 +43,27 @@ public class ListaAlimentos {
         this.nombre = nombre;
     }
 
-    public String getValorCalorias() {
-        return valorCalorias;
+    public float getCalorias() {
+        return calorias;
     }
 
-    public void setValorCalorias(String valorCalorias) {
-        this.valorCalorias = valorCalorias;
+    public void setCalorias(float calorias) {
+        this.calorias = calorias;
     }
 
-    public String getValorProteinas() {
-        return valorProteinas;
+    public float getProteinas() {
+        return proteinas;
     }
 
-    public void setValorProteinas(String valorProteinas) {
-        this.valorProteinas = valorProteinas;
+    public void setProteinas(float proteinas) {
+        this.proteinas = proteinas;
     }
 
-    public String getValorCarbohidratos() {
-        return valorCarbohidratos;
+    public float getCarbohidratos() {
+        return carbohidratos;
     }
 
-    public void setValorCarbohidratos(String valorCarbohidratos) {
-        this.valorCarbohidratos = valorCarbohidratos;
+    public void setCarbohidratos(float carbohidratos) {
+        this.carbohidratos = carbohidratos;
     }
 }

@@ -3,6 +3,7 @@ package com.example.uer.trabajogradofittness.Persona;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -13,6 +14,7 @@ import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -39,6 +41,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -53,10 +56,12 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
     View v;
     GlobalState gs;
+    ProgressDialog progress;
 
     ModeloPerfil modeloPerfil;
 
     ImageView ivImagen;
+    Bitmap bitmap;
 
     LinearLayout layout_datos;
     TextView tvTipoIdentificacion;
@@ -96,7 +101,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -209,6 +213,10 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando informacion...");
+        progress.show();
+
         consultarPersona();
     }
 
@@ -226,15 +234,12 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
             try {
                 final Uri imageUri = data.getData();
                 final InputStream imageStream = getActivity().getApplicationContext().getContentResolver().openInputStream(imageUri);
-                final Bitmap selectedImage = BitmapFactory.decodeStream(imageStream);
-                ivImagen.setImageBitmap(selectedImage);
+                bitmap = BitmapFactory.decodeStream(imageStream);
+                ivImagen.setImageBitmap(bitmap);
+                guardarImagen();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-
-            /*Uri path = data.getData();
-            ivImagen.setImageURI(path);*/
-            //guardarImagen();
         }
     }
 
@@ -280,14 +285,26 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     }
 
     private void guardarImagen(){
-        consulta = "guardarImagen";
+        consulta = "guardar_imagen";
+        String idPersona = String.valueOf(gs.getSesion_usuario());
 
-        String url = "http://"+gs.getIp()+"/persona/guardar_imagen.php?idPersona="+gs.getSesion_usuario()+"&imagen="+modeloPerfil.getFoto();
+        String imagen = convertirImagen(bitmap);
+
+        String url = "http://"+gs.getIp()+"/persona/guardar_imagen.php?idPersona="+idPersona+"&imagen="+imagen;
 
         url = url.replace(" ", "%20");
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
+    }
+
+    private String convertirImagen(Bitmap bitmap) {
+        ByteArrayOutputStream array = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, array);
+        byte[] imagenByte = array.toByteArray();
+        String imagen = Base64.encodeToString(imagenByte, Base64.DEFAULT);
+
+        return imagen;
     }
 
     private void cargarDepartamentos(){
@@ -407,13 +424,16 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 String[] localidad = (tvLocalidad.getText().toString()).split(", ");
                 spCiudad.setSelection(obtenerPosicionItem(spCiudad, localidad[0]));
             }
+            progress.hide();
         }
-
-
+        else{
+            Toast.makeText(getContext(), "Imagen actualizada!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     public void onErrorResponse(VolleyError error) {
+        progress.hide();
         Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }

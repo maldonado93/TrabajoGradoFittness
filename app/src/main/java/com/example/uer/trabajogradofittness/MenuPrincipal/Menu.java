@@ -19,8 +19,10 @@ import android.widget.ExpandableListView;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
 import com.example.uer.trabajogradofittness.Nutricion.PlanesNutricionales;
+import com.example.uer.trabajogradofittness.Persona.Cuenta;
 import com.example.uer.trabajogradofittness.Persona.HistoricoPesos;
 import com.example.uer.trabajogradofittness.Persona.Perfil;
+import com.example.uer.trabajogradofittness.Persona.Ranking;
 import com.example.uer.trabajogradofittness.R;
 import com.example.uer.trabajogradofittness.RegistroEntreno.FrecuenciaRutinas;
 import com.example.uer.trabajogradofittness.RegistroEntreno.Inicio;
@@ -170,7 +172,7 @@ public class Menu extends AppCompatActivity {
         List<String> listaMenu = Arrays.asList("Inicio", "Mi información", "Datos de entrenos", "Rutina", "Nutrición");
 
         List<String> itemsInicio = Arrays.asList("Iniciar entreno", "Calcular frecuencia en reposo");
-        List<String> itemsInformacion = Arrays.asList("Perfil", "Histórico de peso", "Mi Cuenta");
+        List<String> itemsInformacion = Arrays.asList("Perfil", "Ranking", "Histórico de peso", "Mi cuenta");
         List<String> itemsDatos = Arrays.asList("Registro de entrenos", "Promedio de frecuencia por rutina");
         List<String> itemsRutina = Arrays.asList("Mis rutinas", "Ejercicios");
         List<String> itemsNutricion = Arrays.asList("Planes nutricionales", "Alimentos");
@@ -210,9 +212,13 @@ public class Menu extends AppCompatActivity {
                 break;
             case "Promedio de frecuencia por rutina": fragment = new FrecuenciaRutinas();
                 break;
+            case "Perfil": fragment = new Perfil();
+                break;
             case "Histórico de peso": fragment = new HistoricoPesos();
                 break;
-            case "Perfil": fragment = new Perfil();
+            case "Ranking": fragment = new Ranking();
+                break;
+            case "Mi cuenta": fragment = new Cuenta();
                 break;
             case "Mis rutinas": fragment = new Rutinas();
                 break;
@@ -248,6 +254,38 @@ public class Menu extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if(fragment instanceof Inicio){
+                dialogSalir();
+            }
+            else{
+                gs.setFragmentActual("Inicio");
+                verificarFragment();
+                reemplazarFragment();
+            }
+        }
+    }
+
+    private void limpiarDatos(){
+        gs.setSesion_usuario(0);
+        gs.setUsuario("");
+        gs.setPassword("");
+        gs.setGenero("");
+        gs.setPeso(0);
+        gs.setNivelActividad("");
+        gs.setFumador("");
+        gs.setEdad(0);
+        gs.setAlimentos(null);
+        gs.setCantidad(null);
+        gs.setAccion(null);
+        gs.setCaloriasPlan(null);
+    }
+
     private void dialogSalir(){
         AlertDialog.Builder buider = new AlertDialog.Builder(Menu.this);
         View dView = getLayoutInflater().inflate(R.layout.dialog_salir, null);
@@ -257,6 +295,7 @@ public class Menu extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
+                limpiarDatos();
                 finish();
             }
         });

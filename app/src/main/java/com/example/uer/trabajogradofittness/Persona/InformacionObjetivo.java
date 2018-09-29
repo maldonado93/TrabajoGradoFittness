@@ -40,7 +40,7 @@ public class InformacionObjetivo extends AppCompatActivity {
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                regresar(view);
+                regresar();
             }
         });
 
@@ -60,7 +60,7 @@ public class InformacionObjetivo extends AppCompatActivity {
                 }
                 if(objetivo.compareTo("") != 0){
                     gs.setObjetivo(objetivo);
-                    adelante(view);
+                    adelante();
                 }
                 else{
                     Snackbar.make(view, "Seleccione su objetivo!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
@@ -80,7 +80,7 @@ public class InformacionObjetivo extends AppCompatActivity {
             rbGanar.setChecked(true);
         }
     }
-    public void regresar(View view){
+    public void regresar(){
         Intent intent = new Intent(this, InformacionPersonal.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
@@ -88,11 +88,16 @@ public class InformacionObjetivo extends AppCompatActivity {
     }
 
 
-    public void adelante(View view) {
+    public void adelante() {
 
         Intent intent = new Intent(this, InformacionFisica.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        regresar();
     }
 }

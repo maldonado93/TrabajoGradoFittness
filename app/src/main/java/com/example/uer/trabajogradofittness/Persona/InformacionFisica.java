@@ -35,7 +35,7 @@ public class InformacionFisica extends AppCompatActivity {
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                regresar(view);
+                regresar();
             }
         });
 
@@ -49,7 +49,7 @@ public class InformacionFisica extends AppCompatActivity {
                     gs.setEstatura(Integer.parseInt(estatura));
                     gs.setPeso(Float.parseFloat(peso));
 
-                    adelante(view);
+                    adelante();
                 }
                 else{
                     Snackbar.make(view, "Complete los campos, por favor!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
@@ -64,17 +64,22 @@ public class InformacionFisica extends AppCompatActivity {
         }
     }
 
-    public void regresar(View view) {
+    public void regresar() {
         Intent intent = new Intent(this, InformacionObjetivo.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         finish();
     }
 
-    public void adelante(View view) {
+    public void adelante() {
         Intent intent = new Intent(this, InformacionActividad.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         this.finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        regresar();
     }
 }

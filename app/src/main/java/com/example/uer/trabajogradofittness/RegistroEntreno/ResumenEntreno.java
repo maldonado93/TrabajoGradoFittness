@@ -56,6 +56,7 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     View v;
     String consulta;
     int frecuenciaReposo;
+    int promedioFrecuencias;
     String orientacionRutina;
 
     ProgressDialog progress;
@@ -67,8 +68,8 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     TextView tvActividad;
     TextView tvDescanso;
 
-    float cantSuperior;
-    float cantInferior;
+    int cantSuperior;
+    int cantInferior;
     ArrayList<Integer> registroPulsaciones;
 
     RequestQueue request;
@@ -79,6 +80,8 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
                              Bundle savedInstanceState) {
 
         v = inflater.inflate(R.layout.fragment_resumen_entreno, container, false);
+
+
 
         tvTiempo = v.findViewById(R.id.tvTiempo);
         tvActividad = v.findViewById(R.id.tvActividad);
@@ -92,11 +95,15 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
         gs = (GlobalState) getActivity().getApplication();
 
+        progress = new ProgressDialog(getContext());
+        progress.setMessage("Cargando datos...");
+        progress.show();
+
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
         registroPulsaciones = new ArrayList<>();
 
-        consultarFrecuenciaReposo();
+        consultarFrecuencias();
     }
 
     private void initGraficaPulsaciones(){
@@ -114,13 +121,14 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         cantSuperior = 0;
         cantInferior = 0;
 
-
         for(int i = 0; i < registroPulsaciones.size(); i++){
             val = registroPulsaciones.get(i);
             valoresy.add(new Entry(i,val));
             prom += val;
         }
         prom = (int)(prom/registroPulsaciones.size());
+
+        Toast.makeText(getContext(), "Frecuencia BD: "+ promedioFrecuencias+" "+prom, Toast.LENGTH_LONG).show();
 
         for(int j = 0; j< registroPulsaciones.size(); j++){
             if(registroPulsaciones.get(j) > prom){
@@ -131,16 +139,30 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
             }
         }
 
-        int entreno = (int)Math.ceil((cantSuperior+cantInferior)/60);
-        int actividad = (int)Math.ceil(cantSuperior/60);
-        int descanso = (int)Math.ceil(cantInferior/60);
+        int tiempoEntreno = registroPulsaciones.size();
+        int minutos = (int)Math.ceil(tiempoEntreno / 60);
+        int segundos = tiempoEntreno - (minutos * 60);
 
-        tvTiempo.setText(entreno + " min");
-        tvActividad.setText(actividad + " min");
-        tvDescanso.setText(descanso + " min");
+        String entreno = minutos + " min "+ segundos + " seg";
 
-        cantSuperior = (cantSuperior/registroPulsaciones.size()*100);
-        cantInferior = (cantInferior/registroPulsaciones.size()*100);
+        int tiempoActividad = cantSuperior;
+        minutos = (int)Math.ceil(tiempoActividad / 60);
+        segundos = tiempoActividad - (minutos * 60);
+
+        String actividad = minutos + " min "+ segundos + " seg";
+
+        int tiempoDescanso = cantInferior;
+        minutos = (int)Math.ceil(tiempoDescanso / 60);
+        segundos = tiempoDescanso - (minutos * 60);
+
+        String descanso = minutos + " min "+ segundos + " seg";
+
+        tvTiempo.setText(entreno);
+        tvActividad.setText(actividad);
+        tvDescanso.setText(descanso);
+
+        cantSuperior = (int)((float)cantSuperior/registroPulsaciones.size()*100);
+        cantInferior = (int)((float)cantInferior/registroPulsaciones.size()*100);
 
         LineDataSet datos = new LineDataSet(valoresy, "Pulsaciones/minuto");
         datos.setFillAlpha(110);
@@ -309,12 +331,14 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
 
+        progress.hide();
+
     }
 
-    private void consultarFrecuenciaReposo(){
-        consulta = "frecuencia";
+    private void consultarFrecuencias(){
+        consulta = "frecuencias";
 
-        String url = "http://"+gs.getIp()+"/registro_entrenos/consultar_frecuencia_reposo.php?idPersona="+gs.getSesion_usuario();
+        String url = "http://"+gs.getIp()+"/registro_entrenos/consultar_frecuencias.php?idRegistro="+gs.getId_registro_entreno();
 
         url = url.replace(" ", "%20");
 
@@ -343,8 +367,9 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
             for(int i=0; i<datos.length();i++) {
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
-                if(consulta.compareTo("frecuencia") == 0) {
+                if(consulta.compareTo("frecuencias") == 0) {
                     frecuenciaReposo = jsonObject.optInt("frecuencia_reposo");
+                    promedioFrecuencias = jsonObject.optInt("promedio_frecuencia");
                 }
                 if(consulta.compareTo("datos_entreno") == 0) {
                     registroPulsaciones.add(jsonObject.optInt("bpm"));

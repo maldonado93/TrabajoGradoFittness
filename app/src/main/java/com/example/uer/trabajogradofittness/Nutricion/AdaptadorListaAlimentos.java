@@ -18,10 +18,12 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
 
     Context context;
     ArrayList<ListaAlimentos> alimentos;
+    int cent;
 
-    public AdaptadorListaAlimentos(Context context, ArrayList<ListaAlimentos> alimentos) {
+    public AdaptadorListaAlimentos(Context context, ArrayList<ListaAlimentos> alimentos, int cent) {
         this.context = context;
         this.alimentos = alimentos;
+        this.cent = cent;
     }
 
     public void setFilter(ArrayList<ListaAlimentos> lista){
@@ -37,16 +39,19 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
         v = LayoutInflater.from(context).inflate(R.layout.item_alimento,viewGroup,false);
         final MyViewHolder holder = new MyViewHolder(v);
 
+        if(cent == 2){
+            holder.tvCantidad.setVisibility(View.VISIBLE);
+        }
+
         holder.item_alimento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String idAlimento = alimentos.get(holder.getAdapterPosition()).getId();
+                int idAlimento = alimentos.get(holder.getAdapterPosition()).getId();
 
                 Intent registro = new Intent(context, InformacionAlimento.class);
                 registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);
                 registro.putExtra("idAlimento", idAlimento);
                 context.startActivity(registro);
-
             }
         });
 
@@ -56,11 +61,12 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
-        myViewHolder.tvId.setText(alimentos.get(i).getId());
+        myViewHolder.tvId.setText(String.valueOf(alimentos.get(i).getId()));
+        myViewHolder.tvCantidad.setText(alimentos.get(i).getCantidad());
         myViewHolder.tvNombre.setText(alimentos.get(i).getNombre());
-        myViewHolder.tvCalorias.setText(alimentos.get(i).getValorCalorias());
-        myViewHolder.tvProteinas.setText(alimentos.get(i).getValorProteinas());
-        myViewHolder.tvCarbohidratos.setText(alimentos.get(i).getValorCarbohidratos());
+        myViewHolder.tvCalorias.setText(String.valueOf(alimentos.get(i).getCalorias()));
+        myViewHolder.tvProteinas.setText(String.valueOf(alimentos.get(i).getProteinas()));
+        myViewHolder.tvCarbohidratos.setText(String.valueOf(alimentos.get(i).getCarbohidratos()));
     }
 
     @Override
@@ -73,6 +79,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
 
         private ConstraintLayout item_alimento;
         private TextView tvId;
+        private TextView tvCantidad;
         private TextView tvNombre;
         private TextView tvCalorias;
         private TextView tvProteinas;
@@ -83,6 +90,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
 
             item_alimento = (ConstraintLayout) itemView.findViewById(R.id.item_alimento);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
+            tvCantidad = (TextView)itemView.findViewById(R.id.tvCantidad);
             tvNombre = (TextView)itemView.findViewById(R.id.tvNombres);
             tvCalorias = (TextView)itemView.findViewById(R.id.tvValCalorias);
             tvProteinas = (TextView)itemView.findViewById(R.id.tvValProteinas);

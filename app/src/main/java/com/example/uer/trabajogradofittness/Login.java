@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -65,7 +64,6 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         progress = new ProgressDialog(Login.this);
         progress.setMessage("Cargando...");
 
-
         etUsuario = (EditText)findViewById(R.id.etUsuario);
         etUsuario.setText("");
 
@@ -116,8 +114,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             request.add(jsonObjectRequest);
         }
         else{
-            Snackbar.make(view, "Complete los campos, por favor!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
-        }
+            Toast.makeText(this, "Complete los campos, por favor!", Toast.LENGTH_SHORT).show();}
     }
 
     public void obtenerDatosUsuario(){
@@ -197,8 +194,6 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         },3000);
     }
 
-
-
     @Override
     public void onResponse(JSONObject response) {
 
@@ -216,6 +211,8 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                     gs.setTipo_usuario(jsonObject.optInt("id_tipo_usuario"));
                     if(gs.getSesion_usuario() != 0){
                         if(jsonObject.optString("password").compareTo(password) == 0 ){
+                            gs.setUsuario(usuario);
+                            gs.setPassword(password);
                             usuarioValido = true;
                         }
                         else{
@@ -248,7 +245,10 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             }
             else{
                 progress.hide();
+                etUsuario.setText("");
+                etPassword.setText("");
                 Intent ingreso = null;
+
                 if(gs.getTipo_usuario() == 1){
                     ingreso = new Intent(Login.this, Menu.class);
                 }
@@ -268,8 +268,4 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         Toast.makeText(getApplicationContext(), "Error de login "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
-
-
-
-
 }

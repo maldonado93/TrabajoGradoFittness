@@ -78,6 +78,8 @@
             android:name=".Persona.InformacionActividad"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MenuPrincipal.Menu"></activity>
+        
+
     </application>
 
 </manifest>

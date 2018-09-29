@@ -210,16 +210,16 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
         request.add(jsonObjectRequest);
     }
 
-    private String verificarValor(String v){
-        String val = v;
+    private float verificarValor(String v){
+        float val = Float.parseFloat(v);
         double valor = Double.valueOf(v);
 
         if(valor == -1.00){
-            val = "N";
+            //val = "N";
         }
         else{
             if(valor == -2.00){
-                val = "TR";
+                //val = "TR";
             }
         }
         return val;
@@ -235,15 +235,15 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
 
-                listaAlimentos.add(new ListaAlimentos(jsonObject.optString("id"),
-                        "0",
+                listaAlimentos.add(new ListaAlimentos(jsonObject.optInt("id"),
+                        "Cant: "+ jsonObject.optInt("cantidad"),
                         jsonObject.optString("nombre"),
                         verificarValor(jsonObject.optString("calorias")),
                         verificarValor(jsonObject.optString("proteinas")),
                         verificarValor(jsonObject.optString("carbohidratos"))));
             }
 
-            adaptadorAlimentos = new AdaptadorListaAlimentos(this, listaAlimentos);
+            adaptadorAlimentos = new AdaptadorListaAlimentos(this, listaAlimentos, 1);
             recyclerAlimentos.setLayoutManager(new GridLayoutManager(this, 1));
 
             recyclerAlimentos.setAdapter(adaptadorAlimentos);

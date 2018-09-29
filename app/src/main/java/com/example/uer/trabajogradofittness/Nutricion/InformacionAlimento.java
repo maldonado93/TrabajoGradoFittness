@@ -1,15 +1,8 @@
 package com.example.uer.trabajogradofittness.Nutricion;
 
-import android.app.Activity;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -31,7 +24,7 @@ import org.json.JSONObject;
 public class InformacionAlimento extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener{
 
     GlobalState gs;
-    private String idAlimento;
+    private int idAlimento;
 
     ImageButton btnRegresar;
 
@@ -149,7 +142,7 @@ public class InformacionAlimento extends AppCompatActivity implements Response.L
 
 
         Bundle datos = this.getIntent().getExtras();
-        idAlimento = datos.getString("idAlimento");
+        idAlimento = datos.getInt("idAlimento");
 
         consultarAlimento(idAlimento);
 
@@ -157,7 +150,7 @@ public class InformacionAlimento extends AppCompatActivity implements Response.L
 
 
 
-    private void consultarAlimento(String id){
+    private void consultarAlimento(int id){
 
         String url = "http://"+gs.getIp()+"/nutricion/consultar_alimento.php?id="+id;
 

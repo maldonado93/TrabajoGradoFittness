@@ -92,11 +92,13 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     LineChart graficaPulsaciones;
 
-    RecyclerView recyclerEjercicios;
-
     private String consulta;
     int idRutina;
+    String orientacion;
     int idRegistroEntreno;
+
+    int tiempoEstimadoMin;
+    int tiempoEstimadoMax;
     int[] tiempo;
     int tiempoTotal;
     boolean estadoEntreno;
@@ -105,6 +107,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     ArrayList<String> registroPulsaciones;
     ArrayList<String> registroFrecuenciaReposo;
     int indPulsaciones;
+    float frecuenciaReposo;
     int contReposo;
 
     private int MAX_SIZE = 60; //graph max size
@@ -128,7 +131,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         v = inflater.inflate(R.layout.fragment_inicio_entreno, container, false);
 
-        estadoEntreno = false;
         registroPulsaciones = new ArrayList<>();
         registroFrecuenciaReposo = new ArrayList<>();
 
@@ -158,7 +160,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         btnRutina.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listarEjercicios();
+                dialogRutina();
             }
         });
 
@@ -181,11 +183,10 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                                     if(idRutina != 0){
                                         d = getResources().getDrawable(R.drawable.ic_stop);
                                         btnIniciar.setBackgroundDrawable(d);
-
+                                        btnEscanear.setVisibility(View.GONE);
                                         spDispositivos.setEnabled(false);
                                         registrarEntreno();
-                                        cronometro = new Cronometro();
-                                        cronometro.execute();
+
                                     }
                                     else{
                                         Snackbar.make(view, "No tienes alguna rutina para realizar el entreno!", Snackbar.LENGTH_LONG)
@@ -234,18 +235,64 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
+        estadoEntreno = false;
+        h7 = false;
+        normal = false;
+
         consultarRutina();
     }
 
-    private void obtenerFrecuenciaReposo(){
-        float promedioFrecuencia = 0;
-        for(int i = 0; i<registroFrecuenciaReposo.size();i++){
-            promedioFrecuencia += Float.parseFloat(registroFrecuenciaReposo.get(i));
-        }
-        promedioFrecuencia = promedioFrecuencia / registroFrecuenciaReposo.size();
-        generarLimitesFrecuencias((int)promedioFrecuencia);
+    private void calcularTiemposEspera(){
+        tiempoEstimadoMax = 0;
+        tiempoEstimadoMin = 0;
 
-        registrarFrecuenciaReposo(promedioFrecuencia);
+        String nivelActividad = gs.getNivelActividad();
+        int cantSeries = 0;
+
+        for(int i = 0; i < listaEjercicios.size(); i++)
+        {
+            String[] series = listaEjercicios.get(i).getSeries().split(" * ");
+            cantSeries = Integer.parseInt(series[0]);
+            if(orientacion.compareTo("Metabólica") == 0){
+                tiempoEstimadoMin += 90 * cantSeries;
+                tiempoEstimadoMax += 120 * cantSeries;
+            }
+            else{
+                if((nivelActividad.compareTo("Novato") == 0) || (nivelActividad.compareTo("Intermedio") == 0)){
+
+                    if(orientacion.compareTo("Estructural") == 0){
+                        tiempoEstimadoMin += 120 * cantSeries;
+                        tiempoEstimadoMax += 180 * cantSeries;
+
+                    }
+                    if(orientacion.compareTo("Neural") == 0){
+                        tiempoEstimadoMin += 180 * cantSeries;
+                        tiempoEstimadoMax += 240 * cantSeries;
+                    }
+                }
+                else{
+                    if(orientacion.compareTo("Estructural") == 0){
+                        tiempoEstimadoMin += 120 * cantSeries;
+                        tiempoEstimadoMax += 240 * cantSeries;
+                    }
+                    if(orientacion.compareTo("Neural") == 0){
+                        tiempoEstimadoMin += 240 * cantSeries;
+                        tiempoEstimadoMax += 360 * cantSeries;
+                    }
+                }
+            }
+        }
+        Toast.makeText(getContext(), "Min: "+tiempoEstimadoMin+" Max: "+tiempoEstimadoMax, Toast.LENGTH_LONG).show();
+    }
+
+    private void obtenerFrecuenciaReposo(){
+        frecuenciaReposo = 0;
+        for(int i = 0; i<registroFrecuenciaReposo.size();i++){
+            frecuenciaReposo += Float.parseFloat(registroFrecuenciaReposo.get(i));
+        }
+        frecuenciaReposo = frecuenciaReposo / registroFrecuenciaReposo.size();
+        //generarLimitesFrecuencias((int)promedioFrecuencia);
+        calcularFrecEsfuerzo((int)frecuenciaReposo);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -349,6 +396,98 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         l.setTextColor(Color.DKGRAY);
     }
 
+    private void calcularFrecEsfuerzo(int frecuenciaReposo){
+        int FCmax = 0;
+        int FCrep = frecuenciaReposo;
+        String nivelActividad = gs.getNivelActividad();
+        int edad = gs.getEdad();
+        float peso = gs.getPeso();
+        int CF;
+
+        int FCRMin;
+        int FCRMax;
+
+        double FCEsfMin = 0;
+        double FCEsfMax = 0;
+
+        if(gs.getFumador().compareTo("Si") == 0){
+            CF = 1;
+        }
+        else{
+            CF = 0;
+        }
+        String genero = gs.getGenero();
+
+        if(genero.compareTo("Femenino") == 0){
+            FCmax= (int)Math.round(204.8 - (0.718 * edad) + (0.162 * FCrep) - (0.105 * peso) - (6.2 * CF));
+        }
+        else{
+            FCmax= (int)Math.round(203.9 - (0.812 * edad) + (0.276* FCrep) - (0.084 * peso) - (4.5*CF));
+        }
+
+        if((nivelActividad.compareTo("Novato") == 0) || (nivelActividad.compareTo("Intermedio") == 0)){
+            if(orientacion.compareTo("Metabólica") == 0){
+                FCEsfMin = 0.5;
+                FCEsfMax = 0.6;
+            }
+            if(orientacion.compareTo("Estructural") == 0){
+                FCEsfMin = 0.6;
+                FCEsfMax = 0.7;
+            }
+            if(orientacion.compareTo("Neural") == 0){
+                FCEsfMin = 0.7;
+                FCEsfMax = 0.8;
+            }
+        }
+        else{
+            if(orientacion.compareTo("Metabólica") == 0){
+                FCEsfMin = 0.5;
+                FCEsfMax = 0.6;
+            }
+            if(orientacion.compareTo("Estructural") == 0){
+                FCEsfMin = 0.7;
+                FCEsfMax = 0.75;
+            }
+            if(orientacion.compareTo("Neural") == 0){
+                FCEsfMin = 0.8;
+                FCEsfMax = 0.9;
+            }
+        }
+
+        FCRMin = (int)((FCmax - FCrep) * FCEsfMin + FCrep);
+        FCRMax = (int)((FCmax - FCrep) * FCEsfMax + FCrep);
+
+
+        LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
+        frecuenciaMaxima.setLineColor(Color.RED);
+        frecuenciaMaxima.setLineWidth(1.5f);
+        frecuenciaMaxima.enableDashedLine(10f, 1.5f, 0);
+        frecuenciaMaxima.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaMaxima.setTextSize(8f);
+
+        LimitLine frecuenciaReservaMin = new LimitLine(FCRMin,"Frecuencia reserva minima: "+FCRMin);
+        frecuenciaReservaMin.setLineColor(Color.RED);
+        frecuenciaReservaMin.setLineWidth(1.5f);
+        frecuenciaReservaMin.enableDashedLine(10f, 1.5f, 0);
+        frecuenciaReservaMin.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaReservaMin.setTextSize(8f);
+
+        LimitLine frecuenciaReservaMax = new LimitLine(FCRMax,"Frecuencia reserva máxima: "+FCRMax);
+        frecuenciaReservaMax.setLineColor(Color.RED);
+        frecuenciaReservaMax.setLineWidth(1.5f);
+        frecuenciaReservaMax.enableDashedLine(10f, 1.5f, 0);
+        frecuenciaReservaMax.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
+        frecuenciaReservaMax.setTextSize(8f);
+
+        YAxis yAxis = graficaPulsaciones.getAxisLeft();
+        yAxis.removeAllLimitLines();
+        yAxis.addLimitLine(frecuenciaMaxima);
+        yAxis.addLimitLine(frecuenciaReservaMin);
+        yAxis.addLimitLine(frecuenciaReservaMax);
+        yAxis.enableGridDashedLine(10f,10f,0);
+        yAxis.setDrawLimitLinesBehindData(true);
+    }
+
     private void generarLimitesFrecuencias(int frecuenciaReposo){
 
         int FCmax = 0;
@@ -376,8 +515,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             FCmax= (int)Math.round(203.9 - (0.812 * edad) + (0.276* FCrep) - (0.084 * peso) - (4.5*CF));
         }
         Toast.makeText(getContext(), "FCMx: "+FCmax, Toast.LENGTH_SHORT).show();
-
-
 
         LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
         frecuenciaMaxima.setLineColor(Color.RED);
@@ -421,6 +558,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             int dato = Integer.parseInt(bpm);
 
             if(estadoEntreno){
+                registroPulsaciones.add(bpm);
                 registrarDatosEntreno(dato);
             }
 
@@ -566,6 +704,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             //Discover bluetooth devices
             final List<String> list = new ArrayList<>();
             list.add("Seleccione");
+            pairedDevices.clear();
             pairedDevices.addAll(mBluetoothAdapter.getBondedDevices());
             // If there are paired devices
             if (pairedDevices.size() > 0) {
@@ -609,18 +748,15 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             tvDispositivos.setVisibility(View.VISIBLE);
             spDispositivos.setVisibility(View.VISIBLE);
 
-            if(list.size() != 0){
-                btnEscanear.setVisibility(View.GONE);
-            }
-            else{
+            if(list.size() == 0) {
                 btnEscanear.setVisibility(View.VISIBLE);
                 graficaPulsaciones.setVisibility(View.GONE);
-
             }
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(),
                     android.R.layout.simple_spinner_item, list);
             dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spDispositivos.setAdapter(null);
             spDispositivos.setOnItemSelectedListener(this);
             spDispositivos.setAdapter(dataAdapter);
 
@@ -633,7 +769,36 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             AlertDialog.Builder buider = new AlertDialog.Builder(getContext());
             View dView = getLayoutInflater().inflate(R.layout.dialog_ejercicios_rutina, null);
 
-            recyclerEjercicios = dView.findViewById(R.id.rvEjercicios);
+            RecyclerView recyclerEjercicios = dView.findViewById(R.id.rvEjercicios);
+
+            recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+            recyclerEjercicios.setAdapter(adaptadorEjercicios);
+
+            String descanso = "";
+
+            TextView tvDescanso = dView.findViewById(R.id.tvDescanso);
+            if(orientacion.compareTo("Metabólica") == 0){
+                descanso = "- De 30 a 60 segundos";
+            }
+            else {
+                if (gs.getNivelActividad().compareTo("Novato") == 0 || gs.getNivelActividad().compareTo("Intermedio") == 0) {
+                    if (orientacion.compareTo("Estructural") == 0) {
+                        descanso = "- 1 a 2 minutos";
+                    }
+                    else {
+                        descanso = "- 2 a 3 minutos";
+                    }
+                }
+                else{
+                    if (orientacion.compareTo("Estructural") == 0) {
+                        descanso = "- 1 a 3 minutos";
+                    }
+                    else {
+                        descanso = "- 3 a 5 minutos";
+                    }
+                }
+            }
+            tvDescanso.setText(descanso);
 
             buider.setView(dView);
             AlertDialog dialog = buider.create();
@@ -670,7 +835,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String[] fecha = sdf.format(c.getTime()).split(" ");
 
-        String url = "http://"+gs.getIp()+"/registro_entrenos/registrar_entreno.php?idRutina="+idRutina+"&idPersona="+gs.getSesion_usuario()+"&hora="+fecha[1]+"&tiempo="+tiempoTotal+"&fecha="+fecha[0];
+        String url = "http://"+gs.getIp()+"/registro_entrenos/registrar_entreno.php?idRutina="+idRutina+"&idPersona="+gs.getSesion_usuario()+"&hora="+fecha[1]+"&tiempo="+tiempoTotal+"&frecuencia="+frecuenciaReposo+"&fecha="+fecha[0];
 
         url = url.replace(" ", "%20");
 
@@ -689,10 +854,17 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     }
 
-    private void actualizarTiempoEntreno() {
+    private void actualizarEntreno() {
         consulta = "registro_actualizado";
-        tiempoTotal = (int)(Math.ceil(tiempoTotal/60));
-        String url = "http://" + gs.getIp() + "/registro_entrenos/actualizar_tiempo.php?idEntreno=" + idRegistroEntreno + "&tiempo=" + tiempoTotal;
+        int promedio = 0;
+        for(int i = 0 ;i< registroPulsaciones.size();i++){
+            promedio += Integer.parseInt(registroPulsaciones.get(i));
+        }
+
+        promedio = (int) promedio / registroPulsaciones.size();
+
+        tiempoTotal = tiempoTotal;
+        String url = "http://" + gs.getIp() + "/registro_entrenos/actualizar_entreno.php?idEntreno=" + idRegistroEntreno + "&tiempo=" + tiempoTotal+"&promedio="+promedio;
 
         url = url.replace(" ", "%20");
 
@@ -700,16 +872,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         request.add(jsonObjectRequest);
  }
 
-    private void registrarFrecuenciaReposo(float frecuencia){
-
-        consulta = "condicion_fisica";
-        String url = "http://"+gs.getIp()+"/persona/actualizar_frecuencia_reposo.php?idPersona="+gs.getSesion_usuario()+"&frecuencia="+frecuencia;
-
-        url = url.replace(" ", "%20");
-
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
-        request.add(jsonObjectRequest);
-    }
 
     private void listarEjercicios(){
         consulta = "ejercicio";
@@ -740,7 +902,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 idRutina = jsonObject.optInt("id");
 
                 if(idRutina != 0){
-                    btnRutina.setText(jsonObject.optString("nombre")+ "- "+ jsonObject.optString("categoria"));
+                    orientacion = jsonObject.optString("orientacion");
+                    btnRutina.setText(jsonObject.optString("nombre")+ "- "+ jsonObject.optString("orientacion"));
                     tvEntreno.setVisibility(View.VISIBLE);
                     btnRutina.setVisibility(View.VISIBLE);
                     tvResultado.setVisibility(View.GONE);
@@ -785,19 +948,28 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 }
 
                 adaptadorEjercicios = new AdaptadorListaEjercicioRutina(getContext(), listaEjercicios);
-                dialogRutina();
-
-                recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-                recyclerEjercicios.setAdapter(adaptadorEjercicios);
             }
 
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
+        if(consulta.compareTo("rutina") == 0 && idRutina != 0)
+        {
+            listarEjercicios();
+        }
+        else{
+            if(consulta.compareTo("ejercicio") == 0 && idRutina != 0)
+            {
+                calcularTiemposEspera();
+            }
+        }
+
         if(consulta == "registro_entreno" && idRegistroEntreno != 0){
             indPulsaciones = 0;
             estadoEntreno = true;
+            cronometro = new Cronometro();
+            cronometro.execute();
         }
     }
 
@@ -877,7 +1049,9 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         @Override
         protected void onPostExecute(Boolean resultado) {
             super.onPostExecute(resultado);
-            actualizarTiempoEntreno();
+            if(resultado){
+                actualizarEntreno();
+            }
         }
 
         @Override

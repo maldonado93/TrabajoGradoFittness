@@ -38,6 +38,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -243,9 +244,12 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
     private void registrarPeso(String peso){
         consulta = "historico_peso";
         indConsulta = 2;
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String fecha = sdf.format(c.getTime());
         progress.show();
 
-        String url = "http://"+gs.getIp()+"/persona/registrar_peso.php?idPersona="+gs.getSesion_usuario()+"&peso="+peso;
+        String url = "http://"+gs.getIp()+"/persona/registrar_peso.php?idPersona="+gs.getSesion_usuario()+"&peso="+peso+"&fecha="+fecha;
 
         url = url.replace(" ", "%20");
 

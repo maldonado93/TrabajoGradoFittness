@@ -19,7 +19,6 @@ import android.view.MenuItem;
 import android.widget.Button;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
 import com.example.uer.trabajogradofittness.Persona.Perfil;
-import com.example.uer.trabajogradofittness.Persona.Personas;
 import com.example.uer.trabajogradofittness.RegistroEntreno.Inicio;
 import com.example.uer.trabajogradofittness.Rutina.CategoriasEjercicio;
 
@@ -121,9 +120,7 @@ public class PrincipalInstructor extends AppCompatActivity
         if (id == R.id.nav_inicio) {
             fragment = new Inicio();
             reemplazarFragment();
-        } else if (id == R.id.nav_alumnos) {
-            fragment = new Personas();
-            reemplazarFragment();
+
         } else if (id == R.id.nav_informacion) {
             fragment = new Perfil();
             reemplazarFragment();

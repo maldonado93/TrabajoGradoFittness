@@ -79,7 +79,7 @@ public class FrecuenciaRutinas extends Fragment implements Response.Listener<JSO
 
         v = inflater.inflate(R.layout.fragment_frecuencia_rutinas, container, false);
 
-        layoutHistorial = v.findViewById(R.id.layoutHistorial);
+        layoutHistorial = v.findViewById(R.id.layoutFiltro);
         spHistorial = v.findViewById(R.id.spHistorialEntrenos);
 
         spHistorial.setOnItemSelectedListener(

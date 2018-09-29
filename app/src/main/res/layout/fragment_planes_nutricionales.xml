@@ -26,12 +26,34 @@
             android:padding="5dp"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvCalorias1"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Calorias:"
-                android:visibility="gone" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView41"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Calorias:" />
+
+                <TextView
+                    android:id="@+id/tvCalorias1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:visibility="visible" />
+
+                <TextView
+                    android:id="@+id/tvLimiteCal1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider22"
@@ -67,7 +89,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_expand"
-            android:text="Media mañana" />
+            android:text="Media mañana"
+            android:textColor="@color/colorAccent" />
 
         <LinearLayout
             android:id="@+id/linear_layout2"
@@ -77,12 +100,34 @@
             android:padding="10dp"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvCalorias2"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Calorias:"
-                android:visibility="visible" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView42"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Calorias:" />
+
+                <TextView
+                    android:id="@+id/tvCalorias2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvLimiteCal2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider21"
@@ -107,8 +152,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:drawableRight="@drawable/ic_add"
-                android:text="Agregar alimentos       "
+                android:text="Editar plan"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:visibility="visible" />
         </LinearLayout>
@@ -118,7 +163,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_expand"
-            android:text="Almuerzo" />
+            android:text="Almuerzo"
+            android:textColor="@color/colorPrimary" />
 
         <LinearLayout
             android:id="@+id/linear_layout3"
@@ -128,12 +174,34 @@
             android:padding="10dp"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvCalorias3"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Calorias:"
-                android:visibility="gone" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView43"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Calorias:" />
+
+                <TextView
+                    android:id="@+id/tvCalorias3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvLimiteCal3"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider23"
@@ -169,7 +237,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_expand"
-            android:text="Media tarde" />
+            android:text="Media tarde"
+            android:textColor="@color/colorPrimaryDark" />
 
         <LinearLayout
             android:id="@+id/linear_layout4"
@@ -179,12 +248,34 @@
             android:padding="10dp"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvCalorias4"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Calorias:"
-                android:visibility="gone" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView44"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Calorias:" />
+
+                <TextView
+                    android:id="@+id/tvCalorias4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvLimiteCal4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider25"
@@ -230,12 +321,35 @@
             android:padding="10dp"
             android:visibility="gone">
 
-            <TextView
-                android:id="@+id/tvCalorias5"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Calorias:"
-                android:visibility="gone" />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/textView40"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Calorias:" />
+
+                <TextView
+                    android:id="@+id/tvCalorias5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:text="0"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tvLimiteCal5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_weight="1"
+                    android:text="- 0" />
+            </LinearLayout>
 
             <View
                 android:id="@+id/divider24"

@@ -10,6 +10,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,6 +43,10 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
 
     private AdaptadorListaRutinas adaptadorRutinas;
     private List<ListaRutinas> listaRutinas;
+    private List<String> filtro =  new ArrayList<>();
+
+    LinearLayout layoutFiltro;
+    Spinner spFiltro;
 
     TextView tvMensaje;
     RecyclerView recyclerRutinas;
@@ -52,6 +60,31 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_rutinas, container, false);
+
+        layoutFiltro = v.findViewById(R.id.layoutFiltro);
+
+
+        spFiltro = v.findViewById(R.id.spFiltro);
+
+        spFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                String filtro = spFiltro.getSelectedItem().toString();
+                listarEjercicios(filtro);
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+                filtro.add("Programadas");
+        filtro.add("Realizadas");
+        filtro.add("Todas");
+
+        ArrayAdapter<String> adapter = new ArrayAdapter(getActivity().getApplicationContext(), android.R.layout.simple_spinner_item, filtro);
+        spFiltro.setAdapter(adapter);
+
 
 
         tvMensaje = v.findViewById(R.id.tvMensaje);
@@ -67,14 +100,13 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-
-        listarEjercicios();
+        listarEjercicios("Programadas");
     }
 
 
-    private void listarEjercicios(){
+    private void listarEjercicios(String filtro){
 
-        String url = "http://"+gs.getIp()+"/ejercicio/listar_rutinas.php?idPersona="+gs.getSesion_usuario();
+        String url = "http://"+gs.getIp()+"/ejercicio/listar_rutinas.php?idPersona="+gs.getSesion_usuario()+"&filtro="+filtro;
 
         url = url.replace(" ", "%20");
 
@@ -99,7 +131,6 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
                             jsonObject.optString("cantidad")));
                 }
 
-
                 adaptadorRutinas = new AdaptadorListaRutinas(getContext(), listaRutinas);
                 recyclerRutinas.setLayoutManager(new GridLayoutManager(getActivity(), 1));
 
@@ -109,7 +140,6 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
                 tvMensaje.setVisibility(View.VISIBLE);
                 recyclerRutinas.setVisibility(View.GONE);
             }
-
         }
         catch (JSONException e) {
             e.printStackTrace();

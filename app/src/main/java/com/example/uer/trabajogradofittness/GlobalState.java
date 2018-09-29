@@ -35,7 +35,14 @@ public class GlobalState extends Application{
     public String nivelActividad = "";
     public String fumador = "";
 
+    int indPlan;
+    boolean limiteCal;
+    public double[] caloriasMax = null;
+    public double[] caloriasPlan = null;
     public int[] alimentos = null;
+    public double[] caloria = null;
+    public int[] cantidad = null;
+    public String[] accion = null;
 
 
     public String getIp() {
@@ -254,9 +261,49 @@ public class GlobalState extends Application{
         this.fumador = fumador;
     }
 
+
+    public int getIndPlan() {
+        return indPlan;
+    }
+
+    public void setIndPlan(int indPlan) {
+        this.indPlan = indPlan;
+    }
+
+    public boolean isLimiteCal() {
+        return limiteCal;
+    }
+
+    public void setLimiteCal(boolean limiteCal) {
+        this.limiteCal = limiteCal;
+    }
+
+    public double[] getCaloriasMax() {
+        return caloriasMax;
+    }
+
+    public void setCaloriasMax(double[] caloriasMax) {
+        this.caloriasMax = caloriasMax;
+    }
+
+    public void insCalorias(int cant){
+        this.caloriasPlan = new double[cant];
+        for(int i = 0; i < this.caloriasPlan.length; i++){
+            this.caloriasPlan[i] = 0;
+        }
+    }
+
+    public double[] getCaloriasPlan() {
+        return caloriasPlan;
+    }
+
+    public void setCaloriasPlan(double[] caloriasPlan) {
+        this.caloriasPlan = caloriasPlan;
+    }
+
     public void insAlimentos(int cant){
         this.alimentos = new int[cant];
-        for(int i = 0; i< this.alimentos.length; i++){
+        for(int i = 0; i < this.alimentos.length; i++){
             this.alimentos[i] = 0;
         }
     }
@@ -267,5 +314,50 @@ public class GlobalState extends Application{
 
     public void setAlimentos(int[] alimentos) {
         this.alimentos = alimentos;
+    }
+
+    public void insCaloria(int cant){
+        this.caloria = new double[cant];
+        for(int i = 0; i < this.caloria.length; i++){
+            this.caloria[i] = 0;
+        }
+    }
+
+    public double[] getCaloria() {
+        return caloria;
+    }
+
+    public void setCaloria(double[] caloria) {
+        this.caloria = caloria;
+    }
+
+    public void insCantidades(int cant){
+        this.cantidad = new int[cant];
+        for(int i = 0; i < this.cantidad.length; i++){
+            this.cantidad[i] = 1;
+        }
+    }
+
+    public int[] getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int[] cantidad) {
+        this.cantidad = cantidad;
+    }
+
+    public void insAccion(int cant){
+        this.accion = new String[cant];
+        for(int i = 0; i < this.accion.length; i++){
+            this.accion[i] = "";
+        }
+    }
+
+    public String[] getAccion() {
+        return accion;
+    }
+
+    public void setAccion(String[] accion) {
+        this.accion = accion;
     }
 }

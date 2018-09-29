@@ -240,7 +240,7 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
             gs.setCiudad(ciudad);
             gs.setIdCiudad(idCiudad);
 
-            siguiente(view);
+            siguiente();
         }
         else{
             Toast.makeText(this,"Complete los campos, por favor!", Toast.LENGTH_SHORT).show();
@@ -248,12 +248,14 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         }
     }
 
-    public void siguiente(View view) {
+
+
+    public void siguiente() {
 
         Intent intent = new Intent(this, InformacionObjetivo.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        finish();
+        //finish();
     }
 
     private void cargarTiposIdentificacion(){
