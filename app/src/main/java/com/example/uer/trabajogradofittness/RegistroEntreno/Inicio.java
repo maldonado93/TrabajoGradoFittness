@@ -1,6 +1,7 @@
 package com.example.uer.trabajogradofittness.RegistroEntreno;
 
 
+import android.annotation.TargetApi;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.DialogInterface;
@@ -24,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +67,7 @@ import java.util.Observable;
 import java.util.Observer;
 
 import static com.google.android.gms.internal.zzahf.runOnUiThread;
+import static java.lang.Thread.sleep;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -74,7 +77,19 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     GlobalState gs;
     View v;
 
+    AlertDialog dialog;
+    View dialogResultado;
+
+    TextView tvNivel;
+    ProgressBar prPuntos;
+    TextView tvPuntos;
+    TextView tvTiempo;
+    TextView tvPuntosTiempo;
+    TextView tvTotal;
+    TextView tvRendimiento;
+
     Cronometro cronometro = null;
+    Resultados resultados = null;
 
     Drawable d;
     TextView tvEntreno;
@@ -99,10 +114,24 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     int tiempoEstimadoMin;
     int tiempoEstimadoMax;
-    int[] tiempo;
     int tiempoTotal;
+
     boolean estadoEntreno;
-    boolean bluetooth;
+    int[] tiempo;
+
+    boolean subeNivel;
+    int puntosTiempo;
+    int puntosTotal;
+    int nivel;
+    int puntos;
+    int sumaPuntos;
+
+    boolean hiloResultados;
+    int puntosTiempoHilo;
+    int puntosTotalHilo;
+    int nivelHilo;
+    int puntosHilo;
+    int[] datosResultados;
 
     ArrayList<String> registroPulsaciones;
     ArrayList<String> registroFrecuenciaReposo;
@@ -114,6 +143,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     BluetoothAdapter mBluetoothAdapter;
     List<BluetoothDevice> pairedDevices = new ArrayList<>();
+    boolean bluetooth;
     boolean menuBool = false; //display or not the disconnect option
     boolean h7 = false; //Was the BTLE tested
     boolean normal = false; //Was the BT tested
@@ -165,6 +195,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         });
 
         btnIniciar.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onClick(View view) {
 
@@ -176,7 +207,8 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     spDispositivos.setEnabled(true);
                 }
                 else{
-                    if(mBluetoothAdapter != null){
+                    dialog_resultados();
+                    /*if(mBluetoothAdapter != null){
                         if (mBluetoothAdapter.isEnabled()){
                             if(spDispositivos.getSelectedItemPosition() != 0){
                                 if(h7 || normal){
@@ -211,7 +243,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     }
                     else{
                         verificarBluetooth();
-                    }
+                    }*/
                 }
             }
         });
@@ -247,40 +279,58 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         tiempoEstimadoMin = 0;
 
         String nivelActividad = gs.getNivelActividad();
+        String categoria = "";
+        String[] series = null;
         int cantSeries = 0;
+        int tiempo = 0;
 
         for(int i = 0; i < listaEjercicios.size(); i++)
         {
-            String[] series = listaEjercicios.get(i).getSeries().split(" * ");
-            cantSeries = Integer.parseInt(series[0]);
-            if(orientacion.compareTo("Metabólica") == 0){
-                tiempoEstimadoMin += 90 * cantSeries;
-                tiempoEstimadoMax += 120 * cantSeries;
-            }
-            else{
-                if((nivelActividad.compareTo("Novato") == 0) || (nivelActividad.compareTo("Intermedio") == 0)){
+            categoria = listaEjercicios.get(i).getCategoria();
 
-                    if(orientacion.compareTo("Estructural") == 0){
-                        tiempoEstimadoMin += 120 * cantSeries;
-                        tiempoEstimadoMax += 180 * cantSeries;
+            if(categoria.compareTo("Cardio") != 0){
+                series = listaEjercicios.get(i).getSeries().split(" * ");
+                cantSeries = Integer.parseInt(series[0]);
 
-                    }
-                    if(orientacion.compareTo("Neural") == 0){
-                        tiempoEstimadoMin += 180 * cantSeries;
-                        tiempoEstimadoMax += 240 * cantSeries;
-                    }
+                if(orientacion.compareTo("Metabólica") == 0){
+                    tiempoEstimadoMin += 90 * cantSeries;
+                    tiempoEstimadoMax += 120 * cantSeries;
                 }
                 else{
-                    if(orientacion.compareTo("Estructural") == 0){
-                        tiempoEstimadoMin += 120 * cantSeries;
-                        tiempoEstimadoMax += 240 * cantSeries;
+                    if((nivelActividad.compareTo("Novato") == 0) || (nivelActividad.compareTo("Intermedio") == 0)){
+
+                        if(orientacion.compareTo("Estructural") == 0){
+                            tiempoEstimadoMin += 120 * cantSeries;
+                            tiempoEstimadoMax += 180 * cantSeries;
+
+                        }
+                        if(orientacion.compareTo("Neural") == 0){
+                            tiempoEstimadoMin += 180 * cantSeries;
+                            tiempoEstimadoMax += 240 * cantSeries;
+                        }
                     }
-                    if(orientacion.compareTo("Neural") == 0){
-                        tiempoEstimadoMin += 240 * cantSeries;
-                        tiempoEstimadoMax += 360 * cantSeries;
+                    else{
+                        if(orientacion.compareTo("Estructural") == 0){
+                            tiempoEstimadoMin += 120 * cantSeries;
+                            tiempoEstimadoMax += 240 * cantSeries;
+                        }
+                        if(orientacion.compareTo("Neural") == 0){
+                            tiempoEstimadoMin += 240 * cantSeries;
+                            tiempoEstimadoMax += 360 * cantSeries;
+                        }
                     }
                 }
             }
+            else{
+                series = listaEjercicios.get(i).getSeries().split(" ");
+                tiempo = Integer.parseInt(series[0]) * 60;
+
+                tiempoEstimadoMin += tiempo;
+                tiempoEstimadoMax += tiempo;
+            }
+
+
+
         }
         Toast.makeText(getContext(), "Min: "+tiempoEstimadoMin+" Max: "+tiempoEstimadoMax, Toast.LENGTH_LONG).show();
     }
@@ -320,7 +370,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                                 mBluetoothAdapter.enable();
                                 bluetooth = true;
                                 try {
-                                    Thread.sleep(2000);
+                                    sleep(2000);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
@@ -731,7 +781,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                         Log.d("Inicio", "Iniciando escaneo");
                         mBluetoothAdapter.startLeScan(leScanCallback);
                         try {
-                            Thread.sleep(5000);
+                            sleep(5000);
                             Log.d("Inicio", "Deteniendo escaneo");
                             mBluetoothAdapter.stopLeScan(leScanCallback);
                         } catch (InterruptedException e) {
@@ -883,6 +933,85 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         request.add(jsonObjectRequest);
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void dialog_resultados(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        dialogResultado = getLayoutInflater().inflate(R.layout.dialog_resultado_entreno, null);
+
+        int puntosEntreno = 100;
+        nivel = gs.getNivel();
+        puntos = gs.getPuntos();
+
+        tvNivel = dialogResultado.findViewById(R.id.tvNivel);
+        prPuntos = dialogResultado.findViewById(R.id.prPuntos);
+        tvPuntos = dialogResultado.findViewById(R.id.tvPuntos);
+        tvTiempo = dialogResultado.findViewById(R.id.tvTiempo);
+        tvPuntosTiempo = dialogResultado.findViewById(R.id.tvPuntosTiempo);
+        tvTotal = dialogResultado.findViewById(R.id.tvTotal);
+        tvRendimiento = dialogResultado.findViewById(R.id.tvRendimiento);
+        Button btnContinuar = dialogResultado.findViewById(R.id.btnContinuar);
+        btnContinuar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+            }
+        });
+
+        calcularPuntosEntreno(puntosEntreno);
+
+        tvNivel.setText("Nivel: " + nivel);
+
+        prPuntos.setProgress(puntos, true);
+        tvPuntos.setText(puntos + "/" + 500);
+
+        builder.setView(dialogResultado);
+        dialog = builder.create();
+        dialog.show();
+
+        hiloResultados = true;
+        resultados = new Resultados();
+        resultados.execute();
+
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void calcularPuntosEntreno(int puntosEntreno){
+
+        subeNivel = false;
+        int tiempo = 1800;
+        int minutos = (int) Math.ceil(tiempo / 60);
+        int segundos = tiempo - (minutos * 60);
+        tvTiempo.setText(minutos + " min " + segundos + " seg");
+
+        tvPuntosTiempo.setText("+0");
+        tvRendimiento.setText((int)(gs.getRendimiento() * 100) + "%");
+        tvTotal.setText("+0");
+
+        double calculoTiempo = 1;
+        if(tiempo < tiempoEstimadoMin){
+            calculoTiempo = tiempo/tiempoEstimadoMin;
+        }
+        else{
+            if(tiempo > tiempoEstimadoMax){
+                calculoTiempo = tiempoEstimadoMax/(double)tiempo;
+            }
+        }
+
+        puntosTiempo = (int)(puntosEntreno * calculoTiempo);
+
+        puntosTotal = (int)(puntosEntreno * gs.getRendimiento());
+
+        sumaPuntos = puntos + puntosTotal;
+
+        if(sumaPuntos > 500){
+            subeNivel = true;
+            sumaPuntos = sumaPuntos - 500;
+            nivel++;
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -941,12 +1070,25 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 for(int i=0; i<datos.length();i++) {
                     JSONObject jsonObject = null;
                     jsonObject = datos.getJSONObject(i);
-                    listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
-                                                                 jsonObject.optString("nombre"),
-                                                                 jsonObject.optString("series")+" * "+
-                                                                 jsonObject.optString("repeticiones")));
-                }
 
+                    String categoria = jsonObject.optString("categoria");
+                    if(categoria.compareTo("Cardio") != 0){
+                        listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
+                                jsonObject.optString("categoria"),
+                                jsonObject.optString("nombre"),
+                                "Serie/Repeticion",
+                                jsonObject.optString("series")+" * "+
+                                        jsonObject.optString("repeticiones")));
+                    }
+                    else{
+                        listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
+                                jsonObject.optString("categoria"),
+                                jsonObject.optString("nombre"),
+                                "tiempo",
+                                jsonObject.optString("tiempo")+" min"));
+                    }
+
+                }
                 adaptadorEjercicios = new AdaptadorListaEjercicioRutina(getContext(), listaEjercicios);
             }
 
@@ -1002,7 +1144,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
             try{
                 while(estadoEntreno){
-                    Thread.sleep(1000);
+                    sleep(1000);
                     tiempoTotal++;
                     if(tiempo[2] < 59){
                         tiempo[2]++;
@@ -1018,6 +1160,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     }
                     publishProgress(tiempo[0], tiempo[1], tiempo[2]);
                 }
+
             }
             catch (InterruptedException e){
                 e.printStackTrace();
@@ -1059,6 +1202,134 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             super.onCancelled();
             cronometro=null;
             estadoEntreno = false;
+        }
+
+    }
+
+    private class Resultados extends AsyncTask<Void, Integer, Boolean>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            puntosTiempoHilo = 0;
+            puntosTotalHilo = 0;
+
+            nivelHilo = gs.getNivel();
+            puntosHilo = gs.getPuntos();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+
+            try{
+                boolean pTiempo = true;
+                boolean pTotal = false;
+                boolean pNivel = false;
+                boolean pPuntos = false;
+
+                sleep(1000);
+                while(hiloResultados){
+                    sleep(20);
+                    if(pTiempo){
+                        if(puntosTiempoHilo <= puntosTiempo){
+                            puntosTiempoHilo++;
+                        }
+                        else{
+                            pTiempo = false;
+                            pTotal = true;
+                            sleep(500);
+                        }
+                    }
+                    else{
+                        if(pTotal){
+                            if(puntosTotalHilo <= puntosTotal){
+                                puntosTotalHilo++;
+                            }
+                            else{
+                                pTotal = false;
+                                pPuntos = true;
+                                sleep(500);
+                            }
+                        }
+                        else{
+                            if(pNivel){
+                                nivelHilo++;
+
+                                gs.setNivel(nivelHilo);
+                                pNivel = false;
+                                pPuntos = true;
+                                subeNivel = false;
+                                sleep(500);
+                            }
+                            else{
+                                if(pPuntos){
+                                    if(subeNivel){
+                                        if(puntosHilo <= 500){
+                                            puntosHilo++;
+                                        }
+                                        else{
+                                            pPuntos = false;
+                                            pNivel = true;
+                                            sleep(500);
+                                        }
+                                    }
+                                    else{
+                                        if(puntosHilo <= sumaPuntos){
+                                            puntosHilo++;
+                                        }
+                                        else{
+                                            pPuntos = false;
+                                            hiloResultados = false;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    publishProgress(puntosTiempoHilo, puntosTotalHilo, nivel, puntosHilo);
+                }
+                gs.setPuntos(puntosHilo);
+            }
+            catch (InterruptedException e){
+                e.printStackTrace();
+            }
+            return true;
+        }
+
+        @TargetApi(Build.VERSION_CODES.N)
+        @RequiresApi(api = Build.VERSION_CODES.N)
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+
+            int puntosTiempo = values[0];
+            int puntosTotal = values[1];
+            int nivel = values[2];
+            int puntos = values[3];
+
+            tvPuntosTiempo.setText("+" + puntosTiempo);
+            tvTotal.setText("+" + puntosTotal);
+            tvNivel.setText("Nivel: " + nivel);
+            prPuntos.setProgress(puntos, true);
+            tvPuntos.setText(puntos + "/500");
+        }
+
+        @Override
+        protected void onPostExecute(Boolean resultado) {
+            super.onPostExecute(resultado);
+            if(resultado){
+                resultados = null;
+                hiloResultados = false;
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
+
+            resultados = null;
+            hiloResultados = false;
         }
 
     }

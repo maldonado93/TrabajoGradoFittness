@@ -5,6 +5,7 @@
     android:id="@+id/linearLayout3"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     tools:context=".Rutina.Rutinas"
     tools:layout_editor_absoluteY="136dp">
 
@@ -26,7 +27,6 @@
         android:id="@+id/layoutFiltro"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/background_light"
         android:orientation="vertical"
         android:paddingTop="10dp"
         android:visibility="visible"

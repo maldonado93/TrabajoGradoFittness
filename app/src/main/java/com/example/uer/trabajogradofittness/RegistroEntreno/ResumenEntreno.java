@@ -128,8 +128,6 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         }
         prom = (int)(prom/registroPulsaciones.size());
 
-        Toast.makeText(getContext(), "Frecuencia BD: "+ promedioFrecuencias+" "+prom, Toast.LENGTH_LONG).show();
-
         for(int j = 0; j< registroPulsaciones.size(); j++){
             if(registroPulsaciones.get(j) > prom){
                 cantSuperior++;
@@ -380,7 +378,7 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         catch (JSONException e) {
             e.printStackTrace();
         }
-        if(consulta.compareTo("frecuencia") == 0) {
+        if(consulta.compareTo("frecuencias") == 0) {
             consultarDatosEntreno();
         }
         else{

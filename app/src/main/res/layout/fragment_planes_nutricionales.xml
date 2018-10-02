@@ -11,12 +11,22 @@
         android:orientation="vertical"
         android:padding="10dp">
 
-        <Button
-            android:id="@+id/btnComida1"
+        <TextView
+            android:id="@+id/textView39"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_expand"
-            android:text="Desayuno" />
+            android:layout_marginTop="25dp"
+            android:text="Las cantidades se distribuyen por porciones de 100g." />
+
+        <Button
+            android:id="@+id/btnComida1"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:drawableLeft="@drawable/ic_expand_white"
+            android:text="Desayuno"
+            android:textColor="@color/background" />
 
         <LinearLayout
             android:id="@+id/linear_layout1"
@@ -44,8 +54,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="0"
-                    android:visibility="visible" />
+                    android:text="0" />
 
                 <TextView
                     android:id="@+id/tvLimiteCal1"
@@ -86,11 +95,12 @@
 
         <Button
             android:id="@+id/btnComida2"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_expand"
+            android:drawableLeft="@drawable/ic_expand_white"
             android:text="Media mañana"
-            android:textColor="@color/colorAccent" />
+            android:textColor="@color/background" />
 
         <LinearLayout
             android:id="@+id/linear_layout2"
@@ -118,8 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="0"
-                    android:visibility="gone" />
+                    android:text="0" />
 
                 <TextView
                     android:id="@+id/tvLimiteCal2"
@@ -160,11 +169,12 @@
 
         <Button
             android:id="@+id/btnComida3"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_expand"
+            android:drawableLeft="@drawable/ic_expand_white"
             android:text="Almuerzo"
-            android:textColor="@color/colorPrimary" />
+            android:textColor="@color/background" />
 
         <LinearLayout
             android:id="@+id/linear_layout3"
@@ -192,8 +202,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="0"
-                    android:visibility="gone" />
+                    android:text="0" />
 
                 <TextView
                     android:id="@+id/tvLimiteCal3"
@@ -234,11 +243,12 @@
 
         <Button
             android:id="@+id/btnComida4"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_expand"
+            android:drawableLeft="@drawable/ic_expand_white"
             android:text="Media tarde"
-            android:textColor="@color/colorPrimaryDark" />
+            android:textColor="@color/background" />
 
         <LinearLayout
             android:id="@+id/linear_layout4"
@@ -266,8 +276,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="0"
-                    android:visibility="gone" />
+                    android:text="0" />
 
                 <TextView
                     android:id="@+id/tvLimiteCal4"
@@ -308,10 +317,12 @@
 
         <Button
             android:id="@+id/btnComida5"
+            style="@style/Widget.AppCompat.Button.Colored"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:drawableLeft="@drawable/ic_expand"
-            android:text="Noche" />
+            android:drawableLeft="@drawable/ic_expand_white"
+            android:text="Noche"
+            android:textColor="@color/background" />
 
         <LinearLayout
             android:id="@+id/linear_layout5"
@@ -339,8 +350,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
                     android:layout_weight="1"
-                    android:text="0"
-                    android:visibility="gone" />
+                    android:text="0" />
 
                 <TextView
                     android:id="@+id/tvLimiteCal5"

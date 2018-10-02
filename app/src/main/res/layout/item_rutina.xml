@@ -5,6 +5,7 @@
     android:id="@+id/item_rutina"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:background="@color/background"
     tools:layout_editor_absoluteY="81dp">
 
 

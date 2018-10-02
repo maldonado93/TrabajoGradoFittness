@@ -3,7 +3,7 @@
     <color name="colorPrimary">#008f4f</color>
     <color name="colorPrimaryDark">#017b44</color>
     <color name="colorAccent">#1fc77c</color>
-    <color name="background">#FFFFFFFF</color>
+    <color name="background">#ffffff</color>
 
     //Colores del menu principal
     <color name="dividerColor">#80CBC4</color>

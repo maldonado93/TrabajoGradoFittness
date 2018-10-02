@@ -61,8 +61,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="7f7f7f" />
-                            <entry key="outputName" value="ic_expand" />
+                            <entry key="color" value="ffffff" />
+                            <entry key="outputName" value="ic_expand_white" />
                             <entry key="sourceFile" value="C:\Users\HP" />
                           </map>
                         </option>

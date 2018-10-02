@@ -82,7 +82,7 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
             item_ejercicio = (ConstraintLayout)itemView.findViewById(R.id.item_ejercicio);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
             //ivImagen = (ImageView) itemView.findViewById(R.id.ivImagen);
-            tvNombre = (TextView)itemView.findViewById(R.id.tvNombres);
+            tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
 
         }
     }

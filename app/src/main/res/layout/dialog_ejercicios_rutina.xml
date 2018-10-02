@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?android:attr/actionModeBackground"
     android:orientation="vertical"
     android:padding="10dp">
 
@@ -32,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="Tiempo de descanso"
+        android:text="Tiempo de descanso entre series"
         android:textSize="16sp" />
 
     <TextView

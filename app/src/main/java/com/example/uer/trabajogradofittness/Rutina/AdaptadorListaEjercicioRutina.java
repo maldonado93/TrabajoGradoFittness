@@ -36,7 +36,6 @@ public class AdaptadorListaEjercicioRutina extends RecyclerView.Adapter<Adaptado
             @Override
             public void onClick(View view) {
                 String idEjercicio = ejercicio.get(holder.getAdapterPosition()).getId();
-
             }
         });
 
@@ -47,6 +46,7 @@ public class AdaptadorListaEjercicioRutina extends RecyclerView.Adapter<Adaptado
     public void onBindViewHolder(@NonNull AdaptadorListaEjercicioRutina.MyViewHolder myViewHolder, int i) {
         myViewHolder.tvId.setText(ejercicio.get(i).getId());
         myViewHolder.tvNombre.setText(ejercicio.get(i).getNombre());
+        myViewHolder.tvVariable.setText(ejercicio.get(i).getVariable());
         myViewHolder.tvSerie.setText(ejercicio.get(i).getSeries());
     }
 
@@ -61,6 +61,7 @@ public class AdaptadorListaEjercicioRutina extends RecyclerView.Adapter<Adaptado
         private ConstraintLayout item_ejercicio;
         private TextView tvId;
         private TextView tvNombre;
+        private TextView tvVariable;
         private TextView tvSerie;
 
         public MyViewHolder(@NonNull View itemView) {
@@ -68,7 +69,8 @@ public class AdaptadorListaEjercicioRutina extends RecyclerView.Adapter<Adaptado
 
             item_ejercicio = itemView.findViewById(R.id.item_ejercicio_rutina);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
-            tvNombre = (TextView)itemView.findViewById(R.id.tvNombres);
+            tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
+            tvVariable = (TextView)itemView.findViewById(R.id.tvVariable);
             tvSerie = (TextView)itemView.findViewById(R.id.tvSerie);
         }
     }

@@ -24,6 +24,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -57,6 +60,10 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     View v;
     GlobalState gs;
     ProgressDialog progress;
+    ProgressBar progressBar;
+
+    ScrollView scrollView;
+    RelativeLayout relativeLayout;
 
     ModeloPerfil modeloPerfil;
 
@@ -108,6 +115,11 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         v = inflater.inflate(R.layout.fragment_perfil, container, false);
 
+        progressBar = v.findViewById(R.id.progressBar);
+
+        scrollView = v.findViewById(R.id.scrollView);
+        relativeLayout = v.findViewById(R.id.relativeLayout);
+
         ivImagen = v.findViewById(R.id.ivImagen);
 
         fbBorrar = v.findViewById(R.id.fbBorrar);
@@ -128,7 +140,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         layout_datos = v.findViewById(R.id.layout_datos);
         tvIdentificacion = v.findViewById(R.id.tvIdentificacion);
-        tvNombre = v.findViewById(R.id.tvNombres);
+        tvNombre = v.findViewById(R.id.tvNombre);
         tvEmail = v.findViewById(R.id.tvEmail);
         tvMovil = v.findViewById(R.id.tvMovil);
         tvLocalidad = v.findViewById(R.id.tvLocalidad);
@@ -213,9 +225,9 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        progress = new ProgressDialog(getContext());
+        /*progress = new ProgressDialog(getContext());
         progress.setMessage("Cargando informacion...");
-        progress.show();
+        progress.show();*/
 
         consultarPersona();
     }
@@ -424,7 +436,10 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 String[] localidad = (tvLocalidad.getText().toString()).split(", ");
                 spCiudad.setSelection(obtenerPosicionItem(spCiudad, localidad[0]));
             }
-            progress.hide();
+
+            scrollView.setVisibility(View.VISIBLE);
+            relativeLayout.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.GONE);
         }
         else{
             Toast.makeText(getContext(), "Imagen actualizada!", Toast.LENGTH_SHORT).show();

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,6 +52,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
     View v;
 
     ProgressDialog progress;
+    ProgressBar progressBar;
 
     private List<ListaRegistros> listaRegistros;
     ArrayList<String> listaHistorial;
@@ -58,7 +60,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
     String consulta;
 
     TextView tvMensaje;
-    LinearLayout layoutHistorial;
+    LinearLayout layoutFiltro;
     Spinner spHistorial;
     RecyclerView rvEntrenos;
 
@@ -74,12 +76,13 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
         v = inflater.inflate(R.layout.fragment_registros_entreno, container, false);
 
         progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando registros...");
-        progress.show();
+        progressBar = v.findViewById(R.id.progressBar);
+        /*progress.setMessage("Cargando registros...");
+        progress.show();*/
 
         tvMensaje = v.findViewById(R.id.tvMensaje);
 
-        layoutHistorial = v.findViewById(R.id.layoutFiltro);
+        layoutFiltro= v.findViewById(R.id.layoutFiltro);
         spHistorial = (Spinner)v.findViewById(R.id.spHistorialEntrenos);
 
         spHistorial.setOnItemSelectedListener(
@@ -267,7 +270,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                         fecha = jsonObject.optString("fecha").split("-");
                         mes = obtenerMes(fecha[1], 1);
                         listaHistorial.add(mes + "- " + fecha[0]);
-                        layoutHistorial.setVisibility(View.VISIBLE);
+
                         historial = true;
                     }
 
@@ -307,17 +310,19 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                 }
 
                 if (consulta == "registros") {
+
                     AdaptadorListaRegistros adaptador = new AdaptadorListaRegistros(getContext(), listaRegistros);
                     rvEntrenos.setLayoutManager(new GridLayoutManager(getActivity(), 1));
                     rvEntrenos.setAdapter(adaptador);
-                    progress.hide();
+                    layoutFiltro.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
                 }
             }
             else {
                 tvMensaje.setVisibility(View.VISIBLE);
-                layoutHistorial.setVisibility(View.GONE);
+                layoutFiltro.setVisibility(View.GONE);
                 rvEntrenos.setVisibility(View.GONE);
-                progress.hide();
+                //progress.hide();
             }
 
         }
@@ -333,6 +338,9 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
             int yyyy = c.get(Calendar.YEAR);
             int mm = c.get(Calendar.MONTH)+1;
 
+            if(mm != Integer.parseInt(fecha[1])){
+                mm = Integer.parseInt(fecha[1]);
+            }
             spHistorial.setSelection(obtenerPosicionItem(spHistorial, mes+"- "+fecha[0] ));
 
             consultarRegistros(mm, yyyy);

@@ -46,12 +46,12 @@
 
     <Button
         android:id="@+id/btnActualizar"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="16dp"
-        android:background="@color/colorPrimaryDark"
         android:drawableLeft="@drawable/ic_loop"
         android:text="Actualizar"
         android:textColor="@android:color/background_light"

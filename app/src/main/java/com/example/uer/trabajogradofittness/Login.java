@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Login extends AppCompatActivity implements Response.Listener<JSONObject>, Response.ErrorListener {
@@ -37,6 +38,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     GlobalState gs;
 
     String consulta;
+    String fecha;
 
     EditText etUsuario;
     EditText etPassword;
@@ -57,6 +59,10 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        fecha = sdf.format(c.getTime());
 
         gs = (GlobalState)getApplication();
         request = Volley.newRequestQueue(getApplicationContext());
@@ -86,6 +92,50 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                 Registrar(view);
             }
         });
+    }
+
+    private void iniciarSesion(){
+        progress.hide();
+        etUsuario.setText("");
+        etPassword.setText("");
+        Intent ingreso = null;
+
+        if(gs.getTipo_usuario() == 1){
+            ingreso = new Intent(Login.this, Menu.class);
+        }
+        else{
+            ingreso = new Intent(Login.this, PrincipalInstructor.class);
+        }
+
+        ingreso.addFlags(ingreso.FLAG_ACTIVITY_CLEAR_TOP | ingreso.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(ingreso);
+    }
+
+    private void calcularRendimiento(int registros){
+        double rendimiento = gs.getRendimiento();
+        boolean correcto = true;
+        if(gs.getNivelActividad().compareTo("Novato") == 0 || gs.getNivelActividad().compareTo("Intermedio") == 0 ){
+            if(registros == 4){
+                rendimiento += 0.1;
+            }
+            else{
+                correcto = false;
+            }
+        }
+        else{
+            if(registros >= 4 && registros <= 6){
+                rendimiento += 0.1;
+
+            }
+            else{
+                correcto = false;
+            }
+        }
+
+        if(!correcto){
+            rendimiento -= (registros * 0.025);
+        }
+        gs.setRendimiento(rendimiento);
     }
 
     private void consultarUsuario(View view){
@@ -120,7 +170,28 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     public void obtenerDatosUsuario(){
 
         consulta = "datos";
-        String url = "http://"+gs.getIp()+"/usuario/consultar_datos_usuario.php?usuario="+ usuario;
+        String url = "http://"+gs.getIp()+"/usuario/consultar_datos_usuario.php?usuario="+ usuario+"&fecha="+fecha;
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+    public void consultarEntrenos(){
+
+        consulta = "registros";
+        String url = "http://"+gs.getIp()+"/registro_entrenos/consultar_registros_semana.php?idPersona="+ gs.getSesion_usuario()+"&fecha="+fecha;
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+    private void actualizarRendimiento(){
+        consulta = "rendimiento";
+        String url = "http://"+gs.getIp()+"/persona/actualizar_rendimiento.php?idPersona="+ gs.getSesion_usuario()+"&rendimiento="+gs.getRendimiento();
 
         url = url.replace(" ", "%20");
 
@@ -199,6 +270,8 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
         int tipoUsuario = 0;
         boolean usuarioValido = false;
+        int dias = 0;
+        int cantidadRegistros = 0;
 
         JSONArray datos = response.optJSONArray(consulta);
         JSONObject jsonObject = null;
@@ -224,15 +297,25 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                         progress.hide();
                         Toast.makeText(this, "Usuario no registrado!",Toast.LENGTH_SHORT).show();
                     }
-
                 }
                 if(consulta.compareTo("datos") == 0){
+                    gs.setNombres(jsonObject.optString("nombres"));
+                    gs.setApellidos(jsonObject.optString("apellidos"));
                     gs.setGenero(jsonObject.optString("genero"));
+                    gs.setNivel(jsonObject.optInt("nivel"));
+                    gs.setPuntos(jsonObject.optInt("puntos"));
+                    dias = jsonObject.optInt("dias");
+                    if(dias < 7){
+                        gs.setRendimiento(Double.parseDouble(jsonObject.optString("rendimiento")));
+                    }
                     gs.setPeso(Float.parseFloat(jsonObject.optString("peso")));
                     gs.setNivelActividad(jsonObject.optString("nivel_actividad"));
                     gs.setFumador(jsonObject.optString("fuma"));
                     calcularEdad(jsonObject.optString("fecha_nacimiento"));
                     usuarioValido = true;
+                }
+                if(consulta.compareTo("registros") == 0){
+                    cantidadRegistros = jsonObject.optInt("cantidad");
                 }
             }
         } catch (JSONException e) {
@@ -244,20 +327,25 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                 obtenerDatosUsuario();
             }
             else{
-                progress.hide();
-                etUsuario.setText("");
-                etPassword.setText("");
-                Intent ingreso = null;
-
-                if(gs.getTipo_usuario() == 1){
-                    ingreso = new Intent(Login.this, Menu.class);
+                if(consulta.compareTo("datos") == 0){
+                    if(dias >= 7){
+                        consultarEntrenos();
+                    }
+                    else{
+                        iniciarSesion();
+                    }
                 }
                 else{
-                    ingreso = new Intent(Login.this, PrincipalInstructor.class);
+                    if(consulta.compareTo("registros") == 0){
+                        calcularRendimiento(cantidadRegistros);
+                        actualizarRendimiento();
+                    }
+                    else{
+                        if(consulta.compareTo("rendimiento") == 0){
+                            iniciarSesion();
+                        }
+                    }
                 }
-
-                ingreso.addFlags(ingreso.FLAG_ACTIVITY_CLEAR_TOP | ingreso.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(ingreso);
             }
         }
     }

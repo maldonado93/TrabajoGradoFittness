@@ -59,7 +59,7 @@ public class InformacionEjercicio extends AppCompatActivity implements Response.
 
 
         tvId = (TextView)findViewById(R.id.tvId);
-        tvNombre = (TextView)findViewById(R.id.tvNombres);
+        tvNombre = (TextView)findViewById(R.id.tvNombre);
         tvDescripcion = (TextView)findViewById(R.id.tvDescripcion);
         ivImagen = (ImageView)findViewById(R.id.ivImagen);
 

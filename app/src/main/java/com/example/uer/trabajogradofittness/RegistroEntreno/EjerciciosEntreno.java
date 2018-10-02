@@ -88,10 +88,22 @@ public class EjerciciosEntreno extends Fragment implements Response.Listener<JSO
             for(int i=0; i<datos.length();i++) {
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(i);
-                listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
-                                jsonObject.optString("nombre"),
-                         jsonObject.optString("series")+" * "+
-                                jsonObject.optString("repeticiones")));
+                String categoria = jsonObject.optString("categoria");
+                if(categoria.compareTo("Cardio") != 0){
+                    listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
+                            jsonObject.optString("categoria"),
+                            jsonObject.optString("nombre"),
+                            "Serie/Repeticion",
+                            jsonObject.optString("series")+" * "+
+                                    jsonObject.optString("repeticiones")));
+                }
+                else{
+                    listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
+                            jsonObject.optString("categoria"),
+                            jsonObject.optString("nombre"),
+                            "Tiempo",
+                            jsonObject.optString("tiempo")+" min"));
+                }
             }
 
             adaptadorEjercicios = new AdaptadorListaEjercicioRutina(getContext(), listaEjercicios);

@@ -6,6 +6,11 @@ public class GlobalState extends Application{
 
     public String ip = "piperomero1226.000webhostapp.com";
 
+    public int nivel = 1;
+    public int puntos= 0;
+    public double rendimiento = 1;
+
+
     public int sesion_usuario = 0;
     public int tipo_usuario = 0;
     public int id_registro_entreno = 0;
@@ -52,6 +57,32 @@ public class GlobalState extends Application{
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+
+    public int getNivel() {
+        return nivel;
+    }
+
+    public void setNivel(int nivel) {
+        this.nivel = nivel;
+    }
+
+    public int getPuntos() {
+        return puntos;
+    }
+
+    public void setPuntos(int puntos) {
+        this.puntos = puntos;
+    }
+
+    public double getRendimiento() {
+        return rendimiento;
+    }
+
+    public void setRendimiento(double rendimiento) {
+        this.rendimiento = rendimiento;
+    }
+
 
     public int getSesion_usuario() {
         return sesion_usuario;

@@ -1,8 +1,10 @@
 package com.example.uer.trabajogradofittness.MenuPrincipal;
 
 import android.content.res.Configuration;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -15,6 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
@@ -43,6 +47,11 @@ public class Menu extends AppCompatActivity {
     private String tituloActividad;
     private String[] items;
 
+    TextView tvNombre;
+    TextView tvNivel;
+    ProgressBar prPuntos;
+    TextView tvPuntos;
+
     private ExpandableListView expandableListView;
     private ExpandableListAdapter adaptador;
     private List<String> listTitulos;
@@ -54,6 +63,7 @@ public class Menu extends AppCompatActivity {
     GlobalState gs;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +79,16 @@ public class Menu extends AppCompatActivity {
         initItems();
 
         View listHeaderView = getLayoutInflater().inflate(R.layout.nav_header_menu, null, false);
+
+        tvNombre = listHeaderView.findViewById(R.id.tvNombre);
+        tvNivel = listHeaderView.findViewById(R.id.tvNivel);
+        prPuntos = listHeaderView.findViewById(R.id.prPuntos);
+        tvPuntos = listHeaderView.findViewById(R.id.tvPuntos);
+
+        tvNombre.setText(gs.getNombres()+" "+gs.getApellidos());
+        tvNivel.setText("Nivel: " + gs.getNivel());
+        prPuntos.setProgress(250, true);
+        tvPuntos.setText(gs.getPuntos()+ "/" + prPuntos.getMax());
 
         expandableListView.addHeaderView(listHeaderView);
 
@@ -105,8 +125,12 @@ public class Menu extends AppCompatActivity {
 
     private void setupDrawer() {
         drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close){
+            @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDrawerOpened(View drawerView) {
+                tvNivel.setText("Nivel: "+ gs.getNivel());
+                prPuntos.setProgress(gs.getPuntos(), true);
+                tvPuntos.setText(gs.getPuntos() + "/" + 500);
                 invalidateOptionsMenu();
             }
 
@@ -175,7 +199,7 @@ public class Menu extends AppCompatActivity {
         List<String> itemsInformacion = Arrays.asList("Perfil", "Ranking", "Histórico de peso", "Mi cuenta");
         List<String> itemsDatos = Arrays.asList("Registro de entrenos", "Promedio de frecuencia por rutina");
         List<String> itemsRutina = Arrays.asList("Mis rutinas", "Ejercicios");
-        List<String> itemsNutricion = Arrays.asList("Planes nutricionales", "Alimentos");
+        List<String> itemsNutricion = Arrays.asList("Plan nutricional", "Alimentos");
 
         listChild = new TreeMap<>();
         listChild.put(listaMenu.get(4), itemsNutricion);
@@ -224,7 +248,7 @@ public class Menu extends AppCompatActivity {
                 break;
             case "Ejercicios": fragment = new CategoriasEjercicio();
                 break;
-            case "Planes nutricionales": fragment = new PlanesNutricionales();
+            case "Plan nutricional": fragment = new PlanesNutricionales();
                 break;
             case "Alimentos": fragment = new Nutricion();
                 break;

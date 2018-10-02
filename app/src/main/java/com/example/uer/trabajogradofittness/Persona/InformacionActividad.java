@@ -32,6 +32,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
 
     GlobalState gs;
     String consulta;
+    String fecha;
 
     ProgressDialog progress;
 
@@ -88,6 +89,10 @@ public class InformacionActividad extends AppCompatActivity implements Response.
                     verificarCampos(view, 2);
             }
         });
+
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        fecha = sdf.format(c.getTime());
 
         cargarDatos();
     }
@@ -213,11 +218,6 @@ public class InformacionActividad extends AppCompatActivity implements Response.
     }
 
     private void registrarPeso(){
-
-        Calendar c = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String fecha = sdf.format(c.getTime());
-
         consulta = "historico_peso";
         String url = "http://"+gs.getIp()+"/persona/registrar_peso.php?idPersona="+idPersona+"&peso="+gs.getPeso()+"&fecha="+fecha;
 
@@ -236,6 +236,18 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
+
+    private void registrarGamificacion(double rendimiento){
+        consulta = "gamificacion";
+        String url = "http://"+gs.getIp()+"/persona/registrar_gamificacion.php?idPersona="+idPersona+"&rendimiento="+rendimiento+"&fecha="+fecha;
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+
 
     @Override
     public void onResponse(JSONObject response) {
@@ -265,9 +277,18 @@ public class InformacionActividad extends AppCompatActivity implements Response.
                 }
                 else{
                     if(consulta.compareTo("datos") == 0){
-                        progress.hide();
-                        limpiarDatos();
-                        finish();
+                        double rendimiento = 1;
+                        if(gs.getNivelActividad().compareTo("Intermedio") == 0 || gs.getNivelActividad().compareTo("Avanzado") == 0){
+                            rendimiento = 2.5;
+                        }
+                        registrarGamificacion(rendimiento);
+                    }
+                    else{
+                        if(consulta.compareTo("gamificacion") == 0){
+                            progress.hide();
+                            limpiarDatos();
+                            finish();
+                        }
                     }
                 }
             }

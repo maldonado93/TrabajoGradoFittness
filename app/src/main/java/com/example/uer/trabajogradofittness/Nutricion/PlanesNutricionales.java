@@ -101,7 +101,6 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
     int indAlimentosPlan;
     int seleccion;
     int cantidad;
-    double[] auxCalorias = null;
     double[] caloriasPlan;
     int[] alimentosPlan;
     int[] cantidadesPlan;
@@ -343,14 +342,12 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
 
         if(listaAlimentos1.size() > 0){
             tvCalorias1.setText(""+ caloriasPlan[0]);
-            tvCalorias1.setVisibility(View.VISIBLE);
             adaptadorAlimentos1 = new AdaptadorListaAlimentos(getContext(), listaAlimentos1, 2);
             rvComida1.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida1.setAdapter(adaptadorAlimentos1);
         }
         if(listaAlimentos2.size() > 0){
             tvCalorias2.setText(""+ caloriasPlan[1]);
-            tvCalorias2.setVisibility(View.VISIBLE);
             adaptadorAlimentos2 = new AdaptadorListaAlimentos(getContext(), listaAlimentos2, 2);
             rvComida2.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida2.setAdapter(adaptadorAlimentos2);
@@ -358,7 +355,6 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
 
         if(listaAlimentos3.size() > 0){
             tvCalorias3.setText(""+ caloriasPlan[2]);
-            tvCalorias3.setVisibility(View.VISIBLE);
             adaptadorAlimentos3 = new AdaptadorListaAlimentos(getContext(), listaAlimentos3, 2);
             rvComida3.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida3.setAdapter(adaptadorAlimentos3);
@@ -366,7 +362,6 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
 
         if(listaAlimentos4.size() > 0){
             tvCalorias4.setText(""+ caloriasPlan[3]);
-            tvCalorias4.setVisibility(View.VISIBLE);
             adaptadorAlimentos4 = new AdaptadorListaAlimentos(getContext(), listaAlimentos4, 2);
             rvComida4.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida4.setAdapter(adaptadorAlimentos4);
@@ -374,7 +369,6 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
 
         if(listaAlimentos5.size() > 0){
             tvCalorias5.setText(""+ caloriasPlan[4]);
-            tvCalorias5.setVisibility(View.VISIBLE);
             adaptadorAlimentos5 = new AdaptadorListaAlimentos(getContext(), listaAlimentos5, 2);
             rvComida5.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida5.setAdapter(adaptadorAlimentos5);
@@ -409,7 +403,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
     }
 
     private void mostrarDialog(){
-        AlertDialog.Builder buider = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         View dView = getLayoutInflater().inflate(R.layout.dialog_plan_nutricional, null);
 
         RecyclerView rvAlimentos = dView.findViewById(R.id.rvAlimentos);
@@ -451,8 +445,9 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
                 }
             }
         });
-        buider.setView(dView);
-        dialog = buider.create();
+        builder.setView(dView);
+        builder.setCancelable(false);
+        dialog = builder.create();
         dialog.show();
     }
 
@@ -522,7 +517,6 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
     }
 
     private void consultarAlimentosPlan(){
-        auxCalorias = caloriasPlan;
         consulta = "plan_propuesto";
 
         String url = "http://"+gs.getIp()+"/nutricion/listar_plan_propuesto.php?comida="+comida+"&fecha="+fecha;

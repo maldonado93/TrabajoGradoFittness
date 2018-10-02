@@ -91,7 +91,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
             item_alimento = (ConstraintLayout) itemView.findViewById(R.id.item_alimento);
             tvId = (TextView)itemView.findViewById(R.id.tvId);
             tvCantidad = (TextView)itemView.findViewById(R.id.tvCantidad);
-            tvNombre = (TextView)itemView.findViewById(R.id.tvNombres);
+            tvNombre = (TextView)itemView.findViewById(R.id.tvNombre);
             tvCalorias = (TextView)itemView.findViewById(R.id.tvValCalorias);
             tvProteinas = (TextView)itemView.findViewById(R.id.tvValProteinas);
             tvCarbohidratos = (TextView)itemView.findViewById(R.id.tvValCarbohidratos);
