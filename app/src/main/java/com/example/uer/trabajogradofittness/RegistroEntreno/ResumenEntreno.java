@@ -1,6 +1,5 @@
 package com.example.uer.trabajogradofittness.RegistroEntreno;
 
-import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,6 +11,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,12 +54,15 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     private static String TAG = "ResumenEntreno";
     GlobalState gs;
     View v;
+
     String consulta;
     int frecuenciaReposo;
     int promedioFrecuencias;
     String orientacionRutina;
 
-    ProgressDialog progress;
+    ProgressBar progressBar;
+
+    ConstraintLayout layout_resumen;
 
     private LineChart graficaPulsaciones;
     private PieChart graficaPorcentaje;
@@ -81,7 +84,8 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
         v = inflater.inflate(R.layout.fragment_resumen_entreno, container, false);
 
-
+        layout_resumen = v.findViewById(R.id.layout_resumen);
+        progressBar = v.findViewById(R.id.progressBar);
 
         tvTiempo = v.findViewById(R.id.tvTiempo);
         tvActividad = v.findViewById(R.id.tvActividad);
@@ -94,10 +98,6 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         super.onCreate(savedInstanceState);
 
         gs = (GlobalState) getActivity().getApplication();
-
-        progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando datos...");
-        progress.show();
 
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
@@ -329,7 +329,6 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
         l.setDrawInside(false);
 
-        progress.hide();
 
     }
 
@@ -383,6 +382,8 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         }
         else{
             if(consulta.compareTo("datos_entreno") == 0){
+                progressBar.setVisibility(View.GONE);
+                layout_resumen.setVisibility(View.VISIBLE);
                 initGraficaPulsaciones();
                 initGraficaPorcentaje();
             }

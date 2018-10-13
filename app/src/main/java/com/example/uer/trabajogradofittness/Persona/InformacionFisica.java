@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
@@ -15,8 +15,8 @@ public class InformacionFisica extends AppCompatActivity {
 
     GlobalState gs;
 
-    ImageButton btnRegresar;
-    ImageButton btnAdelante;
+    Button btnRegresar;
+    Button btnAdelante;
 
     EditText etEstatura;
     EditText etPeso;

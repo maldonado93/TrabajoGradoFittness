@@ -116,7 +116,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         boolean correcto = true;
         if(gs.getNivelActividad().compareTo("Novato") == 0 || gs.getNivelActividad().compareTo("Intermedio") == 0 ){
             if(registros == 4){
-                rendimiento += 0.1;
+                rendimiento += 0.01;
             }
             else{
                 correcto = false;
@@ -124,7 +124,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         }
         else{
             if(registros >= 4 && registros <= 6){
-                rendimiento += 0.1;
+                rendimiento += 0.01;
 
             }
             else{
@@ -133,7 +133,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         }
 
         if(!correcto){
-            rendimiento -= (registros * 0.025);
+            rendimiento -= 0.01;
         }
         gs.setRendimiento(rendimiento);
     }
@@ -156,7 +156,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
             consulta = "usuario";
             progress.show();
-            String url = "http://"+gs.getIp()+"/usuario/consultar_usuario1.php?usuario="+ usuario;
+            String url = "http://"+gs.getIp()+"/usuario/consultar_usuario.php?usuario="+ usuario;
 
             url = url.replace(" ", "%20");
 
@@ -191,13 +191,14 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
     private void actualizarRendimiento(){
         consulta = "rendimiento";
-        String url = "http://"+gs.getIp()+"/persona/actualizar_rendimiento.php?idPersona="+ gs.getSesion_usuario()+"&rendimiento="+gs.getRendimiento();
+        String url = "http://"+gs.getIp()+"/persona/actualizar_rendimiento.php?idPersona="+ gs.getSesion_usuario()+"&rendimiento="+gs.getRendimiento()+"&fecha="+fecha;
 
         url = url.replace(" ", "%20");
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
+
 
     private void calcularEdad(String fecha){
         Date fechaActual = new Date();
@@ -268,8 +269,8 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     @Override
     public void onResponse(JSONObject response) {
 
-        int tipoUsuario = 0;
         boolean usuarioValido = false;
+        String url = "";
         int dias = 0;
         int cantidadRegistros = 0;
 
@@ -299,15 +300,14 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                     }
                 }
                 if(consulta.compareTo("datos") == 0){
+                    gs.setFotoPerfil(jsonObject.optString("foto"));
                     gs.setNombres(jsonObject.optString("nombres"));
                     gs.setApellidos(jsonObject.optString("apellidos"));
                     gs.setGenero(jsonObject.optString("genero"));
                     gs.setNivel(jsonObject.optInt("nivel"));
                     gs.setPuntos(jsonObject.optInt("puntos"));
                     dias = jsonObject.optInt("dias");
-                    if(dias < 7){
-                        gs.setRendimiento(Double.parseDouble(jsonObject.optString("rendimiento")));
-                    }
+                    gs.setRendimiento(Double.parseDouble(jsonObject.optString("rendimiento")));
                     gs.setPeso(Float.parseFloat(jsonObject.optString("peso")));
                     gs.setNivelActividad(jsonObject.optString("nivel_actividad"));
                     gs.setFumador(jsonObject.optString("fuma"));

@@ -16,11 +16,39 @@
                             <entry key="launcher">
                               <value>
                                 <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="backgroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="65" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="foregroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="72" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundLayerName" value="ic_launcher_background" />
+                                      <entry key="backgroundImage" value="C:\Users\HP\Desktop\Insignias\insignia.png" />
+                                      <entry key="backgroundLayerName" value="ic_insignia" />
+                                      <entry key="foregroundImage" value="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Android Studio" />
                                       <entry key="foregroundLayerName" value="ic_launcher_foreground" />
-                                      <entry key="outputName" value="foto_defecto" />
+                                      <entry key="outputName" value="insignia" />
                                     </map>
                                   </option>
                                 </PersistentState>

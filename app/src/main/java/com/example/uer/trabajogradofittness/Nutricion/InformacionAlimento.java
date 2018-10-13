@@ -83,7 +83,7 @@ public class InformacionAlimento extends AppCompatActivity implements Response.L
 
         gs = (GlobalState) getApplication();
 
-        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar1);
 
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -1,18 +1,23 @@
 package com.example.uer.trabajogradofittness.Persona;
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+
 public class ListaRanking {
 
     private int posicion;
     private int id;
-    private String imagen;
+    private Bitmap imagen;
     private String nombre;
+    private Drawable insignia;
     private String nivel;
     private String puntos;
 
-    public ListaRanking(int posicion, String imagen, String nombre, String nivel, String puntos) {
+    public ListaRanking(int posicion, Bitmap imagen, String nombre, Drawable insignia, String nivel, String puntos) {
         this.posicion = posicion;
         this.imagen = imagen;
         this.nombre = nombre;
+        this.insignia = insignia;
         this.nivel = nivel;
         this.puntos = puntos;
     }
@@ -41,11 +46,11 @@ public class ListaRanking {
         this.id = id;
     }
 
-    public String getImagen() {
+    public Bitmap getImagen() {
         return imagen;
     }
 
-    public void setImagen(String imagen) {
+    public void setImagen(Bitmap imagen) {
         this.imagen = imagen;
     }
 
@@ -55,6 +60,14 @@ public class ListaRanking {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Drawable getInsignia() {
+        return insignia;
+    }
+
+    public void setInsignia(Drawable insignia) {
+        this.insignia = insignia;
     }
 
     public String getNivel() {

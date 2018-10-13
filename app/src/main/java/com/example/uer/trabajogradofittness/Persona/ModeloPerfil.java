@@ -84,7 +84,7 @@ public class ModeloPerfil {
 
         try{
             byte[] byteCode = Base64.decode(dato, Base64.DEFAULT);
-            this.foto = BitmapFactory.decodeByteArray(byteCode, 0 ,byteCode.length);
+            setFoto(BitmapFactory.decodeByteArray(byteCode, 0 ,byteCode.length));
         }catch (Exception e){
             e.printStackTrace();
         }

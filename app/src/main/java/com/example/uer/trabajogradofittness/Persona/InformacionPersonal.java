@@ -3,13 +3,17 @@ package com.example.uer.trabajogradofittness.Persona;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,10 +44,12 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
 
     ArrayList<String> listaConsulta;
     String consulta;
-    boolean carga = false;
+    boolean existeUsuario;
+    boolean existeIdentificacion;
+    boolean carga;
 
     ImageButton btnSalir;
-    ImageButton btnSiguiente;
+    Button btnSiguiente;
     ImageButton btnCalendario;
 
     EditText etUsuario;
@@ -51,6 +57,7 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
     EditText etIdentificacion;
     EditText etNombres;
     EditText etApellidos;
+    EditText etMovil;
     EditText etEmail;
     EditText etFechaNato;
 
@@ -97,11 +104,49 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         });
 
         etUsuario = findViewById(R.id.etUsuario);
+        etUsuario.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                etUsuario.setHighlightColor(Color.BLUE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                if(etUsuario.getText().toString().compareTo("") != 0){
+                    existeUsuario = false;
+                    if(!carga){
+                        verificarUsuario();
+                    }
+
+                }
+            }
+        });
+
+
         etPassword = findViewById(R.id.etPassword);
         spTipoIdentificacion = findViewById(R.id.spTipoIdentificacion);
         etIdentificacion = findViewById(R.id.etIdentificacion);
+
+        etIdentificacion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                if (!b && etIdentificacion.getText().toString().compareTo("") != 0) {
+                    existeIdentificacion = false;
+                    if (!carga){
+                        verificarIdentificacion();
+                    }
+                }
+            }
+        });
+
         etNombres = findViewById(R.id.etNombres);
         etApellidos = findViewById(R.id.etApellidos);
+        etMovil = findViewById(R.id.etMovil);
         etEmail = findViewById(R.id.etEmail);
 
         rgroup= findViewById(R.id.rgroup);
@@ -150,8 +195,6 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
 
         spCiudad = findViewById(R.id.spCiudad);
 
-
-
         cargarCampos();
         cargarTiposIdentificacion();
     }
@@ -174,13 +217,19 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
     }
 
     public void cargarCampos(){
-        carga = true;
+        if(gs.getUsuario().compareTo("") != 0){
+            carga=true;
+        }
+        else{
+            carga = false;
+        }
 
         etUsuario.setText(gs.getUsuario());
         etPassword.setText(gs.getPassword());
         etIdentificacion.setText(gs.getIdentificacion());
         etNombres.setText(gs.getNombres());
         etApellidos.setText(gs.getApellidos());
+        etMovil.setText(gs.getMovil());
         etEmail.setText(gs.getEmail());
 
         String genero = gs.getGenero();
@@ -198,7 +247,6 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         else{
             etFechaNato.setText("00/00/0000");
         }
-
     }
 
     public void verificarCampos(View view){
@@ -209,6 +257,7 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         String identificacion = etIdentificacion.getText().toString().trim();
         String nombres = etNombres.getText().toString().trim();
         String apellidos = etApellidos.getText().toString().trim();
+        String movil = etMovil.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
         String genero = "";
         if(rbMasculino.isChecked()){
@@ -224,7 +273,7 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         int idCiudad = (spCiudad.getSelectedItemPosition()+1);
 
         if(usuario.compareTo("") != 0 && password.compareTo("") != 0 && identificacion.compareTo("") != 0 && nombres.compareTo("") != 0 && apellidos.compareTo("") != 0
-                && email.compareTo("") != 0 && genero.compareTo("") != 0 && fecha.compareTo("00/00/0000") != 0){
+                && movil.compareTo("") != 0 && email.compareTo("") != 0 && genero.compareTo("") != 0 && fecha.compareTo("00/00/0000") != 0){
 
             gs.setRegistro(1);
             gs.setUsuario(usuario);
@@ -233,6 +282,7 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
             gs.setIdentificacion(identificacion);
             gs.setNombres(nombres);
             gs.setApellidos(apellidos);
+            gs.setMovil(movil);
             gs.setEmail(email);
             gs.setGenero(genero);
             gs.setFecha(fecha);
@@ -240,7 +290,15 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
             gs.setCiudad(ciudad);
             gs.setIdCiudad(idCiudad);
 
-            siguiente();
+            if(existeUsuario){
+                Snackbar.make(view, "El usuario ya existe!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            }
+            if(existeIdentificacion){
+                Snackbar.make(view, "La identificacion ya existe!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
+            }
+            if(!existeUsuario && !existeIdentificacion){
+                siguiente();
+            }
         }
         else{
             Toast.makeText(this,"Complete los campos, por favor!", Toast.LENGTH_SHORT).show();
@@ -248,14 +306,34 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
         }
     }
 
-
-
     public void siguiente() {
 
         Intent intent = new Intent(this, InformacionObjetivo.class);
         startActivity(intent);
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-        //finish();
+        this.finish();
+    }
+
+    private void verificarUsuario(){
+        consulta = "usuario";
+
+        String url = "http://"+gs.getIp()+"/usuario/consultar_usuario.php?usuario="+ etUsuario.getText().toString();
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+    private void verificarIdentificacion(){
+        consulta = "verificar_identificacion";
+
+        String url = "http://"+gs.getIp()+"/persona/verificar_identificacion.php?identificacion="+ etIdentificacion.getText().toString();
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
     }
 
     private void cargarTiposIdentificacion(){
@@ -311,37 +389,61 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
                 if(consulta.compareTo("ciudad") == 0){
                     listaConsulta.add(jsonObject.optString("ciudad"));
                 }
-
+                if(consulta.compareTo("usuario") == 0){
+                    String usuario = jsonObject.optString("usuario");
+                    if(usuario.compareTo("") != 0){
+                        existeUsuario = true;
+                        etUsuario.setTextColor(Color.RED);
+                        Toast.makeText(this, "El usuario ya existe!", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        existeUsuario = false;
+                        etUsuario.setTextColor(Color.BLACK);
+                    }
+                }
+                if(consulta.compareTo("verificar_identificacion") == 0){
+                    int id = jsonObject.optInt("id");
+                    if(id != 0){
+                        existeIdentificacion = true;
+                        etIdentificacion.setTextColor(Color.RED);
+                        Toast.makeText(this, "La identificacion ya existe!", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        existeIdentificacion = false;
+                        etIdentificacion.setTextColor(Color.BLACK);
+                    }
+                }
             }
             adaptador = new ArrayAdapter(this, android.R.layout.simple_spinner_item, listaConsulta);
-
-
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
 
-        if(consulta.compareTo("tipo_identificacion") == 0){
-            spTipoIdentificacion.setAdapter(adaptador);
-            if(gs.getRegistro() == 1){
-                spTipoIdentificacion.setSelection(gs.getTipoIdentificacion()-1);
-            }
-            cargarDepartamentos();
-        }
-        else{
-            if(consulta.compareTo("departamento") == 0){
-                spDepartamento.setAdapter(adaptador);
-                if(gs.getRegistro() == 1){
-                    spDepartamento.setSelection(gs.getDepartamento()-1);
+
+            if(consulta.compareTo("verificar_identificacion") != 0) {
+                if (consulta.compareTo("tipo_identificacion") == 0) {
+                    spTipoIdentificacion.setAdapter(adaptador);
+                    if (gs.getRegistro() == 1) {
+                        spTipoIdentificacion.setSelection(gs.getTipoIdentificacion() - 1);
+                    }
+                    cargarDepartamentos();
+                } else {
+                    if (consulta.compareTo("departamento") == 0) {
+                        spDepartamento.setAdapter(adaptador);
+                        if (gs.getRegistro() == 1) {
+                            spDepartamento.setSelection(gs.getDepartamento() - 1);
+                        }
+                    }
+                    if (consulta.compareTo("ciudad") == 0) {
+                        spCiudad.setAdapter(adaptador);
+                        if (carga) {
+                            spCiudad.setSelection(gs.getIdCiudad() - 1);
+                        }
+                    }
                 }
             }
-            if(consulta.compareTo("ciudad") == 0){
-                spCiudad.setAdapter(adaptador);
-                if(carga){
-                    spCiudad.setSelection(gs.getIdCiudad()-1);
-                }
-            }
-        }
+
     }
 
 

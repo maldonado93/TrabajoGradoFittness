@@ -48,7 +48,7 @@ public class InformacionEjercicio extends AppCompatActivity implements Response.
         Bundle datos = this.getIntent().getExtras();
         idEjercicio = datos.getString("id");
 
-        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar1);
 
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override

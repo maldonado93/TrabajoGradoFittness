@@ -322,7 +322,7 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                 tvMensaje.setVisibility(View.VISIBLE);
                 layoutFiltro.setVisibility(View.GONE);
                 rvEntrenos.setVisibility(View.GONE);
-                //progress.hide();
+                progressBar.setVisibility(View.GONE);
             }
 
         }

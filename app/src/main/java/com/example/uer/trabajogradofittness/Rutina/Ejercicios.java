@@ -63,7 +63,7 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
         idRutina = datos.getString("idRutina");
         rutina = datos.getString("rutina");
 
-        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar1);
 
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override

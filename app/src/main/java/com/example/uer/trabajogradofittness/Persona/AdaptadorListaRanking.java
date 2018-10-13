@@ -1,7 +1,9 @@
 package com.example.uer.trabajogradofittness.Persona;
 
 import android.content.Context;
+import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -34,11 +36,14 @@ public class AdaptadorListaRanking extends RecyclerView.Adapter<AdaptadorListaRa
         return holder;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     @Override
     public void onBindViewHolder(@NonNull AdaptadorListaRanking.MyViewHolder myViewHolder, int i) {
         myViewHolder.tvPosicion.setText(String.valueOf(lista.get(i).getPosicion()));
         myViewHolder.tvId.setText(String.valueOf(lista.get(i).getId()));
+        myViewHolder.ivImagen.setImageBitmap(lista.get(i).getImagen());
         myViewHolder.tvNombre.setText(lista.get(i).getNombre());
+        myViewHolder.ivInsignia.setBackground(lista.get(i).getInsignia());
         myViewHolder.tvNivel.setText(lista.get(i).getNivel());
         myViewHolder.tvPuntos.setText(lista.get(i).getPuntos());
     }
@@ -56,6 +61,7 @@ public class AdaptadorListaRanking extends RecyclerView.Adapter<AdaptadorListaRa
         private TextView tvId;
         private ImageView ivImagen;
         private TextView tvNombre;
+        private ImageView ivInsignia;
         private TextView tvNivel;
         private TextView tvPuntos;
 
@@ -67,6 +73,7 @@ public class AdaptadorListaRanking extends RecyclerView.Adapter<AdaptadorListaRa
             tvId = (TextView)itemView.findViewById(R.id.tvId);
             ivImagen = itemView.findViewById(R.id.ivImagen);
             tvNombre = itemView.findViewById(R.id.tvNombre);
+            ivInsignia = itemView.findViewById(R.id.ivInsignia);
             tvNivel = itemView.findViewById(R.id.tvNivel);
             tvPuntos = itemView.findViewById(R.id.tvPuntos);
         }

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +53,7 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
     View v;
 
     ProgressDialog progress;
+    ProgressBar progressBar;
 
     String consulta;
     int indConsulta;
@@ -58,10 +61,12 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
     private LineChart graficaPesos;
     ArrayList<String> registroPesos;
 
+    ConstraintLayout layout_historico;
+
     TextView tvPeso;
+    TextView tvKg;
     EditText etPeso;
     Button btnActualizar;
-
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -72,7 +77,11 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_historico_pesos, container, false);
 
+        progressBar = v.findViewById(R.id.progressBar);
+        layout_historico = v.findViewById(R.id.layout_historico);
+
         tvPeso = v.findViewById(R.id.tvPeso);
+        tvKg = v.findViewById(R.id.tvKg);
         etPeso = v.findViewById(R.id.etPeso);
         btnActualizar = v.findViewById(R.id.btnActualizar);
         btnActualizar.setOnClickListener(new View.OnClickListener() {
@@ -108,11 +117,11 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
         graficaPesos = v.findViewById(R.id.graficaPeso);
 
-        graficaPesos.setDragEnabled(false);
+        graficaPesos.setDragEnabled(true);
         graficaPesos.setScaleEnabled(false);
         graficaPesos.getDescription().setEnabled(true);
         graficaPesos.getDescription().setText("");
-        graficaPesos.setTouchEnabled(false);
+        graficaPesos.setTouchEnabled(true);
         graficaPesos.setPinchZoom(false);
 
         ArrayList<Entry> valoresy = new ArrayList<>();
@@ -138,7 +147,7 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
         LineDataSet datos = new LineDataSet(valoresy, "Pesos");
         datos.setFillAlpha(110);
-        datos.setValueTextSize(12f);
+        datos.setValueTextSize(8f);
         datos.setDrawCircles(true);
         datos.setCircleRadius(0.3f);
         datos.setColor(Color.BLUE);
@@ -147,23 +156,22 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
         xAxis.setValueFormatter(new Formato(fechas));
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1);
-        xAxis.setTextSize(10f);
+        xAxis.setTextSize(7f);
 
         YAxis yAxis = graficaPesos.getAxisLeft();
         yAxis.setDrawGridLines(false);
         yAxis.setEnabled(false);
         yAxis.setDrawLabels(false);
-
+        yAxis.setDrawLimitLinesBehindData(false);
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(datos);
 
         verificarFecha();
-        progress.hide();
-
 
         LineData lineData = new LineData(dataSets);
         graficaPesos.setData(lineData);
+        graficaPesos.setVisibleXRangeMaximum(4);
         graficaPesos.animateX(1000, Easing.EasingOption.EaseOutSine);
     }
 
@@ -223,13 +231,13 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
         if(dia != dd || (dia == dd && mes != mm)){
             tvPeso.setVisibility(View.VISIBLE);
+            tvKg.setVisibility(View.VISIBLE);
             etPeso.setVisibility(View.VISIBLE);
             btnActualizar.setVisibility(View.VISIBLE);
         }
     }
 
     private void consultarPesos(){
-        progress.show();
         consulta = "historico_peso";
         indConsulta = 1;
 
@@ -273,7 +281,10 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
                     if(indConsulta == 2){
                         Toast.makeText(getContext(), "Peso actualizado!",Toast.LENGTH_SHORT).show();
                     }
+                    progressBar.setVisibility(View.GONE);
+                    layout_historico.setVisibility(View.VISIBLE);
                     tvPeso.setVisibility(View.GONE);
+                    tvKg.setVisibility(View.GONE);
                     etPeso.setVisibility(View.GONE);
                     btnActualizar.setVisibility(View.GONE);
                 }

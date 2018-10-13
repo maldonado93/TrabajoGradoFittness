@@ -25,6 +25,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ import com.example.uer.trabajogradofittness.Bluetooth.ConnectThread;
 import com.example.uer.trabajogradofittness.Bluetooth.DataHandler;
 import com.example.uer.trabajogradofittness.Bluetooth.H7ConnectThread;
 import com.example.uer.trabajogradofittness.GlobalState;
+import com.example.uer.trabajogradofittness.Insignias;
 import com.example.uer.trabajogradofittness.R;
 import com.example.uer.trabajogradofittness.Rutina.AdaptadorListaEjercicioRutina;
 import com.example.uer.trabajogradofittness.Rutina.ListaEjercicioRutina;
@@ -77,9 +79,13 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     GlobalState gs;
     View v;
 
-    AlertDialog dialog;
-    View dialogResultado;
+    AlertDialog dialogResultado;
+    View viewResultado;
 
+    AlertDialog dialogRutina;
+    View viewRutina;
+
+    ImageView ivInsignia;
     TextView tvNivel;
     ProgressBar prPuntos;
     TextView tvPuntos;
@@ -119,6 +125,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     boolean estadoEntreno;
     int[] tiempo;
 
+    int puntosNivel = 1000;
     boolean subeNivel;
     int puntosTiempo;
     int puntosTotal;
@@ -129,7 +136,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     boolean hiloResultados;
     int puntosTiempoHilo;
     int puntosTotalHilo;
-    int nivelHilo;
     int puntosHilo;
     int[] datosResultados;
 
@@ -207,8 +213,9 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     spDispositivos.setEnabled(true);
                 }
                 else{
-                    dialog_resultados();
-                    /*if(mBluetoothAdapter != null){
+                    /*tiempoTotal = 2500;
+                    dialog_resultados();*/
+                    if(mBluetoothAdapter != null){
                         if (mBluetoothAdapter.isEnabled()){
                             if(spDispositivos.getSelectedItemPosition() != 0){
                                 if(h7 || normal){
@@ -218,7 +225,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                                         btnEscanear.setVisibility(View.GONE);
                                         spDispositivos.setEnabled(false);
                                         registrarEntreno();
-
                                     }
                                     else{
                                         Snackbar.make(view, "No tienes alguna rutina para realizar el entreno!", Snackbar.LENGTH_LONG)
@@ -243,7 +249,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     }
                     else{
                         verificarBluetooth();
-                    }*/
+                    }
                 }
             }
         });
@@ -328,9 +334,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 tiempoEstimadoMin += tiempo;
                 tiempoEstimadoMax += tiempo;
             }
-
-
-
         }
         Toast.makeText(getContext(), "Min: "+tiempoEstimadoMin+" Max: "+tiempoEstimadoMax, Toast.LENGTH_LONG).show();
     }
@@ -341,7 +344,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             frecuenciaReposo += Float.parseFloat(registroFrecuenciaReposo.get(i));
         }
         frecuenciaReposo = frecuenciaReposo / registroFrecuenciaReposo.size();
-        //generarLimitesFrecuencias((int)promedioFrecuencia);
+
         calcularFrecEsfuerzo((int)frecuenciaReposo);
     }
 
@@ -507,7 +510,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         FCRMin = (int)((FCmax - FCrep) * FCEsfMin + FCrep);
         FCRMax = (int)((FCmax - FCrep) * FCEsfMax + FCrep);
 
-
         LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
         frecuenciaMaxima.setLineColor(Color.RED);
         frecuenciaMaxima.setLineWidth(1.5f);
@@ -537,47 +539,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         yAxis.enableGridDashedLine(10f,10f,0);
         yAxis.setDrawLimitLinesBehindData(true);
     }
-
-    private void generarLimitesFrecuencias(int frecuenciaReposo){
-
-        int FCmax = 0;
-        int FCrep = frecuenciaReposo;
-        int FCRMin = 0;
-        int FCRMax = 0;
-
-        String genero = gs.getGenero();
-        int edad = gs.getEdad();
-        float peso = gs.getPeso();
-        int CF;
-        String nivelActividad = gs.getNivelActividad();
-
-        if(gs.getFumador().compareTo("Si") == 0){
-            CF = 1;
-        }
-        else{
-            CF = 0;
-        }
-
-        if(genero.compareTo("Femenino") == 0){
-            FCmax= (int)Math.round(204.8 - (0.718 * edad) + (0.162 * FCrep) - (0.105 * peso) - (6.2 * CF));
-        }
-        else{
-            FCmax= (int)Math.round(203.9 - (0.812 * edad) + (0.276* FCrep) - (0.084 * peso) - (4.5*CF));
-        }
-        Toast.makeText(getContext(), "FCMx: "+FCmax, Toast.LENGTH_SHORT).show();
-
-        LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
-        frecuenciaMaxima.setLineColor(Color.RED);
-        frecuenciaMaxima.setLineWidth(1.5f);
-        frecuenciaMaxima.enableDashedLine(10f, 1.5f, 0);
-        frecuenciaMaxima.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
-        frecuenciaMaxima.setTextSize(4f);
-
-        YAxis yAxis = graficaPulsaciones.getAxisLeft();
-        yAxis.removeAllLimitLines();
-        yAxis.addLimitLine(frecuenciaMaxima);
-    }
-
 
     private LineDataSet createSet() {
         LineDataSet set = new LineDataSet(null, "Pulsaciones/minuto");
@@ -816,44 +777,176 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     }
 
     private void dialogRutina(){
-            AlertDialog.Builder buider = new AlertDialog.Builder(getContext());
-            View dView = getLayoutInflater().inflate(R.layout.dialog_ejercicios_rutina, null);
+        AlertDialog.Builder buider = new AlertDialog.Builder(getContext());
+        viewRutina = getLayoutInflater().inflate(R.layout.dialog_ejercicios_rutina, null);
 
-            RecyclerView recyclerEjercicios = dView.findViewById(R.id.rvEjercicios);
+        RecyclerView recyclerEjercicios = viewRutina.findViewById(R.id.rvEjercicios);
 
-            recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));
-            recyclerEjercicios.setAdapter(adaptadorEjercicios);
+        recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));
+        recyclerEjercicios.setAdapter(adaptadorEjercicios);
 
-            String descanso = "";
 
-            TextView tvDescanso = dView.findViewById(R.id.tvDescanso);
-            if(orientacion.compareTo("Metabólica") == 0){
-                descanso = "- De 30 a 60 segundos";
-            }
-            else {
-                if (gs.getNivelActividad().compareTo("Novato") == 0 || gs.getNivelActividad().compareTo("Intermedio") == 0) {
-                    if (orientacion.compareTo("Estructural") == 0) {
-                        descanso = "- 1 a 2 minutos";
-                    }
-                    else {
-                        descanso = "- 2 a 3 minutos";
-                    }
+
+        String descanso = "";
+
+        TextView tvDescanso = viewRutina.findViewById(R.id.tvDescanso);
+        if(orientacion.compareTo("Metabólica") == 0){
+            descanso = "- De 30 a 60 segundos";
+        }
+        else {
+            if (gs.getNivelActividad().compareTo("Novato") == 0 || gs.getNivelActividad().compareTo("Intermedio") == 0) {
+                if (orientacion.compareTo("Estructural") == 0) {
+                    descanso = "- 1 a 2 minutos";
                 }
                 else{
-                    if (orientacion.compareTo("Estructural") == 0) {
-                        descanso = "- 1 a 3 minutos";
-                    }
-                    else {
-                        descanso = "- 3 a 5 minutos";
-                    }
+                    descanso = "- 2 a 3 minutos";
                 }
             }
-            tvDescanso.setText(descanso);
+            else{
+                if (orientacion.compareTo("Estructural") == 0) {
+                    descanso = "- 1 a 3 minutos";
+                }
+                else {
+                    descanso = "- 3 a 5 minutos";
+                }
+            }
+        }
+        tvDescanso.setText(descanso);
 
-            buider.setView(dView);
-            AlertDialog dialog = buider.create();
-            dialog.show();
+        int tiempo;
+        int minutos;
+        int segundos;
+        String t;
+
+        TextView tvTiempoMin = viewRutina.findViewById(R.id.tvTiempoMin);
+
+        tiempo = tiempoEstimadoMin;
+        minutos = (int) Math.ceil(tiempo / 60);
+        segundos = tiempo - (minutos * 60);
+
+        if(segundos != 0){
+            t = "- Min: " + minutos + " min " + segundos + " seg";
+        }
+        else{
+            t ="- Min: " + minutos + " min ";
+        }
+
+        tvTiempoMin.setText(t);
+
+        TextView tvTiempoMax = viewRutina.findViewById(R.id.tvTiempoMax);
+
+        tiempo = tiempoEstimadoMax;
+        minutos = (int) Math.ceil(tiempo / 60);
+        segundos = tiempo - (minutos * 60);
+
+        if(segundos != 0){
+            t = "- Min: " + minutos + " min " + segundos + " seg";
+        }
+        else{
+            t ="- Min: " + minutos + " min ";
+        }
+
+        tvTiempoMax.setText(t);
+
+        Button btnAceptar = viewRutina.findViewById(R.id.btnAceptar);
+        btnAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogRutina.hide();
+            }
+        });
+
+        buider.setView(viewRutina);
+        dialogRutina = buider.create();
+        dialogRutina.show();
     }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void dialog_resultados(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        viewResultado = getLayoutInflater().inflate(R.layout.dialog_resultado_entreno, null);
+
+        int puntosEntreno = 100;
+        nivel = gs.getNivel();
+        puntos = gs.getPuntos();
+
+        ivInsignia = viewResultado.findViewById(R.id.ivInsignia);
+        tvNivel = viewResultado.findViewById(R.id.tvNivel);
+        prPuntos = viewResultado.findViewById(R.id.prPuntos);
+        tvPuntos = viewResultado.findViewById(R.id.tvPuntos);
+        tvTiempo = viewResultado.findViewById(R.id.tvTiempo);
+        tvPuntosTiempo = viewResultado.findViewById(R.id.tvPuntosTiempo);
+        tvTotal = viewResultado.findViewById(R.id.tvTotal);
+        tvRendimiento = viewResultado.findViewById(R.id.tvRendimiento);
+        Button btnContinuar = viewResultado.findViewById(R.id.btnContinuar);
+        btnContinuar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogResultado.hide();
+            }
+        });
+
+        Insignias insignias = new Insignias(getContext(), nivel);
+        Drawable insignia = insignias.getInsignia();
+        ivInsignia.setBackground(insignia);
+        tvNivel.setText(gs.getNivelActividad());
+
+        calcularPuntosEntreno(puntosEntreno);
+
+        prPuntos.setProgress(puntos, true);
+        tvPuntos.setText(puntos + "/" + puntosNivel);
+
+
+
+        builder.setView(viewResultado);
+        dialogResultado = builder.create();
+        dialogResultado.show();
+
+        actualizarGamificacion();
+
+        hiloResultados = true;
+        resultados = new Resultados();
+        resultados.execute();
+    }
+
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void calcularPuntosEntreno(int puntosEntreno){
+
+        subeNivel = false;
+        int tiempo = tiempoTotal;
+        int minutos = (int) Math.ceil(tiempo / 60);
+        int segundos = tiempo - (minutos * 60);
+        tvTiempo.setText(minutos + " min " + segundos + " seg");
+
+        tvPuntosTiempo.setText("+0");
+        tvRendimiento.setText((int)(gs.getRendimiento() * 100) + "%");
+        tvTotal.setText("+0");
+
+        double calculoTiempo = 1;
+        if(tiempo < tiempoEstimadoMin){
+            calculoTiempo = tiempo/((double)tiempoEstimadoMin);
+        }
+        else{
+            if(tiempo > tiempoEstimadoMax){
+                calculoTiempo = ((double)tiempoEstimadoMax) / tiempo;
+            }
+        }
+
+        puntosTiempo = (int)(puntosEntreno * calculoTiempo);
+
+        puntosTotal = (int)(puntosTiempo * gs.getRendimiento());
+
+        sumaPuntos = puntos + puntosTotal;
+
+        if(sumaPuntos > puntosNivel){
+            subeNivel = true;
+            sumaPuntos = sumaPuntos - puntosNivel;
+        }
+        gs.setPuntos(sumaPuntos);
+    }
+
 
     private void consultarRutina(){
         consulta = "rutina";
@@ -913,7 +1006,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         promedio = (int) promedio / registroPulsaciones.size();
 
-        tiempoTotal = tiempoTotal;
         String url = "http://" + gs.getIp() + "/registro_entrenos/actualizar_entreno.php?idEntreno=" + idRegistroEntreno + "&tiempo=" + tiempoTotal+"&promedio="+promedio;
 
         url = url.replace(" ", "%20");
@@ -921,7 +1013,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
  }
-
 
     private void listarEjercicios(){
         consulta = "ejercicio";
@@ -933,91 +1024,33 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         request.add(jsonObjectRequest);
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void dialog_resultados(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        dialogResultado = getLayoutInflater().inflate(R.layout.dialog_resultado_entreno, null);
+    private void actualizarGamificacion(){
+        consulta = "gamificacion";
+        String url = "http://"+gs.getIp()+"/persona/actualizar_gamificacion.php?idPersona="+gs.getSesion_usuario()+"&nivel="+gs.getNivel()+"&puntos="+gs.getPuntos();
 
-        int puntosEntreno = 100;
-        nivel = gs.getNivel();
-        puntos = gs.getPuntos();
+        url = url.replace(" ", "%20");
 
-        tvNivel = dialogResultado.findViewById(R.id.tvNivel);
-        prPuntos = dialogResultado.findViewById(R.id.prPuntos);
-        tvPuntos = dialogResultado.findViewById(R.id.tvPuntos);
-        tvTiempo = dialogResultado.findViewById(R.id.tvTiempo);
-        tvPuntosTiempo = dialogResultado.findViewById(R.id.tvPuntosTiempo);
-        tvTotal = dialogResultado.findViewById(R.id.tvTotal);
-        tvRendimiento = dialogResultado.findViewById(R.id.tvRendimiento);
-        Button btnContinuar = dialogResultado.findViewById(R.id.btnContinuar);
-        btnContinuar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.hide();
-            }
-        });
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+    private void actualizarCondicionFisica(){
+        consulta = "condicion_fisica";
+        String url = "http://"+gs.getIp()+"/persona/actualizar_condicion_fisica.php?idPersona="+gs.getSesion_usuario()+"&nivel="+gs.getNivelActividad();
 
-        calcularPuntosEntreno(puntosEntreno);
+        url = url.replace(" ", "%20");
 
-        tvNivel.setText("Nivel: " + nivel);
-
-        prPuntos.setProgress(puntos, true);
-        tvPuntos.setText(puntos + "/" + 500);
-
-        builder.setView(dialogResultado);
-        dialog = builder.create();
-        dialog.show();
-
-        hiloResultados = true;
-        resultados = new Resultados();
-        resultados.execute();
-
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
     }
 
-    @TargetApi(Build.VERSION_CODES.N)
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void calcularPuntosEntreno(int puntosEntreno){
-
-        subeNivel = false;
-        int tiempo = 1800;
-        int minutos = (int) Math.ceil(tiempo / 60);
-        int segundos = tiempo - (minutos * 60);
-        tvTiempo.setText(minutos + " min " + segundos + " seg");
-
-        tvPuntosTiempo.setText("+0");
-        tvRendimiento.setText((int)(gs.getRendimiento() * 100) + "%");
-        tvTotal.setText("+0");
-
-        double calculoTiempo = 1;
-        if(tiempo < tiempoEstimadoMin){
-            calculoTiempo = tiempo/tiempoEstimadoMin;
-        }
-        else{
-            if(tiempo > tiempoEstimadoMax){
-                calculoTiempo = tiempoEstimadoMax/(double)tiempo;
-            }
-        }
-
-        puntosTiempo = (int)(puntosEntreno * calculoTiempo);
-
-        puntosTotal = (int)(puntosEntreno * gs.getRendimiento());
-
-        sumaPuntos = puntos + puntosTotal;
-
-        if(sumaPuntos > 500){
-            subeNivel = true;
-            sumaPuntos = sumaPuntos - 500;
-            nivel++;
-        }
-    }
 
     @Override
     public void onResume() {
         super.onResume();
     }
 
-
+    @TargetApi(Build.VERSION_CODES.N)
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void onResponse(JSONObject response) {
         int resultado = 0;
@@ -1084,10 +1117,9 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                         listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
                                 jsonObject.optString("categoria"),
                                 jsonObject.optString("nombre"),
-                                "tiempo",
+                                "Tiempo",
                                 jsonObject.optString("tiempo")+" min"));
                     }
-
                 }
                 adaptadorEjercicios = new AdaptadorListaEjercicioRutina(getContext(), listaEjercicios);
             }
@@ -1106,12 +1138,23 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 calcularTiemposEspera();
             }
         }
-
-        if(consulta == "registro_entreno" && idRegistroEntreno != 0){
+        if(consulta.compareTo("registro_entreno") == 0 && idRegistroEntreno != 0){
             indPulsaciones = 0;
             estadoEntreno = true;
             cronometro = new Cronometro();
             cronometro.execute();
+        }
+        else{
+            if(consulta.compareTo("registro_actualizado") == 0){
+                dialog_resultados();
+            }
+            else{
+                if(consulta.compareTo("gamificacion") == 0){
+                    if(subeNivel){
+                        actualizarCondicionFisica();
+                    }
+                }
+            }
         }
     }
 
@@ -1214,11 +1257,11 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
             puntosTiempoHilo = 0;
             puntosTotalHilo = 0;
-
-            nivelHilo = gs.getNivel();
             puntosHilo = gs.getPuntos();
         }
 
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+        @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
         @Override
         protected Boolean doInBackground(Void... voids) {
 
@@ -1254,9 +1297,23 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                         }
                         else{
                             if(pNivel){
-                                nivelHilo++;
+                                nivel++;
+                                gs.setNivel(nivel);
+                                Insignias insignias = new Insignias(getContext(), nivel);
+                                Drawable insignia = insignias.getInsignia();
+                                ivInsignia.setBackground(insignia);
 
-                                gs.setNivel(nivelHilo);
+                                if(nivel == 10){
+                                    tvNivel.setText("Intermedio");
+                                    gs.setNivelActividad("Intermedio");
+                                }
+                                else{
+                                    if(nivel == 19){
+                                        tvNivel.setText("Avanzado");
+                                        gs.setNivelActividad("Avanzado");
+                                    }
+                                }
+
                                 pNivel = false;
                                 pPuntos = true;
                                 subeNivel = false;
@@ -1265,13 +1322,14 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                             else{
                                 if(pPuntos){
                                     if(subeNivel){
-                                        if(puntosHilo <= 500){
+                                        if(puntosHilo < puntosNivel){
                                             puntosHilo++;
                                         }
                                         else{
+                                            puntosHilo = 0;
                                             pPuntos = false;
                                             pNivel = true;
-                                            sleep(500);
+                                            sleep(250);
                                         }
                                     }
                                     else{
@@ -1287,9 +1345,9 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                             }
                         }
                     }
-                    publishProgress(puntosTiempoHilo, puntosTotalHilo, nivel, puntosHilo);
+                    publishProgress(puntosTiempoHilo, puntosTotalHilo, puntosHilo);
                 }
-                gs.setPuntos(puntosHilo);
+
             }
             catch (InterruptedException e){
                 e.printStackTrace();
@@ -1305,14 +1363,12 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
             int puntosTiempo = values[0];
             int puntosTotal = values[1];
-            int nivel = values[2];
-            int puntos = values[3];
+            int puntos = values[2];
 
             tvPuntosTiempo.setText("+" + puntosTiempo);
             tvTotal.setText("+" + puntosTotal);
-            tvNivel.setText("Nivel: " + nivel);
             prPuntos.setProgress(puntos, true);
-            tvPuntos.setText(puntos + "/500");
+            tvPuntos.setText(puntos + "/" + puntosNivel);
         }
 
         @Override
@@ -1331,6 +1387,5 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             resultados = null;
             hiloResultados = false;
         }
-
     }
 }

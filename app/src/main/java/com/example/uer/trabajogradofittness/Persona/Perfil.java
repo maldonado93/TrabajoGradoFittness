@@ -31,11 +31,14 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
@@ -48,6 +51,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -121,6 +126,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         relativeLayout = v.findViewById(R.id.relativeLayout);
 
         ivImagen = v.findViewById(R.id.ivImagen);
+        consultarImagen(gs.getFotoPerfil());
 
         fbBorrar = v.findViewById(R.id.fbBorrar);
         fbBorrar.setOnClickListener(new View.OnClickListener() {
@@ -193,7 +199,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 dialog.setCancelable(false);
                 dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        guardarDatos();
+                        asignarDatos();
                         editarDatos(2);
                     }
                 });
@@ -229,6 +235,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         progress.setMessage("Cargando informacion...");
         progress.show();*/
 
+
         consultarPersona();
     }
 
@@ -236,7 +243,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         intent.setType("image/");
         startActivityForResult(intent.createChooser(intent,"Seleccione la aplicacion"),10);
-
     }
 
     @Override
@@ -276,8 +282,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         }
     }
 
-
-    private void guardarDatos(){
+    private void asignarDatos(){
         tvNombre.setText(etNombre.getText());
         tvEmail.setText(etEmail.getText());
         tvMovil.setText(etMovil.getText());
@@ -296,13 +301,11 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         request.add(jsonObjectRequest);
     }
 
-    private void guardarImagen(){
-        consulta = "guardar_imagen";
-        String idPersona = String.valueOf(gs.getSesion_usuario());
-
-        String imagen = convertirImagen(bitmap);
-
-        String url = "http://"+gs.getIp()+"/persona/guardar_imagen.php?idPersona="+idPersona+"&imagen="+imagen;
+    private void guardarDatos(){
+        consulta = "guardar_datos";
+        String url = "http://"+gs.getIp()+"/persona/guardar_datos.php?idPersona="+gs.getSesion_usuario()+"&tipoIdentificacion="+gs.getTipoIdentificacion()+"&identificacion="+gs.getIdentificacion()
+                +"&nombres="+gs.getNombres()+"&apellidos="+gs.getApellidos()+"&movil="+gs.getMovil()+"&email="+gs.getEmail()
+                +"&estatura="+gs.getEstatura();
 
         url = url.replace(" ", "%20");
 
@@ -310,7 +313,59 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         request.add(jsonObjectRequest);
     }
 
-    private String convertirImagen(Bitmap bitmap) {
+    private void guardarImagen(){
+        /*consulta = "guardar_imagen";
+
+        String imagen = convertirImagen(bitmap);
+
+        String url = "http://"+gs.getIp()+"/persona/guardar_imagen.php?idPersona="+gs.getSesion_usuario()+"&imagen="+imagen;
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+        */
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://" + gs.getIp() + "/persona/guardar_imagen_post.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.compareTo("") != 0){
+                            gs.setFotoPerfil(response);
+                            Toast.makeText(getContext(), "Imagen actualizada!", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(getContext(), "Error al actualizar la imagen!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Error al guardar la imagen", Toast.LENGTH_SHORT).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError{
+                String imagen = convertirImagen();
+                String idPersona = String.valueOf(gs.getSesion_usuario());
+
+                Map<String, String> params = new Hashtable<String, String>();
+
+                params.put("imagen", imagen);
+                params.put("idPersona", idPersona);
+
+                return params;
+            }
+
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
+    }
+
+    private String convertirImagen() {
         ByteArrayOutputStream array = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, array);
         byte[] imagenByte = array.toByteArray();
@@ -352,6 +407,26 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         return posicion;
     }
 
+    private void consultarImagen(String url){
+
+        url = url.replace(" ", "%20");
+
+        ImageRequest imageRequest = new ImageRequest(url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        ivImagen.setImageBitmap(response);
+                    }
+                }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        request.add(imageRequest);
+    }
+
 
 
     @Override
@@ -361,6 +436,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
         modeloPerfil = new ModeloPerfil();
 
+        String url = "";
         try {
             if(consulta.compareTo("guardarImagen") != 0){
                 for(int i=0; i<datos.length();i++) {
@@ -379,7 +455,8 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                         else{
                             modeloPerfil.setMovil(" ");
                         }
-                        modeloPerfil.setDato(jsonObject.optString("foto"));
+                        //url = jsonObject.optString("foto");
+                        //modeloPerfil.setDato(jsonObject.optString("foto"));
                         modeloPerfil.setLocalidad(jsonObject.optString("localidad"));
 
                         modeloPerfil.setPeso(jsonObject.optString("peso"));
@@ -392,6 +469,10 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                     if(consulta.compareTo("ciudad") == 0){
                         listaConsulta.add(jsonObject.optString("ciudad"));
                     }
+
+                    if(consulta.compareTo("guardar_datos") == 0){
+                        Toast.makeText(getContext(), "Datos actualizados!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         }
@@ -403,12 +484,12 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
             ArrayAdapter<CharSequence> adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, listaConsulta);
 
             if(consulta.compareTo("persona") == 0){
-                if(modeloPerfil.getFoto() != null){
+                /*if(modeloPerfil.getFoto() != null){
                     ivImagen.setImageBitmap(modeloPerfil.getFoto());
                 }
                 else{
                     ivImagen.setImageResource(R.mipmap.foto_defecto_round);
-                }
+                }*/
                 tvIdentificacion.setText(modeloPerfil.getIdentificacion());
                 tvNombre.setText(modeloPerfil.getNombre());
                 tvEmail.setText(modeloPerfil.getEmail());
@@ -423,7 +504,8 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 tvEstatura.setText(modeloPerfil.getEstatura());
 
                 etPeso.setText(modeloPerfil.getPeso());
-                etEstatura.setText(modeloPerfil.getEstatura().toString());
+
+                //consultarImagen(url);
                 cargarDepartamentos();
             }
             if(consulta.compareTo("departamento") == 0){

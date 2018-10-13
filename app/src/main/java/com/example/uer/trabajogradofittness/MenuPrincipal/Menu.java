@@ -1,6 +1,7 @@
 package com.example.uer.trabajogradofittness.MenuPrincipal;
 
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -17,10 +18,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
+import com.example.uer.trabajogradofittness.Insignias;
 import com.example.uer.trabajogradofittness.Nutricion.Nutricion;
 import com.example.uer.trabajogradofittness.Nutricion.PlanesNutricionales;
 import com.example.uer.trabajogradofittness.Persona.Cuenta;
@@ -47,6 +57,8 @@ public class Menu extends AppCompatActivity {
     private String tituloActividad;
     private String[] items;
 
+    ImageView ivImagen;
+    ImageView ivInsignia;
     TextView tvNombre;
     TextView tvNivel;
     ProgressBar prPuntos;
@@ -62,6 +74,8 @@ public class Menu extends AppCompatActivity {
 
     GlobalState gs;
 
+    RequestQueue request;
+    JsonObjectRequest jsonObjectRequest;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -70,6 +84,7 @@ public class Menu extends AppCompatActivity {
         setContentView(R.layout.activity_menu_principal);
 
         gs = (GlobalState) getApplication();
+        request = Volley.newRequestQueue(getApplicationContext());
 
         drawerLayout = findViewById(R.id.drawer_layout);
         tituloActividad = getTitle().toString();
@@ -80,15 +95,22 @@ public class Menu extends AppCompatActivity {
 
         View listHeaderView = getLayoutInflater().inflate(R.layout.nav_header_menu, null, false);
 
+        ivImagen = listHeaderView.findViewById(R.id.ivImagen);
+        ivInsignia = listHeaderView.findViewById(R.id.ivInsignia);
         tvNombre = listHeaderView.findViewById(R.id.tvNombre);
         tvNivel = listHeaderView.findViewById(R.id.tvNivel);
         prPuntos = listHeaderView.findViewById(R.id.prPuntos);
         tvPuntos = listHeaderView.findViewById(R.id.tvPuntos);
 
+        consultarImagen(gs.getFotoPerfil());
+
         tvNombre.setText(gs.getNombres()+" "+gs.getApellidos());
-        tvNivel.setText("Nivel: " + gs.getNivel());
+        tvNivel.setText(gs.getNivelActividad());
         prPuntos.setProgress(250, true);
         tvPuntos.setText(gs.getPuntos()+ "/" + prPuntos.getMax());
+
+        Insignias insignias = new Insignias(getApplicationContext(), gs.getNivel());
+        ivInsignia.setBackground(insignias.getInsignia());
 
         expandableListView.addHeaderView(listHeaderView);
 
@@ -111,6 +133,26 @@ public class Menu extends AppCompatActivity {
 
     }
 
+    private void consultarImagen(String url){
+
+        url = url.replace(" ", "%20");
+
+        ImageRequest imageRequest = new ImageRequest(url,
+                new Response.Listener<Bitmap>() {
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        ivImagen.setImageBitmap(response);
+                    }
+                }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error al cargar la imagen", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        request.add(imageRequest);
+    }
+
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -128,7 +170,9 @@ public class Menu extends AppCompatActivity {
             @RequiresApi(api = Build.VERSION_CODES.N)
             @Override
             public void onDrawerOpened(View drawerView) {
-                tvNivel.setText("Nivel: "+ gs.getNivel());
+
+                consultarImagen(gs.getFotoPerfil());
+                tvNivel.setText(gs.getNivelActividad());
                 prPuntos.setProgress(gs.getPuntos(), true);
                 tvPuntos.setText(gs.getPuntos() + "/" + 500);
                 invalidateOptionsMenu();
@@ -174,13 +218,6 @@ public class Menu extends AppCompatActivity {
 
                 verificarFragment();
                 reemplazarFragment();
-
-                /*if(items[0].equals(listTitulos.get(groupPosition))){
-                    manager.mostrarFragment(seleccion);
-                }
-                else{
-                    throw  new IllegalArgumentException("Ventana no soportada");
-                }*/
 
                 drawerLayout.closeDrawer(GravityCompat.START);
                 return false;
@@ -299,6 +336,8 @@ public class Menu extends AppCompatActivity {
         gs.setSesion_usuario(0);
         gs.setUsuario("");
         gs.setPassword("");
+        gs.setNombres("");
+        gs.setApellidos("");
         gs.setGenero("");
         gs.setPeso(0);
         gs.setNivelActividad("");

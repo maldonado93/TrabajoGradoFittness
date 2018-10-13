@@ -71,7 +71,7 @@ public class Registrar extends AppCompatActivity implements Response.Listener<JS
         gs = (GlobalState)getApplication();
         request = Volley.newRequestQueue(getApplicationContext());
 
-        btnRegresar = findViewById(R.id.btnRegresar);
+        btnRegresar = findViewById(R.id.btnRegresar1);
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -22,12 +22,14 @@ public class GlobalState extends Application{
     public int edad = 0;
 
     public int registro = 0;
+    public String fotoPerfil = "";
     public String usuario = "";
     public String password = "";
     public int tipoIdentificacion = 0;
     public String identificacion = "";
     public String nombres = "";
     public String apellidos = "";
+    public String movil = "";
     public String email = "";
     public String genero = "";
     public String fecha = "";
@@ -156,6 +158,14 @@ public class GlobalState extends Application{
         this.registro = registro;
     }
 
+    public void setFotoPerfil(String fotoPerfil) {
+        this.fotoPerfil = fotoPerfil;
+    }
+
+    public String getFotoPerfil() {
+        return fotoPerfil;
+    }
+
     public String getUsuario() {
         return usuario;
     }
@@ -202,6 +212,14 @@ public class GlobalState extends Application{
 
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
+    }
+
+    public String getMovil() {
+        return movil;
+    }
+
+    public void setMovil(String movil) {
+        this.movil = movil;
     }
 
     public String getEmail() {

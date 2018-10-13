@@ -97,7 +97,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
 
     ArrayList<ListaAlimentos> plan;
     int idPlanNutricional;
-    float maxCalorias = 6000;
+    double maxCalorias;
     int indAlimentosPlan;
     int seleccion;
     int cantidad;
@@ -316,17 +316,21 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         fecha = sdf.format(c.getTime());
 
+        calcularCaloriasDiarias();
+
         consultarPlanNutricional();
     }
 
     private void inicializarCalorias(){
         double[] cal = new double[5];
 
-        cal[0] = maxCalorias * 0.25;
-        cal[1] = maxCalorias * 0.15;
-        cal[2] = maxCalorias * 0.3;
-        cal[3] = maxCalorias * 0.2;
-        cal[4] = maxCalorias * 0.1;
+        cal[0] = Math.round(maxCalorias * 0.25);
+        cal[1] = Math.round(maxCalorias * 0.15);
+        cal[2] = Math.round(maxCalorias * 0.3);
+        cal[3] = Math.round(maxCalorias * 0.2);
+        cal[4] = Math.round(maxCalorias * 0.1);
+
+        maxCalorias = cal[0] + cal[1] +cal[2] +cal[3] +cal[4];
 
         tvLimiteCal1.setText("- " + cal[0]);
         tvLimiteCal2.setText("- " + cal[1]);
@@ -336,6 +340,27 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
 
         gs.setCaloriasMax(cal);
         gs.insCalorias(5);
+    }
+
+    private void calcularCaloriasDiarias(){
+
+        double peso = gs.getPeso();
+        int estatura = gs.getEstatura();
+        int edad = gs.getEdad();
+
+        double valorCalorico = 0;
+
+        if(gs.getGenero().compareTo("Femenino") == 0){
+            valorCalorico = (int)(655.0955 + (9.5634 * peso) + (1.8449 * estatura) - (4.6756 * edad));
+
+
+        }
+        else{
+            valorCalorico = (int)(66.4730 + (13.7516 * peso) + (5.0033 * estatura) - (6.7550 * edad));
+        }
+
+        maxCalorias = valorCalorico;
+
     }
 
     private void generarListasPlanes(){

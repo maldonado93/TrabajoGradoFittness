@@ -8,7 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -38,7 +37,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
 
     String idPersona;
 
-    ImageButton btnRegresar;
+    Button btnRegresar;
 
     RadioButton rbNovato;
     RadioButton rbIntermedio;
@@ -141,7 +140,6 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         }
     }
 
-
     public void cargarDatos(){
         if (gs.getNivelActividad().compareTo("Novato") == 0){
             rbNovato.setChecked(true);
@@ -160,7 +158,6 @@ public class InformacionActividad extends AppCompatActivity implements Response.
             rbSi.setChecked(true);
         }
     }
-
 
     public void regresar() {
         Intent intent = new Intent(this, InformacionFisica.class);
@@ -198,8 +195,18 @@ public class InformacionActividad extends AppCompatActivity implements Response.
     private void registrarPersona(){
         consulta = "persona";
         String url = "http://"+gs.getIp()+"/persona/registrar_persona.php?tipoIdentificacion="+gs.getTipoIdentificacion()+"&identificacion="+gs.getIdentificacion()
-                +"&nombres="+gs.getNombres()+"&apellidos="+gs.getApellidos()+"&genero="+gs.getGenero()+"&fecha="+gs.getFecha()+"&email="+gs.getEmail()
+                +"&nombres="+gs.getNombres()+"&apellidos="+gs.getApellidos()+"&movil="+gs.getMovil()+"&genero="+gs.getGenero()+"&fecha="+gs.getFecha()+"&email="+gs.getEmail()
                 +"&estatura="+gs.getEstatura()+"&ciudad="+gs.getCiudad();
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+    private void generarRegistro(){
+        consulta = "generar_registro";
+        String url = "http://"+gs.getIp()+"/persona/generar_registro.php?idPersona="+idPersona+"&fecha="+fecha;
 
         url = url.replace(" ", "%20");
 
@@ -227,9 +234,9 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         request.add(jsonObjectRequest);
     }
 
-    private void registrarDatos(){
+    private void registrarDatos(String nivel){
         consulta = "datos";
-        String url = "http://"+gs.getIp()+"/persona/registrar_datos.php?idPersona="+idPersona+"&objetivo="+gs.getObjetivo()+" peso&nivel="+gs.getNivelActividad()+"&fuma="+gs.getFumador();
+        String url = "http://"+gs.getIp()+"/persona/registrar_datos.php?idPersona="+idPersona+"&objetivo="+gs.getObjetivo()+"&nivel="+nivel+"&fuma="+gs.getFumador();
 
         url = url.replace(" ", "%20");
 
@@ -237,17 +244,15 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         request.add(jsonObjectRequest);
     }
 
-    private void registrarGamificacion(double rendimiento){
+    private void registrarGamificacion(int nivel){
         consulta = "gamificacion";
-        String url = "http://"+gs.getIp()+"/persona/registrar_gamificacion.php?idPersona="+idPersona+"&rendimiento="+rendimiento+"&fecha="+fecha;
+        String url = "http://"+gs.getIp()+"/persona/registrar_gamificacion.php?idPersona="+idPersona+"&nivel="+nivel+"&fecha="+fecha;
 
         url = url.replace(" ", "%20");
 
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
-
-
 
     @Override
     public void onResponse(JSONObject response) {
@@ -265,29 +270,42 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         }
 
         if(consulta.compareTo("persona") == 0){
-            registrarUsuario();
+            generarRegistro();
         }
         else{
-            if(consulta.compareTo("usuario") == 0){
-                registrarPeso();
+            if(consulta.compareTo("generar_registro") == 0){
+                registrarUsuario();
             }
-            else{
-                if(consulta.compareTo("historico_peso") == 0){
-                    registrarDatos();
-                }
-                else{
-                    if(consulta.compareTo("datos") == 0){
-                        double rendimiento = 1;
-                        if(gs.getNivelActividad().compareTo("Intermedio") == 0 || gs.getNivelActividad().compareTo("Avanzado") == 0){
-                            rendimiento = 2.5;
+            else {
+                if (consulta.compareTo("usuario") == 0) {
+                    registrarPeso();
+                } else {
+                    if (consulta.compareTo("historico_peso") == 0) {
+                        String nivel = "Novato";
+                        if(gs.getNivelActividad().compareTo("Avanzado") == 0){
+                            nivel = "Intermedio";
                         }
-                        registrarGamificacion(rendimiento);
-                    }
-                    else{
-                        if(consulta.compareTo("gamificacion") == 0){
-                            progress.hide();
-                            limpiarDatos();
-                            finish();
+                        registrarDatos(nivel);
+                    } else {
+                        if (consulta.compareTo("datos") == 0) {
+                            int nivel = 0;
+                            if(gs.getNivelActividad().compareTo("Intermedio") == 0){
+                                nivel = 7;
+                            }
+                            else{
+                                if(gs.getNivelActividad().compareTo("Avanzado") == 0){
+                                    nivel = 15;
+                                }
+                            }
+                            registrarGamificacion(nivel);
+                        }
+                        else {
+                            if (consulta.compareTo("gamificacion") == 0) {
+                                progress.hide();
+                                Toast.makeText(this, "Se ha registrado satisfactoriamente!", Toast.LENGTH_SHORT).show();
+                                limpiarDatos();
+                                finish();
+                            }
                         }
                     }
                 }

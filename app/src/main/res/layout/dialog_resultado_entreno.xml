@@ -144,13 +144,19 @@
             android:text="0" />
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/ivInsignia"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp" />
+
     <TextView
         android:id="@+id/tvNivel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="0dp"
         android:gravity="center_horizontal"
-        android:text="NIVEL: 1"
         android:textSize="18sp" />
 
     <ProgressBar

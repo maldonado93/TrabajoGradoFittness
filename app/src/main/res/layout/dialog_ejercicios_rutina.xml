@@ -11,6 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ejercicios"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp"
         android:textStyle="bold" />
 
@@ -32,8 +33,9 @@
         android:id="@+id/textView37"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="15dp"
         android:text="Tiempo de descanso entre series"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp" />
 
     <TextView
@@ -42,6 +44,39 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvTiempos"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Tiempos de entreno estimados"
+        android:textColor="@color/colorPrimary"
         android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvTiempoMin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
+        android:id="@+id/tvTiempoMax"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp" />
+
+    <Button
+        android:id="@+id/btnAceptar"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:text="Aceptar"
+        android:textColor="@color/colorAccent">
+
+    </Button>
 
 </LinearLayout>

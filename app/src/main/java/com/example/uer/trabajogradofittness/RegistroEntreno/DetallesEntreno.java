@@ -48,7 +48,7 @@ public class DetallesEntreno extends AppCompatActivity {
 
         gs = (GlobalState) getApplication();
 
-        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar);
+        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar1);
 
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override

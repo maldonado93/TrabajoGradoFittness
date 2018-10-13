@@ -61,7 +61,7 @@
         android:layout_marginTop="10dp"
         android:gravity="bottom|right"
         android:text="N. Ejercicios"
-        android:textColor="@android:color/holo_blue_light"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline5"
         app:layout_constraintTop_toTopOf="parent" />

@@ -6,56 +6,43 @@
     android:layout_height="match_parent"
     tools:context=".Persona.InformacionFisica">
 
-    <ImageButton
-        android:id="@+id/btnRegresar"
-        android:layout_width="40dp"
-        android:layout_height="44dp"
-        android:background="#00ffffff"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_chevron_left"
-        tools:ignore="VectorDrawableCompat" />
 
     <TextView
         android:id="@+id/tvTitulo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="10dp"
         android:text="Información fisica"
         android:textAllCaps="true"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/divider14"
-        app:layout_constraintEnd_toStartOf="@+id/btnSiguiente"
-        app:layout_constraintStart_toEndOf="@+id/btnRegresar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/btnSiguiente"
-        android:layout_width="40dp"
-        android:layout_height="0dp"
-        android:background="#00ffffff"
-        app:layout_constraintBottom_toTopOf="@+id/divider14"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_chevron"
-        tools:ignore="VectorDrawableCompat" />
 
     <View
         android:id="@+id/divider14"
         android:layout_width="wrap_content"
         android:layout_height="1dp"
+        android:layout_marginTop="10dp"
         android:background="?android:attr/listDivider"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnRegresar" />
+        app:layout_constraintTop_toBottomOf="@+id/tvTitulo" />
 
     <LinearLayout
         android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginStart="15dp"
         android:layout_marginTop="35dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,4 +81,37 @@
             android:textSize="16sp" />
 
     </LinearLayout>
+
+    <View
+        android:id="@+id/divider31"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toTopOf="@+id/btnRegresar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnRegresar"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="15dp"
+        android:text="Regresar"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/btnSiguiente"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="42dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginRight="15dp"
+        android:text="Siguiente"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>
