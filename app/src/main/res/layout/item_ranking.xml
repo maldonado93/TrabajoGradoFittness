@@ -23,6 +23,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:text="1"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline7"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,35 +67,34 @@
 
     <ImageView
         android:id="@+id/ivInsignia"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/ivImagen"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
 
     <TextView
         android:id="@+id/tvNivel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
         android:text="Nivel "
         android:textSize="10sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tvPuntos"
         app:layout_constraintStart_toEndOf="@+id/ivInsignia"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvNombre" />
 
     <TextView
         android:id="@+id/tvPuntos"
         android:layout_width="wrap_content"
         android:layout_height="14dp"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginStart="15dp"
         android:text="Puntos"
         android:textSize="9sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/ivImagen" />
+        app:layout_constraintStart_toEndOf="@+id/ivInsignia" />
 
     <View
         android:id="@+id/divider"

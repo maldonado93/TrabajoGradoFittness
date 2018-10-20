@@ -2,7 +2,6 @@ package com.example.uer.trabajogradofittness.Rutina;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -44,8 +43,7 @@ public class AdaptadorListaEjercicios extends RecyclerView.Adapter<AdaptadorList
             public void onClick(View view) {
                 String idEjercicio = ejercicios.get(holder.getAdapterPosition()).getId();
 
-                Bundle datos = new Bundle();
-                datos.putString("idEjercicio", idEjercicio);
+
 
                 Intent registro = new Intent(context, InformacionEjercicio.class);
                 registro.addFlags(registro.FLAG_ACTIVITY_CLEAR_TOP | registro.FLAG_ACTIVITY_SINGLE_TOP);

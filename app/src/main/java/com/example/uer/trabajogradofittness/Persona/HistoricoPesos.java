@@ -40,6 +40,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,8 +66,12 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
     TextView tvPeso;
     TextView tvKg;
+    TextView tvPesoInicial;
+    TextView tvPesoActual;
+    TextView tvProgreso;
     EditText etPeso;
     Button btnActualizar;
+
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -82,6 +87,10 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
         tvPeso = v.findViewById(R.id.tvPeso);
         tvKg = v.findViewById(R.id.tvKg);
+        tvPesoInicial = v.findViewById(R.id.tvPesoInicial);
+        tvPesoActual = v.findViewById(R.id.tvPesoActual);
+        tvProgreso = v.findViewById(R.id.tvProgreso);
+
         etPeso = v.findViewById(R.id.etPeso);
         btnActualizar = v.findViewById(R.id.btnActualizar);
         btnActualizar.setOnClickListener(new View.OnClickListener() {
@@ -115,6 +124,11 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
     private void initGrafica(){
 
+        double pInicial = 0;
+        double pActual = 0;
+        double diferencia = 0;
+        double porcentaje = 0;
+
         graficaPesos = v.findViewById(R.id.graficaPeso);
 
         graficaPesos.setDragEnabled(true);
@@ -138,12 +152,29 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
             mes = Integer.parseInt(res[2]);
 
             if(i == 0){
+                pInicial = (double)val;
                 valoresy.add(new Entry(i,val));
                 fechas[i] = res[3] +"-"+ obtenerMes(mes-1)+"-"+res[1];
             }
             valoresy.add(new Entry(i+1,val));
             fechas[i+1] = res[3]+"-"+obtenerMes(mes)+"-"+res[1];
         }
+        pActual = (double)val;
+
+        diferencia = pActual - pInicial;
+        if (diferencia < 0){
+            porcentaje = (diferencia / pInicial) * (-100);
+        }
+        else{
+            porcentaje = (diferencia / pInicial) * 100;
+        }
+        DecimalFormat df = new DecimalFormat("#.00");
+
+
+        tvPesoInicial.setText((int)pInicial + " kg");
+        tvPesoActual.setText((int)pActual + " kg");
+        tvProgreso.setText((int)diferencia + " kg (" + df.format(porcentaje) + "%)");
+
 
         LineDataSet datos = new LineDataSet(valoresy, "Pesos");
         datos.setFillAlpha(110);
@@ -278,15 +309,18 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
                     jsonObject = datos.getJSONObject(i);
                     registroPesos.add(jsonObject.optString("peso")+ "-"+jsonObject.optString("fecha"));
 
-                    if(indConsulta == 2){
-                        Toast.makeText(getContext(), "Peso actualizado!",Toast.LENGTH_SHORT).show();
-                    }
+
                     progressBar.setVisibility(View.GONE);
                     layout_historico.setVisibility(View.VISIBLE);
                     tvPeso.setVisibility(View.GONE);
                     tvKg.setVisibility(View.GONE);
                     etPeso.setVisibility(View.GONE);
                     btnActualizar.setVisibility(View.GONE);
+                }
+                if(indConsulta == 2){
+                    progress.hide();
+                    etPeso.setText("");
+                    Toast.makeText(getContext(), "Peso actualizado!",Toast.LENGTH_SHORT).show();
                 }
             }
         }

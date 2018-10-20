@@ -48,6 +48,19 @@
     </android.support.v7.widget.RecyclerView>
 
     <Button
+        android:id="@+id/btnCancelar"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:text="Cancelar"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvAlimentos" />
+
+    <Button
         android:id="@+id/btnConfirmar"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"

@@ -61,6 +61,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
     Button btnAgregar4;
     Button btnAgregar5;
 
+    TextView tvCalDiaria;
     TextView tvCalorias1;
     TextView tvCalorias2;
     TextView tvCalorias3;
@@ -281,6 +282,8 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         rvComida4 = v.findViewById(R.id.rvComida4);
         rvComida5 = v.findViewById(R.id.rvComida5);
 
+        tvCalDiaria = v.findViewById(R.id.tvCalDiaria);
+
         tvCalorias1 = v.findViewById(R.id.tvCalorias1);
         tvCalorias2 = v.findViewById(R.id.tvCalorias2);
         tvCalorias3 = v.findViewById(R.id.tvCalorias3);
@@ -331,6 +334,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         cal[4] = Math.round(maxCalorias * 0.1);
 
         maxCalorias = cal[0] + cal[1] +cal[2] +cal[3] +cal[4];
+        tvCalDiaria.setText("Calorias requeridas: " + maxCalorias);
 
         tvLimiteCal1.setText("- " + cal[0]);
         tvLimiteCal2.setText("- " + cal[1]);
@@ -347,20 +351,43 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         double peso = gs.getPeso();
         int estatura = gs.getEstatura();
         int edad = gs.getEdad();
+        double af = 0;
 
-        double valorCalorico = 0;
+        double valorCalorico1 = 0;
+        double valorCalorico2 = 0;
 
         if(gs.getGenero().compareTo("Femenino") == 0){
-            valorCalorico = (int)(655.0955 + (9.5634 * peso) + (1.8449 * estatura) - (4.6756 * edad));
-
-
+            if(gs.getNivelActividad().compareTo("Novato") == 0){
+                af = 1.12;
+            }
+            else{
+                if(gs.getNivelActividad().compareTo("Intermedio") == 0){
+                    af = 1.27;
+                }
+                else{
+                    af = 1.45;
+                }
+            }
+            valorCalorico1 = (int)(655.0955 + (9.5634 * peso) + (1.8449 * estatura) - (4.6756 * edad));
+            valorCalorico2 = (int)(354 - 6.91 * edad + (af * (9.36 * peso + 726 * estatura)));
         }
         else{
-            valorCalorico = (int)(66.4730 + (13.7516 * peso) + (5.0033 * estatura) - (6.7550 * edad));
+            if(gs.getNivelActividad().compareTo("Novato") == 0){
+                af = 1.11;
+            }
+            else{
+                if(gs.getNivelActividad().compareTo("Intermedio") == 0){
+                    af = 1.25;
+                }
+                else{
+                    af = 1.48;
+                }
+            }
+            valorCalorico1 = (int)(66.4730 + (13.7516 * peso) + (5.0033 * estatura) - (6.7550 * edad));
+
+            valorCalorico2 = (int)(662 - 9.53 * edad + (af * (15.91 * peso + 539.6 * estatura)));
         }
-
-        maxCalorias = valorCalorico;
-
+        maxCalorias = valorCalorico2;
     }
 
     private void generarListasPlanes(){
@@ -436,7 +463,6 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         rvAlimentos.setLayoutManager(new GridLayoutManager(getContext(), 1));
         rvAlimentos.setAdapter(adaptadorAlimentos);
 
-
         Button btnConfirmar = dView.findViewById(R.id.btnConfirmar);
 
         btnConfirmar.setOnClickListener(new View.OnClickListener(){
@@ -470,12 +496,19 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
                 }
             }
         });
+        Button btnCancelar = dView.findViewById(R.id.btnCancelar);
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.hide();
+            }
+        });
+
         builder.setView(dView);
         builder.setCancelable(false);
         dialog = builder.create();
         dialog.show();
     }
-
 
     public void verificarAlimentos(){
         if(alimentosPlan.length > 0 && indAlimentosPlan < alimentosPlan.length){

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -50,7 +51,9 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -60,7 +63,6 @@ import static android.app.Activity.RESULT_OK;
  * A simple {@link Fragment} subclass.
  */
 public class Perfil extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener{
-
 
     View v;
     GlobalState gs;
@@ -85,12 +87,14 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     TextView tvLocalidad;
 
     LinearLayout layout_campos;
+    Spinner spTipoIdentificacion;
+    EditText etIdentificacion;
     EditText etNombre;
+    EditText etApellido;
     EditText etEmail;
     EditText etMovil;
 
-    LinearLayout layout_fisonomia;
-    TextView tvEdad;
+    LinearLayout layout_condicion_fisica;
     TextView tvPeso;
     TextView tvEstatura;
 
@@ -109,7 +113,9 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     FloatingActionButton fbEditar;
     FloatingActionButton fbConfirmar;
 
+    String fecha;
     private String consulta = null;
+    boolean existeIdentificacion;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -132,7 +138,30 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         fbBorrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(getContext());
+                dialogo1.setTitle("");
+                dialogo1.setMessage("¿Desea eliminar su foto de perfil?");
+                dialogo1.setCancelable(false);
+                dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogo1, int id) {
+                    eliminar_imagen();
+                    String url = "http://piperomero1226.000webhostapp.com/persona/imagenes/";
+                    if(gs.getGenero().compareTo("Femenino") == 0){
+                        url +="foto_mujer.png";
+                    }
+                    else{
+                        url +="foto_hombre.png";
+                    }
+                    gs.setFotoPerfil(url);
+                    consultarImagen(url);
+                    }
+                });
+                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialogo1, int id) {
+                        dialogo1.cancel();
+                    }
+                });
+                dialogo1.show();
             }
         });
 
@@ -152,11 +181,29 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         tvLocalidad = v.findViewById(R.id.tvLocalidad);
 
         layout_campos = v.findViewById(R.id.layout_campos);
+        spTipoIdentificacion = v.findViewById(R.id.spTipoIdentificacion);
+        etIdentificacion = v.findViewById(R.id.etIdentificacion);
+        etIdentificacion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                String[] ident = tvIdentificacion.getText().toString().split(". ");
+                if (etIdentificacion.getText().toString().compareTo(ident[1]) != 0) {
+                    existeIdentificacion = false;
+                    verificarIdentificacion();
+                }
+                else{
+                    existeIdentificacion = false;
+                    etIdentificacion.setTextColor(Color.BLACK);
+                }
+            }
+        });
+
         etNombre = v.findViewById(R.id.etNombre);
+        etApellido = v.findViewById(R.id.etApellido);
         etEmail = v.findViewById(R.id.etEmail);
         etMovil = v.findViewById(R.id.etMovil);
 
-        layout_fisonomia = v.findViewById(R.id.layout_fisonomia);
+        layout_condicion_fisica = v.findViewById(R.id.layout_condicion_fisica);
         tvPeso = v.findViewById(R.id.tvPeso);
         tvEstatura = v.findViewById(R.id.tvEstatura);
 
@@ -199,8 +246,15 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 dialog.setCancelable(false);
                 dialog.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        asignarDatos();
-                        editarDatos(2);
+                        boolean valida = validarDatos();
+                        if(valida){
+                            asignarDatos();
+                            editarDatos(2);
+                        }
+                        else{
+                            Toast.makeText(getContext(), "Complete todos los campos, por favor!", Toast.LENGTH_SHORT).show();
+                        }
+
                     }
                 });
                 dialog.setNeutralButton("Descartar", new DialogInterface.OnClickListener() {
@@ -222,21 +276,30 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         return v;
     }
 
+
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         gs = (GlobalState) getActivity().getApplication();
 
-        //((Principal) getActivity()).getSupportActionBar().setTitle("Mi informacion");
-
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
 
-        /*progress = new ProgressDialog(getContext());
-        progress.setMessage("Cargando informacion...");
-        progress.show();*/
-
+        Calendar c = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        fecha = sdf.format(c.getTime());
 
         consultarPersona();
+    }
+
+    private void verificarIdentificacion(){
+        consulta = "verificar_identificacion";
+
+        String url = "http://"+gs.getIp()+"/persona/verificar_identificacion.php?identificacion="+ etIdentificacion.getText().toString();
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
     }
 
     private void cargarImagen(){
@@ -261,13 +324,32 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         }
     }
 
+    private boolean validarDatos(){
+        String identificacion = etIdentificacion.getText().toString();
+        String nombres = etIdentificacion.getText().toString();
+        String apellidos = etIdentificacion.getText().toString();
+        String email = etIdentificacion.getText().toString();
+        String movil = etIdentificacion.getText().toString();
+        String peso = etIdentificacion.getText().toString();
+        String estatura = etIdentificacion.getText().toString();
+
+        if(identificacion.compareTo("") != 0 && nombres.compareTo("") != 0 && apellidos.compareTo("") != 0
+                && email.compareTo("") != 0 && movil.compareTo("") != 0 && peso.compareTo("") != 0
+                && estatura.compareTo("") != 0){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     @SuppressLint("RestrictedApi")
     private void editarDatos(int accion){
 
         if(accion == 1){
             layout_datos.setVisibility(View.GONE);
             layout_campos.setVisibility(View.VISIBLE);
-            layout_fisonomia.setVisibility(View.GONE);
+            layout_condicion_fisica.setVisibility(View.GONE);
             layout_campos_fisonomia.setVisibility(View.VISIBLE);
             fbEditar.setVisibility(View.GONE);
             fbConfirmar.setVisibility(View.VISIBLE);
@@ -276,19 +358,33 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
             layout_campos.setVisibility(View.GONE);
             layout_datos.setVisibility(View.VISIBLE);
             layout_campos_fisonomia.setVisibility(View.GONE);
-            layout_fisonomia.setVisibility(View.VISIBLE);
+            layout_condicion_fisica.setVisibility(View.VISIBLE);
             fbConfirmar.setVisibility(View.GONE);
             fbEditar.setVisibility(View.VISIBLE);
         }
     }
 
     private void asignarDatos(){
-        tvNombre.setText(etNombre.getText());
+        if(spTipoIdentificacion.getSelectedItemPosition() == 0){
+            tvIdentificacion.setText("CC. " + etIdentificacion.getText());
+        }
+        else{
+            tvIdentificacion.setText("TI. " + etIdentificacion.getText());
+        }
+        tvNombre.setText(etNombre.getText() + " " + etApellido.getText());
         tvEmail.setText(etEmail.getText());
         tvMovil.setText(etMovil.getText());
         tvLocalidad.setText(spCiudad.getSelectedItem().toString()+", "+spDepartamento.getSelectedItem().toString());
-        tvPeso.setText(etPeso.getText());
+        if(tvPeso.getText().toString().compareTo(etPeso.getText().toString()) != 0){
+            tvPeso.setText(etPeso.getText());
+        }
+        else{
+            etPeso.setText("0");
+        }
+
         tvEstatura.setText(etEstatura.getText());
+
+        guardarDatos();
     }
 
     private void consultarPersona(){
@@ -303,9 +399,17 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
     private void guardarDatos(){
         consulta = "guardar_datos";
-        String url = "http://"+gs.getIp()+"/persona/guardar_datos.php?idPersona="+gs.getSesion_usuario()+"&tipoIdentificacion="+gs.getTipoIdentificacion()+"&identificacion="+gs.getIdentificacion()
-                +"&nombres="+gs.getNombres()+"&apellidos="+gs.getApellidos()+"&movil="+gs.getMovil()+"&email="+gs.getEmail()
-                +"&estatura="+gs.getEstatura();
+        String url = "http://"+gs.getIp()+"/persona/guardar_datos.php?idPersona="+gs.getSesion_usuario()
+                +"&tipoIdentificacion="+(spTipoIdentificacion.getSelectedItemPosition()+1)
+                +"&identificacion="+etIdentificacion.getText()
+                +"&nombres="+etNombre.getText()
+                +"&apellidos="+etApellido.getText()
+                +"&movil="+etMovil.getText()
+                +"&email="+etEmail.getText()
+                +"&ciudad="+spCiudad.getSelectedItem()
+                +"&peso="+etPeso.getText()
+                +"&estatura="+etEstatura.getText()
+                +"&fecha="+fecha;
 
         url = url.replace(" ", "%20");
 
@@ -314,18 +418,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     }
 
     private void guardarImagen(){
-        /*consulta = "guardar_imagen";
-
-        String imagen = convertirImagen(bitmap);
-
-        String url = "http://"+gs.getIp()+"/persona/guardar_imagen.php?idPersona="+gs.getSesion_usuario()+"&imagen="+imagen;
-
-        url = url.replace(" ", "%20");
-
-        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
-        request.add(jsonObjectRequest);
-        */
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://" + gs.getIp() + "/persona/guardar_imagen_post.php",
                 new Response.Listener<String>() {
                     @Override
@@ -365,6 +457,44 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         requestQueue.add(stringRequest);
     }
 
+    private void eliminar_imagen(){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, "http://" + gs.getIp() + "/persona/eliminar_imagen.php",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if(response.compareTo("") != 0){
+                            gs.setFotoPerfil(response);
+                            Toast.makeText(getContext(), "Foto eliminada!", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            Toast.makeText(getContext(), "Error al actualizar la imagen!", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getContext(), "Error al guardar la imagen", Toast.LENGTH_SHORT).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError{
+                String idPersona = String.valueOf(gs.getSesion_usuario());
+
+                Map<String, String> params = new Hashtable<String, String>();
+
+                params.put("genero", gs.getGenero());
+                params.put("idPersona", idPersona);
+
+                return params;
+            }
+        };
+
+        RequestQueue requestQueue = Volley.newRequestQueue(getContext());
+        requestQueue.add(stringRequest);
+    }
+
     private String convertirImagen() {
         ByteArrayOutputStream array = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, array);
@@ -372,6 +502,17 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         String imagen = Base64.encodeToString(imagenByte, Base64.DEFAULT);
 
         return imagen;
+    }
+
+    private void cargarTiposIdentificacion(){
+        consulta = "tipo_identificacion";
+
+        String url = "http://"+gs.getIp()+"/tipo_identificacion/listar_tipo_identificaciones.php";
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
     }
 
     private void cargarDepartamentos(){
@@ -395,7 +536,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
-
 
     public static int obtenerPosicionItem(Spinner spinner, String item) {
         int posicion = 0;
@@ -427,12 +567,11 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         request.add(imageRequest);
     }
 
-
-
     @Override
     public void onResponse(JSONObject response) {
         JSONArray datos = response.optJSONArray(consulta);
         ArrayList<String> listaConsulta = new ArrayList<String>();
+        ArrayAdapter<CharSequence> adaptador = null;
 
         modeloPerfil = new ModeloPerfil();
 
@@ -444,10 +583,10 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                     jsonObject = datos.getJSONObject(i);
 
                     if(consulta.compareTo("persona") == 0){
-                        modeloPerfil.setId_tipo_identificacion(jsonObject.optString("id_tipo_identificacion"));
+                        modeloPerfil.setId_tipo_identificacion(jsonObject.optString("tipo"));
                         modeloPerfil.setIdentificacion(jsonObject.optString("identificacion"));
-                        modeloPerfil.setNombre(jsonObject.optString("nombres")+" "
-                                +jsonObject.optString("apellidos"));
+                        modeloPerfil.setNombres(jsonObject.optString("nombres"));
+                        modeloPerfil.setApellidos(jsonObject.optString("apellidos"));
                         modeloPerfil.setEmail(jsonObject.optString("email"));
                         if(jsonObject.optString("movil") != null){
                             modeloPerfil.setMovil(jsonObject.optString("movil"));
@@ -455,13 +594,14 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                         else{
                             modeloPerfil.setMovil(" ");
                         }
-                        //url = jsonObject.optString("foto");
-                        //modeloPerfil.setDato(jsonObject.optString("foto"));
                         modeloPerfil.setLocalidad(jsonObject.optString("localidad"));
-
-                        modeloPerfil.setPeso(jsonObject.optString("peso"));
+                        double peso = Double.parseDouble(jsonObject.optString("peso"));
+                        modeloPerfil.setPeso(String.valueOf((int)peso));
                         modeloPerfil.setEstatura(jsonObject.optString("estatura"));
 
+                    }
+                    if(consulta.compareTo("tipo_identificacion") == 0){
+                        listaConsulta.add(jsonObject.optString("tipo"));
                     }
                     if(consulta.compareTo("departamento") == 0){
                         listaConsulta.add(jsonObject.optString("departamento"));
@@ -469,9 +609,20 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                     if(consulta.compareTo("ciudad") == 0){
                         listaConsulta.add(jsonObject.optString("ciudad"));
                     }
-
                     if(consulta.compareTo("guardar_datos") == 0){
                         Toast.makeText(getContext(), "Datos actualizados!", Toast.LENGTH_SHORT).show();
+                    }
+                    if(consulta.compareTo("verificar_identificacion") == 0){
+                        int id = jsonObject.optInt("id");
+                        if(id != 0){
+                            existeIdentificacion = true;
+                            etIdentificacion.setTextColor(Color.RED);
+                            Toast.makeText(getContext(), "La identificacion ya existe!", Toast.LENGTH_SHORT).show();
+                        }
+                        else{
+                            existeIdentificacion = false;
+                            etIdentificacion.setTextColor(Color.BLACK);
+                        }
                     }
                 }
             }
@@ -484,19 +635,20 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
             ArrayAdapter<CharSequence> adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, listaConsulta);
 
             if(consulta.compareTo("persona") == 0){
-                /*if(modeloPerfil.getFoto() != null){
-                    ivImagen.setImageBitmap(modeloPerfil.getFoto());
+                if(modeloPerfil.getId_tipo_identificacion().compareTo("Cédula de ciudadanía") == 0){
+                    tvIdentificacion.setText("CC. " + modeloPerfil.getIdentificacion());
                 }
                 else{
-                    ivImagen.setImageResource(R.mipmap.foto_defecto_round);
-                }*/
-                tvIdentificacion.setText(modeloPerfil.getIdentificacion());
-                tvNombre.setText(modeloPerfil.getNombre());
+                    tvIdentificacion.setText("TI. " + modeloPerfil.getIdentificacion());
+                }
+                tvNombre.setText(modeloPerfil.getNombres() + " "+ modeloPerfil.getApellidos());
                 tvEmail.setText(modeloPerfil.getEmail());
                 tvLocalidad.setText(modeloPerfil.getLocalidad());
                 tvMovil.setText(modeloPerfil.getMovil());
 
-                etNombre.setText(modeloPerfil.getNombre());
+                etIdentificacion.setText(modeloPerfil.getIdentificacion());
+                etNombre.setText(modeloPerfil.getNombres());
+                etApellido.setText(modeloPerfil.getApellidos());
                 etEmail.setText(modeloPerfil.getEmail());
                 etMovil.setText(modeloPerfil.getMovil());
 
@@ -504,19 +656,33 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 tvEstatura.setText(modeloPerfil.getEstatura());
 
                 etPeso.setText(modeloPerfil.getPeso());
+                etEstatura.setText(modeloPerfil.getEstatura());
 
-                //consultarImagen(url);
-                cargarDepartamentos();
+
+                cargarTiposIdentificacion();
             }
-            if(consulta.compareTo("departamento") == 0){
-                spDepartamento.setAdapter(adapter);
-                String[] localidad = (tvLocalidad.getText().toString()).split(", ");
-                spDepartamento.setSelection(obtenerPosicionItem(spDepartamento, localidad[1]));
-            }
-            if(consulta.compareTo("ciudad") == 0){
-                spCiudad.setAdapter(adapter);
-                String[] localidad = (tvLocalidad.getText().toString()).split(", ");
-                spCiudad.setSelection(obtenerPosicionItem(spCiudad, localidad[0]));
+            else{
+                if (consulta.compareTo("tipo_identificacion") == 0) {
+                    adaptador = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, listaConsulta);
+                    spTipoIdentificacion.setAdapter(adaptador);
+                    spCiudad.setSelection(obtenerPosicionItem(spDepartamento, modeloPerfil.getId_tipo_identificacion()));
+
+                    cargarDepartamentos();
+                }
+                else{
+                    if(consulta.compareTo("departamento") == 0){
+                        spDepartamento.setAdapter(adapter);
+                        String[] localidad = (tvLocalidad.getText().toString()).split(", ");
+                        spDepartamento.setSelection(obtenerPosicionItem(spDepartamento, localidad[1]));
+                    }
+                    else{
+                        if(consulta.compareTo("ciudad") == 0){
+                            spCiudad.setAdapter(adapter);
+                            String[] localidad = (tvLocalidad.getText().toString()).split(", ");
+                            spCiudad.setSelection(obtenerPosicionItem(spCiudad, localidad[0]));
+                        }
+                    }
+                }
             }
 
             scrollView.setVisibility(View.VISIBLE);
@@ -534,5 +700,4 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
-
 }

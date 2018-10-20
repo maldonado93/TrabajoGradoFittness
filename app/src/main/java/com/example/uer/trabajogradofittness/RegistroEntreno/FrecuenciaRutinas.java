@@ -399,6 +399,7 @@ public class FrecuenciaRutinas extends Fragment implements Response.Listener<JSO
                         String hora = jsonObject.optString("hora");
 
                         String tiempo = jsonObject.optString("tiempo") + " min";
+                        String puntos = jsonObject.optString("puntos");
 
                         listaRegistros.add(new ListaRegistros(idRegistro,
                                 idRutina,
@@ -408,7 +409,8 @@ public class FrecuenciaRutinas extends Fragment implements Response.Listener<JSO
                                 dia,
                                 fech,
                                 hora,
-                                tiempo));
+                                tiempo,
+                                puntos));
                     }
                 }
                 if (consulta == "historial") {

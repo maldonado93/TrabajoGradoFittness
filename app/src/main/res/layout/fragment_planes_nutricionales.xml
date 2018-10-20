@@ -12,11 +12,24 @@
         android:padding="10dp">
 
         <TextView
+            android:id="@+id/tvCalDiaria"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="25dp"
+            android:textColor="@color/colorAccent"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/textView39"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
-            android:text="Las cantidades se distribuyen por porciones de 100g." />
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="15dp"
+            android:text="Las cantidades de los alimentos se distribuyen por porciones de 100g." />
 
         <Button
             android:id="@+id/btnComida1"
@@ -78,11 +91,12 @@
             <Button
                 android:id="@+id/btnAgregar1"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:drawableRight="@drawable/ic_add"
-                android:text="Agregar alimentos       "
+                android:drawableRight="@drawable/ic_mode_edit_grenn"
+                android:text="Editar plan"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:visibility="visible" />
 
@@ -158,9 +172,10 @@
             <Button
                 android:id="@+id/btnAgregar2"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:drawableRight="@drawable/ic_mode_edit_grenn"
                 android:text="Editar plan"
                 android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
@@ -226,11 +241,12 @@
             <Button
                 android:id="@+id/btnAgregar3"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:drawableRight="@drawable/ic_add"
-                android:text="Agregar alimentos       "
+                android:drawableRight="@drawable/ic_mode_edit_grenn"
+                android:text="Editar plan"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:visibility="visible" />
 
@@ -300,11 +316,12 @@
             <Button
                 android:id="@+id/btnAgregar4"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:drawableRight="@drawable/ic_add"
-                android:text="Agregar alimentos       "
+                android:drawableRight="@drawable/ic_mode_edit_grenn"
+                android:text="Editar plan"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:visibility="visible" />
 
@@ -375,11 +392,12 @@
             <Button
                 android:id="@+id/btnAgregar5"
                 style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                android:layout_width="160dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:drawableRight="@drawable/ic_add"
-                android:text="Agregar alimentos       "
+                android:drawableRight="@drawable/ic_mode_edit_grenn"
+                android:text="Editar plan"
+                android:textColor="@color/colorPrimary"
                 android:textSize="12sp"
                 android:visibility="visible" />
 

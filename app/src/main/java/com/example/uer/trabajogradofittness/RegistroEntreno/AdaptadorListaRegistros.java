@@ -61,6 +61,7 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
         myViewHolder.tvFecha.setText(registros.get(i).getFecha());
         myViewHolder.tvHora.setText(registros.get(i).getHora());
         myViewHolder.tvTiempo.setText(registros.get(i).getTiempo());
+        myViewHolder.tvPuntos.setText(registros.get(i).getPuntos());
     }
 
 
@@ -80,6 +81,7 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
         private TextView tvFecha;
         private TextView tvHora;
         private TextView tvTiempo;
+        private TextView tvPuntos;
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -93,8 +95,7 @@ public class AdaptadorListaRegistros extends RecyclerView.Adapter<AdaptadorLista
             tvFecha = (TextView)itemView.findViewById(R.id.tvFecha);
             tvHora = (TextView)itemView.findViewById(R.id.tvHora);
             tvTiempo = (TextView)itemView.findViewById(R.id.tvTiempo);
-
-
+            tvPuntos = (TextView)itemView.findViewById(R.id.tvPuntos);
         }
     }
 }

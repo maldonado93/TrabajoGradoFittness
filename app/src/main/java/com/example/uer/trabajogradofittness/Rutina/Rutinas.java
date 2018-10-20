@@ -63,7 +63,6 @@ public class Rutinas extends Fragment implements Response.Listener<JSONObject>, 
 
         layoutFiltro = v.findViewById(R.id.layoutFiltro);
 
-
         spFiltro = v.findViewById(R.id.spFiltro);
 
         spFiltro.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

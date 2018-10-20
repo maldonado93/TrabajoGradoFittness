@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +35,8 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
 
     GlobalState gs;
 
+    ProgressBar progressBar;
+
     private String categoria;
     private String idRutina;
     private String rutina;
@@ -56,6 +59,8 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
         setContentView(R.layout.activity_ejercicios);
 
         gs = (GlobalState) getApplication();
+
+        progressBar = findViewById(R.id.progressBar);
 
 
         Bundle datos = this.getIntent().getExtras();
@@ -185,6 +190,7 @@ public class Ejercicios extends AppCompatActivity implements SearchView.OnQueryT
             adaptadorEjercicios = new AdaptadorListaEjercicios(this, listaEjercicios);
             recyclerEjercicios.setLayoutManager(new GridLayoutManager(this, 1));
 
+            progressBar.setVisibility(View.GONE);
             recyclerEjercicios.setAdapter(adaptadorEjercicios);
         }
         catch (JSONException e) {

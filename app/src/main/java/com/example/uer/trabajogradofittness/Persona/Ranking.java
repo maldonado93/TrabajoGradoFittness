@@ -72,6 +72,10 @@ public class Ranking extends Fragment implements Response.Listener<JSONObject>, 
     TextView tvNivel2;
     TextView tvNivel3;
 
+    TextView tvPuntos1;
+    TextView tvPuntos2;
+    TextView tvPuntos3;
+
     TextView tvNombre1;
     TextView tvNombre2;
     TextView tvNombre3;
@@ -102,6 +106,10 @@ public class Ranking extends Fragment implements Response.Listener<JSONObject>, 
         tvNivel1 = v.findViewById(R.id.tvNivel1);
         tvNivel2 = v.findViewById(R.id.tvNivel2);
         tvNivel3 = v.findViewById(R.id.tvNivel3);
+
+        tvPuntos1 = v.findViewById(R.id.tvPuntos1);
+        tvPuntos2 = v.findViewById(R.id.tvPuntos2);
+        tvPuntos3 = v.findViewById(R.id.tvPuntos3);
 
         tvNombre1 = v.findViewById(R.id.tvNombre1);
         tvNombre2 = v.findViewById(R.id.tvNombre2);
@@ -150,6 +158,7 @@ public class Ranking extends Fragment implements Response.Listener<JSONObject>, 
                                 ivImagen1.setImageBitmap(response);
                                 ivInsignia1.setBackground(insignia);
                                 tvNivel1.setText(datos[3]);
+                                tvPuntos1.setText(datos[5]);
                                 tvNombre1.setText(datos[2]);
                             }
                             else{
@@ -157,6 +166,7 @@ public class Ranking extends Fragment implements Response.Listener<JSONObject>, 
                                     ivImagen2.setImageBitmap(response);
                                     ivInsignia2.setBackground(insignia);
                                     tvNivel2.setText(datos[3]);
+                                    tvPuntos2.setText(datos[5]);
                                     tvNombre2.setText(datos[2]);
                                 }
                                 else{
@@ -164,6 +174,7 @@ public class Ranking extends Fragment implements Response.Listener<JSONObject>, 
                                         ivImagen3.setImageBitmap(response);
                                         ivInsignia3.setBackground(insignia);
                                         tvNivel3.setText(datos[3]);
+                                        tvPuntos3.setText(datos[5]);
                                         tvNombre3.setText(datos[2]);
                                     }
                                     else{

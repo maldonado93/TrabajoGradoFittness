@@ -79,7 +79,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_expand_more_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_mode_edit_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -89,8 +89,8 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_expand_white" />
+                            <entry key="color" value="008f4f" />
+                            <entry key="outputName" value="ic_mode_edit_grenn" />
                             <entry key="sourceFile" value="C:\Users\HP" />
                           </map>
                         </option>

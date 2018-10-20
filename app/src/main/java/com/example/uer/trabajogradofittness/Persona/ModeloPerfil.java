@@ -10,7 +10,8 @@ public class ModeloPerfil {
     private Bitmap foto;
     private String id_tipo_identificacion;
     private String identificacion;
-    private String nombre;
+    private String nombres;
+    private String apellidos;
     private String email;
     private String movil;
     private String localidad;
@@ -43,12 +44,20 @@ public class ModeloPerfil {
         this.identificacion = identificacion;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getNombres() {
+        return nombres;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
     }
 
     public String getEmail() {

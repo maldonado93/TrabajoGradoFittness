@@ -206,11 +206,26 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             public void onClick(View view) {
 
                 if(estadoEntreno){
-                    d = getResources().getDrawable(R.drawable.ic_play);
-                    btnIniciar.setBackgroundDrawable(d);
-                    cronometro = null;
-                    estadoEntreno = false;
-                    spDispositivos.setEnabled(true);
+                    android.app.AlertDialog.Builder dialogo1 = new android.app.AlertDialog.Builder(getContext());
+                    dialogo1.setTitle("");
+                    dialogo1.setMessage("¿Desea terminar el entreno?");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogo1, int id) {
+                            d = getResources().getDrawable(R.drawable.ic_play);
+                            btnIniciar.setBackgroundDrawable(d);
+                            cronometro = null;
+                            estadoEntreno = false;
+                            spDispositivos.setEnabled(true);
+                        }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialogo1, int id) {
+                            dialogo1.cancel();
+                        }
+                    });
+                    dialogo1.show();
+
                 }
                 else{
                     /*tiempoTotal = 2500;
@@ -335,7 +350,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 tiempoEstimadoMax += tiempo;
             }
         }
-        Toast.makeText(getContext(), "Min: "+tiempoEstimadoMin+" Max: "+tiempoEstimadoMax, Toast.LENGTH_LONG).show();
     }
 
     private void obtenerFrecuenciaReposo(){
@@ -611,6 +625,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     spDispositivos.setEnabled(false);
                     contReposo = 0;
                     graficaPulsaciones.setVisibility(View.VISIBLE);
+                    tvBpm.setVisibility(View.VISIBLE);
                 } else if (!normal && DataHandler.getInstance().getH7() == null) {
 
                     Log.i("Main Activity", "Conexion normal");
@@ -619,6 +634,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     contReposo = 0;
                     spDispositivos.setEnabled(false);
                     graficaPulsaciones.setVisibility(View.VISIBLE);
+                    tvBpm.setVisibility(View.VISIBLE);
                     normal = true;
                 }
                 menuBool = true;
@@ -626,6 +642,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             else{
                 spDispositivos.setEnabled(true);
                 graficaPulsaciones.setVisibility(View.GONE);
+                tvBpm.setVisibility(View.GONE);
             }
         }
         else{
@@ -762,6 +779,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             if(list.size() == 0) {
                 btnEscanear.setVisibility(View.VISIBLE);
                 graficaPulsaciones.setVisibility(View.GONE);
+                tvBpm.setVisibility(View.GONE);
             }
 
             ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(getContext(),
@@ -785,7 +803,19 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         recyclerEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 1));
         recyclerEjercicios.setAdapter(adaptadorEjercicios);
 
+        TextView tvCarga = viewRutina.findViewById(R.id.tvCarga);
 
+        if(orientacion.compareTo("Metabólica") == 0){
+            tvCarga.setText("50-60% 1RM con reducción del 15 al 20%");
+        }
+        else{
+            if(orientacion.compareTo("Estructural") == 0){
+                tvCarga.setText("60-70% 1RM con reducción del 15 al 20%");
+            }
+            else{
+                tvCarga.setText("70-80% 1RM con reducción del 15 al 20%");
+            }
+        }
 
         String descanso = "";
 
@@ -825,10 +855,10 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         segundos = tiempo - (minutos * 60);
 
         if(segundos != 0){
-            t = "- Min: " + minutos + " min " + segundos + " seg";
+            t = "- Mínimo: " + minutos + " min " + segundos + " seg";
         }
         else{
-            t ="- Min: " + minutos + " min ";
+            t ="- Mínimo: " + minutos + " min ";
         }
 
         tvTiempoMin.setText(t);
@@ -840,10 +870,10 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         segundos = tiempo - (minutos * 60);
 
         if(segundos != 0){
-            t = "- Min: " + minutos + " min " + segundos + " seg";
+            t = "- Máximo: " + minutos + " min " + segundos + " seg";
         }
         else{
-            t ="- Min: " + minutos + " min ";
+            t ="- Máximo: " + minutos + " min ";
         }
 
         tvTiempoMax.setText(t);

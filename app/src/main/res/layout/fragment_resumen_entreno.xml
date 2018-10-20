@@ -10,7 +10,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -37,11 +38,13 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0">
 
             <android.support.constraint.Guideline
                 android:id="@+id/guideline4"
@@ -50,28 +53,129 @@
                 android:orientation="vertical"
                 app:layout_constraintGuide_begin="193dp" />
 
+
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/graficaPeso"
-                android:layout_width="352dp"
-                android:layout_height="259dp"
+                android:layout_width="0dp"
+                android:layout_height="220dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
             </com.github.mikephil.charting.charts.LineChart>
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/graficaPorcentaje"
-                android:layout_width="358dp"
-                android:layout_height="177dp"
+            <TextView
+                android:id="@+id/textView31"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
+                android:text="Frecuencia máxima"
+                android:textAllCaps="true"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/tvFRMax" />
+
+            <TextView
+                android:id="@+id/textView50"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
+                android:text="Frecuencia reserva máxima"
+                android:textAllCaps="true"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
+
+            <TextView
+                android:id="@+id/textView49"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
+                android:text="Frecuencia reserva mínima"
+                android:textAllCaps="true"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvDescanso">
+                app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
+
+            <TextView
+                android:id="@+id/tvFRMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView49" />
+
+            <TextView
+                android:id="@+id/tvFRMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/textView50" />
+
+            <TextView
+                android:id="@+id/tvFMaxima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/textView31" />
+
+            <TextView
+                android:id="@+id/tvFMinima"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView47" />
+
+
+            <com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/graficaPorcentaje"
+                android:layout_width="358dp"
+                android:layout_height="140dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvEstimadoMax">
 
             </com.github.mikephil.charting.charts.PieChart>
 
@@ -83,7 +187,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:text="0 min"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView28" />
@@ -96,33 +200,32 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
-                android:text="Tiempo"
+                android:text="Tiempo estimado"
                 android:textAllCaps="true"
                 android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.487"
                 app:layout_constraintStart_toStartOf="@+id/guideline4"
-                app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
+                app:layout_constraintTop_toBottomOf="@+id/tvFMaxima" />
 
             <TextView
                 android:id="@+id/textView28"
                 android:layout_width="77dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="25dp"
+                android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
                 android:text="Tiempo de entreno"
                 android:textAllCaps="true"
                 android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
+                app:layout_constraintTop_toBottomOf="@+id/tvFMinima" />
 
             <TextView
                 android:id="@+id/tvActividad"
@@ -132,7 +235,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:text="0 min"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView27" />
@@ -145,7 +248,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:text="0 min"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline4"
                 app:layout_constraintTop_toBottomOf="@+id/textView26" />
@@ -158,38 +261,62 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="20dp"
                 android:text="tiempo en actividad"
                 android:textAllCaps="true"
                 android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toStartOf="@+id/guideline4"
                 app:layout_constraintHorizontal_bias="0.515"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tvTiempo" />
+                app:layout_constraintTop_toBottomOf="@+id/graficaPorcentaje" />
 
             <TextView
-                android:id="@+id/tvTiempo2"
+                android:id="@+id/tvEstimadoMin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="TextView"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/guideline4"
                 app:layout_constraintTop_toBottomOf="@+id/textView13" />
 
             <TextView
+                android:id="@+id/tvEstimadoMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@+id/guideline4"
+                app:layout_constraintTop_toBottomOf="@+id/tvEstimadoMin" />
+
+            <TextView
                 android:id="@+id/textView26"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:text="tiempo de descanso"
                 android:textAllCaps="true"
                 android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.509"
+                app:layout_constraintHorizontal_bias="0.468"
                 app:layout_constraintStart_toEndOf="@+id/guideline4"
-                app:layout_constraintTop_toBottomOf="@+id/tvTiempo" />
+                app:layout_constraintTop_toBottomOf="@+id/graficaPorcentaje" />
+
+            <TextView
+                android:id="@+id/textView47"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:gravity="center_horizontal"
+                android:text="Frecuencia mínima"
+                android:textAllCaps="true"
+                android:textColor="@android:color/holo_blue_light"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/guideline4"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tvFRMin" />
 
         </android.support.constraint.ConstraintLayout>
 

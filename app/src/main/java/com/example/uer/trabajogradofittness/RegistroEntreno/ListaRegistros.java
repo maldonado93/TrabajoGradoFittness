@@ -11,8 +11,9 @@ public class ListaRegistros {
     private String fecha;
     private String hora;
     private String tiempo;
+    private String puntos;
 
-    public ListaRegistros(String idRegistro, String idRutina, String rutina, String categoria, String promedioFrecuencia, String dia, String fecha, String hora, String tiempo) {
+    public ListaRegistros(String idRegistro, String idRutina, String rutina, String categoria, String promedioFrecuencia, String dia, String fecha, String hora, String tiempo, String puntos) {
         this.idRegistro = idRegistro;
         this.idRutina = idRutina;
         this.rutina = rutina;
@@ -22,6 +23,7 @@ public class ListaRegistros {
         this.fecha = fecha;
         this.hora = hora;
         this.tiempo = tiempo;
+        this.puntos = puntos;
     }
 
     public String getIdRegistro() {
@@ -94,5 +96,13 @@ public class ListaRegistros {
 
     public void setTiempo(String tiempo) {
         this.tiempo = tiempo;
+    }
+
+    public String getPuntos() {
+        return puntos;
+    }
+
+    public void setPuntos(String puntos) {
+        this.puntos = puntos;
     }
 }

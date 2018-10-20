@@ -443,7 +443,6 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
                     }
                 }
             }
-
     }
 
 

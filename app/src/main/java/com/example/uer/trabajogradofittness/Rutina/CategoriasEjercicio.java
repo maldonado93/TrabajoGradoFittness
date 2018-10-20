@@ -8,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -33,9 +33,8 @@ public class CategoriasEjercicio extends Fragment implements Response.Listener<J
     View v;
     GlobalState gs;
 
+    ProgressBar progressBar;
     TextView titulo;
-    Button btnVerRutinas;
-
 
     private RecyclerView recyclerCategoriaEjercicios;
     private List<ListaCategorias> listaCategoriaEjercicios;
@@ -49,6 +48,7 @@ public class CategoriasEjercicio extends Fragment implements Response.Listener<J
 
         v = inflater.inflate(R.layout.fragment_categorias_ejercicios,container,false);
 
+        progressBar = v.findViewById(R.id.progressBar);
         titulo = v.findViewById(R.id.tvTitulo);
         recyclerCategoriaEjercicios = (RecyclerView)v.findViewById(R.id.rvCategorias);
 
@@ -78,19 +78,6 @@ public class CategoriasEjercicio extends Fragment implements Response.Listener<J
         request.add(jsonObjectRequest);
     }
 
-    private void verRutinas(){
-        Rutinas fragment = new Rutinas();
-
-        /*Bundle dato = new Bundle();
-        dato.putString("Principal14", "alumno");
-        fragment.setArguments(dato);*/
-
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, fragment).addToBackStack(null);
-        fragmentTransaction.commit();
-    }
-
-
     @Override
     public void onResponse(JSONObject response) {
         JSONArray datos = response.optJSONArray("ejercicio");
@@ -107,6 +94,7 @@ public class CategoriasEjercicio extends Fragment implements Response.Listener<J
             AdaptadorListaCategorias adaptador = new AdaptadorListaCategorias(getContext(), listaCategoriaEjercicios);
             recyclerCategoriaEjercicios.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
+            progressBar.setVisibility(View.GONE);
             recyclerCategoriaEjercicios.setAdapter(adaptador);
         }
         catch (JSONException e) {

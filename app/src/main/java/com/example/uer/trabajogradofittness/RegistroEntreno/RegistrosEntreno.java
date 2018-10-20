@@ -293,6 +293,8 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
 
                         String tiempo = minutos + " min "+ segundos + " seg";
 
+                        String puntos = "+" + jsonObject.optString("puntos");
+
                         listaRegistros.add(new ListaRegistros(idRegistro,
                                 idRutina,
                                 rutina,
@@ -301,7 +303,8 @@ public class RegistrosEntreno extends Fragment implements Response.Listener<JSON
                                 dia,
                                 fech,
                                 hora,
-                                tiempo));
+                                tiempo,
+                                puntos));
                     }
                 }
                 if (consulta == "historial") {

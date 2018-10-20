@@ -30,6 +30,22 @@
     </android.support.v7.widget.RecyclerView>
 
     <TextView
+        android:id="@+id/textView54"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="Cargas de peso"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/tvCarga"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp" />
+
+    <TextView
         android:id="@+id/textView37"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

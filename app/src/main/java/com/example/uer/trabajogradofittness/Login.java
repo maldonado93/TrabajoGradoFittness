@@ -164,7 +164,8 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             request.add(jsonObjectRequest);
         }
         else{
-            Toast.makeText(this, "Complete los campos, por favor!", Toast.LENGTH_SHORT).show();}
+            Toast.makeText(this, "Complete los campos, por favor!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void obtenerDatosUsuario(){
@@ -296,7 +297,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                     }
                     else{
                         progress.hide();
-                        Toast.makeText(this, "Usuario no registrado!",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Usuario o email no registrado!",Toast.LENGTH_SHORT).show();
                     }
                 }
                 if(consulta.compareTo("datos") == 0){

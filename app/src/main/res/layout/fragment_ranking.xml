@@ -105,6 +105,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:text="1"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -129,6 +131,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="70dp"
             android:text="3"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivImagen1"
             app:layout_constraintTop_toTopOf="parent" />
@@ -139,6 +143,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:text="2"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/ivImagen1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -169,7 +175,7 @@
             android:id="@+id/tvNivel2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@+id/ivInsignia2"
             app:layout_constraintTop_toBottomOf="@+id/tvNombre2" />
@@ -178,8 +184,8 @@
             android:id="@+id/tvNivel1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textSize="10sp"
+            android:layout_marginTop="5dp"
+            android:textSize="12sp"
             app:layout_constraintStart_toEndOf="@+id/ivInsignia1"
             app:layout_constraintTop_toBottomOf="@+id/tvNombre1" />
 
@@ -187,35 +193,62 @@
             android:id="@+id/tvNivel3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:textSize="10sp"
             app:layout_constraintStart_toEndOf="@+id/ivInsignia3"
             app:layout_constraintTop_toBottomOf="@+id/tvNombre3" />
 
+        <TextView
+            android:id="@+id/tvPuntos1"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:text="Puntos"
+            android:textSize="9sp"
+            app:layout_constraintStart_toEndOf="@+id/ivInsignia1"
+            app:layout_constraintTop_toBottomOf="@+id/tvNivel1" />\
+
+        <TextView
+            android:id="@+id/tvPuntos2"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:text="Puntos"
+            android:textSize="9sp"
+            app:layout_constraintStart_toEndOf="@+id/ivInsignia2"
+            app:layout_constraintTop_toBottomOf="@+id/tvNivel2" />
+
+        <TextView
+            android:id="@+id/tvPuntos3"
+            android:layout_width="wrap_content"
+            android:layout_height="14dp"
+            android:text="Puntos"
+            android:textSize="9sp"
+            app:layout_constraintStart_toEndOf="@+id/ivInsignia3"
+            app:layout_constraintTop_toBottomOf="@+id/tvNivel3" />
+
         <ImageView
             android:id="@+id/ivInsignia2"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             app:layout_constraintStart_toStartOf="@+id/tvNombre2"
             app:layout_constraintTop_toBottomOf="@+id/tvNombre2" />
 
         <ImageView
             android:id="@+id/ivInsignia1"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             app:layout_constraintStart_toStartOf="@+id/tvNombre1"
             app:layout_constraintTop_toBottomOf="@+id/tvNombre1" />
 
         <ImageView
             android:id="@+id/ivInsignia3"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginStart="15dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginStart="5dp"
             app:layout_constraintStart_toStartOf="@+id/tvNombre3"
             app:layout_constraintTop_toBottomOf="@+id/tvNombre3" />
 

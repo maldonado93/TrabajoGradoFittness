@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginStart="15dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:text="Peso actual:"
             android:textSize="18sp"
             android:visibility="visible"
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="15dp"
             android:text="(Kg)"
             android:textSize="18sp"
             android:visibility="visible"
@@ -75,7 +75,6 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="8dp"
             android:drawableLeft="@drawable/ic_loop"
             android:text="Actualizar"
             android:textColor="@android:color/background_light"
@@ -91,20 +90,13 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="35dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.452"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/guideline8">
+            app:layout_constraintTop_toBottomOf="@+id/tvPesoActual">
 
         </com.github.mikephil.charting.charts.LineChart>
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_begin="191dp" />
 
         <TextView
             android:id="@+id/textView2"
@@ -117,9 +109,18 @@
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/guideline9"
+            app:layout_constraintEnd_toStartOf="@+id/textView20"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
+            app:layout_constraintTop_toBottomOf="@+id/btnActualizar" />
+
+        <TextView
+            android:id="@+id/tvPesoInicial"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toStartOf="@+id/textView20"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2" />
 
         <TextView
             android:id="@+id/textView20"
@@ -130,13 +131,44 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="30dp"
-            android:text="Peso inicial"
+            android:text="Peso actual"
             android:textColor="@color/colorPrimary"
             android:textSize="16sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="@+id/guideline9"
-            app:layout_constraintTop_toBottomOf="@+id/graficaPeso" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btnActualizar" />
+
+        <TextView
+            android:id="@+id/tvPesoActual"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView20" />
+
+        <TextView
+            android:id="@+id/textView53"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="Comparación"
+            android:textColor="@color/colorPrimary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView20"
+            app:layout_constraintTop_toBottomOf="@+id/btnActualizar" />
+
+        <TextView
+            android:id="@+id/tvProgreso"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/textView20"
+            app:layout_constraintTop_toBottomOf="@+id/textView53" />
 
     </android.support.constraint.ConstraintLayout>
 

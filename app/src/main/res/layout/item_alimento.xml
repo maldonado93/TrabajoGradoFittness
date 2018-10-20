@@ -36,6 +36,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginStart="15dp"
         android:text="nombre"
+        android:textColor="@color/colorPrimary"
         android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

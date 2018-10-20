@@ -23,6 +23,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
+import com.example.uer.trabajogradofittness.Rutina.ListaEjercicioRutina;
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
@@ -45,6 +46,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,7 +60,6 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     String consulta;
     int frecuenciaReposo;
     int promedioFrecuencias;
-    String orientacionRutina;
 
     ProgressBar progressBar;
 
@@ -67,13 +68,25 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
     private LineChart graficaPulsaciones;
     private PieChart graficaPorcentaje;
 
+    TextView tvFRMin;
+    TextView tvFRMax;
+    TextView tvFMinima;
+    TextView tvFMaxima;
+
     TextView tvTiempo;
+    TextView tvEstimadoMin;
+    TextView tvEstimadoMax;
     TextView tvActividad;
     TextView tvDescanso;
+
+    String orientacion;
+    int tiempoEstimadoMin;
+    int tiempoEstimadoMax;
 
     int cantSuperior;
     int cantInferior;
     ArrayList<Integer> registroPulsaciones;
+    private List<ListaEjercicioRutina> listaEjercicios;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -87,7 +100,14 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         layout_resumen = v.findViewById(R.id.layout_resumen);
         progressBar = v.findViewById(R.id.progressBar);
 
+        tvFRMin = v.findViewById(R.id.tvFRMin);
+        tvFRMax = v.findViewById(R.id.tvFRMax);
+        tvFMinima = v.findViewById(R.id.tvFMinima);
+        tvFMaxima = v.findViewById(R.id.tvFMaxima);
+
         tvTiempo = v.findViewById(R.id.tvTiempo);
+        tvEstimadoMin = v.findViewById(R.id.tvEstimadoMin);
+        tvEstimadoMax = v.findViewById(R.id.tvEstimadoMax);
         tvActividad = v.findViewById(R.id.tvActividad);
         tvDescanso = v.findViewById(R.id.tvDescanso);
 
@@ -103,7 +123,7 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
 
         registroPulsaciones = new ArrayList<>();
 
-        consultarFrecuencias();
+        listarEjercicios();
     }
 
     private void initGraficaPulsaciones(){
@@ -118,14 +138,26 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         ArrayList<Entry> valoresy = new ArrayList<>();
         int val = 0;
         int prom = 0;
+        int FMinima = registroPulsaciones.get(0);
+        int FMaxima = registroPulsaciones.get(0);
         cantSuperior = 0;
         cantInferior = 0;
 
         for(int i = 0; i < registroPulsaciones.size(); i++){
             val = registroPulsaciones.get(i);
+            if(val < FMinima){
+                FMinima = val;
+            }
+            if(val > FMaxima){
+                FMaxima = val;
+            }
+
             valoresy.add(new Entry(i,val));
             prom += val;
         }
+        tvFMinima.setText(String.valueOf(FMinima));
+        tvFMaxima.setText(String.valueOf(FMaxima));
+
         prom = (int)(prom/registroPulsaciones.size());
 
         for(int j = 0; j< registroPulsaciones.size(); j++){
@@ -243,8 +275,10 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         }
 
         FCRMin = (int)((FCmax - FCrep) * FCEsfMin + FCrep);
-        FCRMax = (int)((FCmax - FCrep) * FCEsfMax + FCrep);
+        tvFRMin.setText(String.valueOf(FCRMin));
 
+        FCRMax = (int)((FCmax - FCrep) * FCEsfMax + FCrep);
+        tvFRMax.setText(String.valueOf(FCRMax));
 
         LimitLine frecuenciaMaxima = new LimitLine(FCmax,"Frecuencia máxima: "+FCmax);
         frecuenciaMaxima.setLineColor(Color.RED);
@@ -314,6 +348,8 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         graficaPorcentaje.getDescription().setEnabled(false);
         graficaPorcentaje.setDrawEntryLabels(false);
         graficaPorcentaje.setDrawHoleEnabled(true);
+        graficaPorcentaje.setTransparentCircleRadius(0f);
+        graficaPorcentaje.setDrawSlicesUnderHole(false);
         graficaPorcentaje.setMaxAngle(180);
         graficaPorcentaje.setRotationAngle(180);
         graficaPorcentaje.setCenterTextOffset(0, 0);
@@ -330,6 +366,95 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         l.setDrawInside(false);
 
 
+    }
+
+    private void calcularTiemposEspera(){
+        tiempoEstimadoMax = 0;
+        tiempoEstimadoMin = 0;
+
+        String nivelActividad = gs.getNivelActividad();
+        String categoria = "";
+        String[] series = null;
+        int cantSeries = 0;
+        int tiempo = 0;
+
+        for(int i = 0; i < listaEjercicios.size(); i++)
+        {
+            categoria = listaEjercicios.get(i).getCategoria();
+
+            if(categoria.compareTo("Cardio") != 0){
+                series = listaEjercicios.get(i).getSeries().split(" * ");
+                cantSeries = Integer.parseInt(series[0]);
+
+                if(orientacion.compareTo("Metabólica") == 0){
+                    tiempoEstimadoMin += 90 * cantSeries;
+                    tiempoEstimadoMax += 120 * cantSeries;
+                }
+                else{
+                    if((nivelActividad.compareTo("Novato") == 0) || (nivelActividad.compareTo("Intermedio") == 0)){
+
+                        if(orientacion.compareTo("Estructural") == 0){
+                            tiempoEstimadoMin += 120 * cantSeries;
+                            tiempoEstimadoMax += 180 * cantSeries;
+
+                        }
+                        if(orientacion.compareTo("Neural") == 0){
+                            tiempoEstimadoMin += 180 * cantSeries;
+                            tiempoEstimadoMax += 240 * cantSeries;
+                        }
+                    }
+                    else{
+                        if(orientacion.compareTo("Estructural") == 0){
+                            tiempoEstimadoMin += 120 * cantSeries;
+                            tiempoEstimadoMax += 240 * cantSeries;
+                        }
+                        if(orientacion.compareTo("Neural") == 0){
+                            tiempoEstimadoMin += 240 * cantSeries;
+                            tiempoEstimadoMax += 360 * cantSeries;
+                        }
+                    }
+                }
+            }
+            else{
+                series = listaEjercicios.get(i).getSeries().split(" ");
+                tiempo = Integer.parseInt(series[0]) * 60;
+
+                tiempoEstimadoMin += tiempo;
+                tiempoEstimadoMax += tiempo;
+            }
+        }
+
+        int tiempoEntreno = 0;
+        int minutos = 0;
+        int segundos = 0;
+
+        String entreno = "";
+
+        tiempoEntreno = tiempoEstimadoMin;
+        minutos = (int)Math.ceil(tiempoEntreno / 60);
+        segundos = tiempoEntreno - (minutos * 60);
+
+        if(segundos == 0){
+            entreno = minutos + " min ";
+        }
+        else{
+            entreno = minutos + " min "+ segundos + " seg";
+        }
+
+
+        tvEstimadoMin.setText("Min: " + entreno);
+
+        tiempoEntreno = tiempoEstimadoMax;
+        minutos = (int)Math.ceil(tiempoEntreno / 60);
+        segundos = tiempoEntreno - (minutos * 60);
+        if(segundos == 0){
+            entreno = minutos + " min ";
+        }
+        else{
+            entreno = minutos + " min "+ segundos + " seg";
+        }
+
+        tvEstimadoMax.setText("Max: " + entreno);
     }
 
     private void consultarFrecuencias(){
@@ -354,11 +479,23 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
         request.add(jsonObjectRequest);
     }
 
+    private void listarEjercicios(){
+        consulta = "ejercicio";
+        String url = "http://"+gs.getIp()+"/ejercicio/listar_ejerciciosxrutina.php?idRutina="+gs.getId_rutina();
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
     @Override
     public void onResponse(JSONObject response) {
         int resultado = 0;
 
         JSONArray datos = response.optJSONArray(consulta);
+
+        listaEjercicios = new ArrayList<>();
 
         try {
             for(int i=0; i<datos.length();i++) {
@@ -371,7 +508,24 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
                 if(consulta.compareTo("datos_entreno") == 0) {
                     registroPulsaciones.add(jsonObject.optInt("bpm"));
                 }
-
+                if(consulta == "ejercicio") {
+                    String categoria = jsonObject.optString("categoria");
+                    orientacion = jsonObject.optString("orientacion");
+                    if (categoria.compareTo("Cardio") != 0) {
+                        listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
+                                jsonObject.optString("categoria"),
+                                jsonObject.optString("nombre"),
+                                "Serie/Repeticion",
+                                jsonObject.optString("series") + " * " +
+                                        jsonObject.optString("repeticiones")));
+                    } else {
+                        listaEjercicios.add(new ListaEjercicioRutina(jsonObject.optString("id"),
+                                jsonObject.optString("categoria"),
+                                jsonObject.optString("nombre"),
+                                "Tiempo",
+                                jsonObject.optString("tiempo") + " min"));
+                    }
+                }
             }
         }
         catch (JSONException e) {
@@ -386,6 +540,13 @@ public class ResumenEntreno extends Fragment implements Response.Listener<JSONOb
                 layout_resumen.setVisibility(View.VISIBLE);
                 initGraficaPulsaciones();
                 initGraficaPorcentaje();
+            }
+            else{
+                if(consulta.compareTo("ejercicio") == 0)
+                {
+                    calcularTiemposEspera();
+                    consultarFrecuencias();
+                }
             }
         }
     }

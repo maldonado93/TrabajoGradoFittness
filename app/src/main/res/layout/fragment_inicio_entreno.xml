@@ -66,7 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:text="No tienes rutina programada para hoy!"
+        android:text="No tienes rutinas programadas!"
         android:textAllCaps="false"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text=":"
+            android:textColor="@color/colorPrimary"
             android:textSize="22sp" />
 
         <TextView
@@ -119,6 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text=":"
+            android:textColor="@color/colorPrimary"
             android:textSize="22sp" />
 
         <TextView
@@ -161,6 +163,7 @@
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/colorPrimary"
         android:textSize="40sp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnIniciar" />

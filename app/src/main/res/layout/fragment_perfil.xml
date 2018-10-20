@@ -84,13 +84,6 @@
                 android:layout_marginTop="190dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/tvIdentificacion"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="25dp"
-                    android:text="Identificacíon" />
-
                 <LinearLayout
                     android:id="@+id/layout_datos"
                     android:layout_width="match_parent"
@@ -103,22 +96,23 @@
                     android:visibility="visible">
 
                     <TextView
+                        android:id="@+id/tvIdentificacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:drawableLeft="@drawable/ic_info"
+                        android:text="Identificacíon" />
+
+                    <TextView
                         android:id="@+id/tvNombre"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
-                        android:text="Nombre"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvIdentificacion" />
+                        android:layout_marginTop="10dp"
+                        android:text="Nombre" />
 
                     <TextView
                         android:id="@+id/tvLocalidad"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="10dp"
                         android:text="Localidad"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -129,8 +123,6 @@
                         android:id="@+id/tvEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="10dp"
                         android:text="Email"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -141,8 +133,6 @@
                         android:id="@+id/tvMovil"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginStart="8dp"
                         android:layout_marginTop="10dp"
                         android:text="Movil"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -159,6 +149,30 @@
                     android:orientation="vertical"
                     android:visibility="gone">
 
+                    <Spinner
+                        android:id="@+id/spTipoIdentificacion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1" />
+
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="5dp"
+                        android:layout_weight="1">
+
+                        <EditText
+                            android:id="@+id/etIdentificacion"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="Identificación"
+                            android:inputType="textPersonName"
+                            android:textSize="14sp" />
+                    </android.support.design.widget.TextInputLayout>
+
                     <android.support.design.widget.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -168,7 +182,22 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
-                            android:hint="Nombre"
+                            android:hint="Nombres"
+                            android:inputType="textPersonName"
+                            android:textSize="14sp" />
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <EditText
+                            android:id="@+id/etApellido"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:ems="10"
+                            android:hint="Apellidos"
                             android:inputType="textPersonName"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
@@ -220,7 +249,7 @@
                         android:id="@+id/textView30"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
+                        android:layout_marginTop="10dp"
                         android:text="Ciudad" />
 
                     <Spinner
@@ -243,12 +272,12 @@
                     android:id="@+id/textView17"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="15dp"
                     android:layout_marginTop="15dp"
                     android:text="Fisonomía" />
 
                 <LinearLayout
-                    android:id="@+id/layout_fisonomia"
+                    android:id="@+id/layout_condicion_fisica"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
@@ -256,33 +285,19 @@
                     android:visibility="visible">
 
                     <TextView
-                        android:id="@+id/Estatura"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_marginLeft="20dp"
-                        android:text="Altura" />
-
-                    <TextView
                         android:id="@+id/tvEstatura"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp" />
-
-                    <TextView
-                        android:id="@+id/Peso"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="20dp"
-                        android:text="Peso" />
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp" />
 
                     <TextView
                         android:id="@+id/tvPeso"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginLeft="20dp" />
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="10dp" />
 
                 </LinearLayout>
 
@@ -306,7 +321,7 @@
                             android:layout_height="wrap_content"
                             android:ems="10"
                             android:hint="Peso"
-                            android:inputType="textPersonName"
+                            android:inputType="numberDecimal"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -319,8 +334,8 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
-                            android:hint="Altura"
-                            android:inputType="textEmailAddress"
+                            android:hint="Estatura"
+                            android:inputType="number"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 

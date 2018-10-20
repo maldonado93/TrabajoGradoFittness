@@ -174,7 +174,7 @@ public class Menu extends AppCompatActivity {
                 consultarImagen(gs.getFotoPerfil());
                 tvNivel.setText(gs.getNivelActividad());
                 prPuntos.setProgress(gs.getPuntos(), true);
-                tvPuntos.setText(gs.getPuntos() + "/" + 500);
+                tvPuntos.setText(gs.getPuntos() + "/" + 1000);
                 invalidateOptionsMenu();
             }
 
