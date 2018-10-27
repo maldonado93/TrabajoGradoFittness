@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,8 +35,9 @@ import java.util.ArrayList;
 
 public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTextListener, Response.Listener<JSONObject>, Response.ErrorListener{
 
-
     GlobalState gs;
+
+    ProgressBar progressBar;
 
     ImageButton btnRegresar;
     TextView tvVista;
@@ -53,7 +55,6 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +62,9 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
 
         gs = (GlobalState) getApplication();
 
-        btnRegresar = (ImageButton) findViewById(R.id.btnRegresar1);
+        progressBar = findViewById(R.id.progressBar);
+
+        btnRegresar = findViewById(R.id.btnRegresar1);
 
         btnRegresar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,19 +120,13 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
             }
         });
 
-
-
         Bundle datos = this.getIntent().getExtras();
         categoria = datos.getString("categoria");
-
-
 
         titulo = (TextView) findViewById(R.id.tvTitulo);
         titulo.setText(categoria);
 
-
         spOrden = (Spinner)findViewById(R.id.spOrden);
-
 
         listaOrden = new ArrayList<>();
         listaOrden.add("Nombre");
@@ -198,8 +195,6 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
         }
     }
 
-
-
     private void listarAlimentos(String categoria, String orden){
 
         String url = "http://"+gs.getIp()+"/nutricion/listar_alimentosxcategoria.php?categoria="+categoria+"&orden="+orden;
@@ -246,6 +241,7 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
             adaptadorAlimentos = new AdaptadorListaAlimentos(this, listaAlimentos, 1);
             recyclerAlimentos.setLayoutManager(new GridLayoutManager(this, 1));
 
+            progressBar.setVisibility(View.GONE);
             recyclerAlimentos.setAdapter(adaptadorAlimentos);
         }
         catch (JSONException e) {
@@ -258,8 +254,4 @@ public class Alimentos extends AppCompatActivity implements SearchView.OnQueryTe
         Toast.makeText(this, "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
-
-
-
-
 }

@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,9 +36,10 @@ import java.util.List;
  */
 public class Nutricion extends Fragment implements Response.Listener<JSONObject>, Response.ErrorListener {
 
-
     View v;
     GlobalState gs;
+
+    ProgressBar progressBar;
 
     TextView titulo;
     private RecyclerView recyclerCategoriaNutricion;
@@ -52,6 +54,7 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
 
         v = inflater.inflate(R.layout.fragment_nutricion,container,false);
 
+        progressBar = v.findViewById(R.id.progressBar);
 
         titulo = v.findViewById(R.id.tvTitulo);
 
@@ -76,7 +79,6 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         request = Volley.newRequestQueue(getActivity().getApplicationContext());
         consultarCategorias();
     }
-
 
     private void consultarCategorias(){
 
@@ -104,13 +106,12 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
             AdaptadorCategoriasAlimentos adaptador = new AdaptadorCategoriasAlimentos(getContext(), listaCategoriaNutricion);
             recyclerCategoriaNutricion.setLayoutManager(new GridLayoutManager(getActivity(), 2));
 
+            progressBar.setVisibility(View.GONE);
             recyclerCategoriaNutricion.setAdapter(adaptador);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 
     @Override
@@ -118,6 +119,4 @@ public class Nutricion extends Fragment implements Response.Listener<JSONObject>
         Toast.makeText(getContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
     }
-
-
 }

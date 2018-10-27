@@ -99,7 +99,7 @@
                         android:id="@+id/tvIdentificacion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:drawableLeft="@drawable/ic_info"
+                        android:drawableLeft="@drawable/ic_ident"
                         android:text="Identificacíon" />
 
                     <TextView
@@ -107,6 +107,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:drawableLeft="@drawable/ic_person"
                         android:text="Nombre" />
 
                     <TextView
@@ -114,6 +115,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:drawableLeft="@drawable/ic_place"
                         android:text="Localidad"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -124,6 +126,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:drawableLeft="@drawable/ic_email"
                         android:text="Email"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -134,6 +137,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:drawableLeft="@drawable/ic_phone"
                         android:text="Movil"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -170,6 +174,7 @@
                             android:ems="10"
                             android:hint="Identificación"
                             android:inputType="textPersonName"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -184,6 +189,7 @@
                             android:ems="10"
                             android:hint="Nombres"
                             android:inputType="textPersonName"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -199,6 +205,7 @@
                             android:ems="10"
                             android:hint="Apellidos"
                             android:inputType="textPersonName"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -213,6 +220,7 @@
                             android:ems="10"
                             android:hint="Email"
                             android:inputType="textEmailAddress"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -227,6 +235,7 @@
                             android:ems="10"
                             android:hint="Movil"
                             android:inputType="phone"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -289,7 +298,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
-                        android:layout_marginTop="10dp" />
+                        android:layout_marginTop="10dp"
+                        android:drawableLeft="@drawable/ic_height" />
 
                     <TextView
                         android:id="@+id/tvPeso"
@@ -297,7 +307,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_marginLeft="15dp"
-                        android:layout_marginTop="10dp" />
+                        android:layout_marginTop="10dp"
+                        android:drawableLeft="@drawable/ic_pound" />
 
                 </LinearLayout>
 
@@ -316,12 +327,13 @@
                         android:layout_height="wrap_content">
 
                         <EditText
-                            android:id="@+id/etPeso"
+                            android:id="@+id/etEstatura"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
-                            android:hint="Peso"
-                            android:inputType="numberDecimal"
+                            android:hint="Estatura"
+                            android:inputType="number"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 
@@ -330,12 +342,13 @@
                         android:layout_height="wrap_content">
 
                         <EditText
-                            android:id="@+id/etEstatura"
+                            android:id="@+id/etPeso"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:ems="10"
-                            android:hint="Estatura"
-                            android:inputType="number"
+                            android:hint="Peso"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/colorPrimaryDark"
                             android:textSize="14sp" />
                     </android.support.design.widget.TextInputLayout>
 

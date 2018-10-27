@@ -14,11 +14,11 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.uer.trabajogradofittness.GlobalState;
 import com.example.uer.trabajogradofittness.R;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class AdaptadorListaAlimentosPlan extends RecyclerView.Adapter<AdaptadorListaAlimentosPlan.MyViewHolder> {
@@ -76,10 +76,11 @@ public class AdaptadorListaAlimentosPlan extends RecyclerView.Adapter<AdaptadorL
 
                 int[] cantidades = gs.getCantidad();
                 int cantPicker = numberPicker.getValue();
+                DecimalFormat df = new DecimalFormat("#");
 
-                holder.tvCalorias.setText(String.valueOf(alimentos.get(holder.getAdapterPosition()).getCalorias() * cantPicker));
-                holder.tvProteinas.setText(String.valueOf(alimentos.get(holder.getAdapterPosition()).getProteinas() * cantPicker));
-                holder.tvCarbohidratos.setText(String.valueOf(alimentos.get(holder.getAdapterPosition()).getCarbohidratos() * cantPicker));
+                holder.tvCalorias.setText(String.valueOf( df.format(alimentos.get(holder.getAdapterPosition()).getCalorias() * cantPicker)));
+                holder.tvProteinas.setText(String.valueOf( df.format(alimentos.get(holder.getAdapterPosition()).getProteinas() * cantPicker)));
+                holder.tvCarbohidratos.setText(String.valueOf( df.format(alimentos.get(holder.getAdapterPosition()).getCarbohidratos() * cantPicker)));
 
                 if(holder.cbSeleccion.isChecked()){
                     int cantAux = cantidades[posicion];
@@ -96,6 +97,7 @@ public class AdaptadorListaAlimentosPlan extends RecyclerView.Adapter<AdaptadorL
                         calAux -= (alimentos.get(holder.getAdapterPosition()).getCalorias() * cantAux);
                         calAux += calPick;
                     }
+
 
                     calorias[posicion] = calAux;
                     gs.setCaloria(calorias);
@@ -142,11 +144,6 @@ public class AdaptadorListaAlimentosPlan extends RecyclerView.Adapter<AdaptadorL
                         alimentos[posicion] = idAlimento;
 
                     }
-                    else{
-                        //Toast.makeText(context, "Calorias: " , Toast.LENGTH_SHORT).show();
-                    }
-                    Toast.makeText(context, "Calorias: "+ sumCal + " - "+caloriasMax[gs.getIndPlan()], Toast.LENGTH_SHORT).show();
-
                 }
                 else {
                     calorias[posicion] = 0;
@@ -170,6 +167,8 @@ public class AdaptadorListaAlimentosPlan extends RecyclerView.Adapter<AdaptadorL
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder myViewHolder, int i) {
 
+        DecimalFormat df = new DecimalFormat("#");
+
         myViewHolder.tvId.setText(String.valueOf(alimentos.get(i).getId()));
         myViewHolder.etSeleccion.setText(String.valueOf(alimentos.get(i).getSeleccion()));
         myViewHolder.numberPicker.setMinValue(1);
@@ -177,9 +176,9 @@ public class AdaptadorListaAlimentosPlan extends RecyclerView.Adapter<AdaptadorL
         myViewHolder.numberPicker.setValue(alimentos.get(i).getCantidad());
         myViewHolder.tvNombre.setText(alimentos.get(i).getNombre());
         myViewHolder.tvCategoria.setText(alimentos.get(i).getCategoria());
-        myViewHolder.tvCalorias.setText(String.valueOf(alimentos.get(i).getCalorias()));
-        myViewHolder.tvProteinas.setText(String.valueOf(alimentos.get(i).getProteinas()));
-        myViewHolder.tvCarbohidratos.setText(String.valueOf(alimentos.get(i).getCarbohidratos()));
+        myViewHolder.tvCalorias.setText(df.format(alimentos.get(i).getCalorias()));
+        myViewHolder.tvProteinas.setText(df.format(alimentos.get(i).getProteinas()));
+        myViewHolder.tvCarbohidratos.setText(df.format(alimentos.get(i).getCarbohidratos()));
     }
 
     @Override

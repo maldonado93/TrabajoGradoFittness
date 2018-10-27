@@ -29,6 +29,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -102,6 +103,8 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
     int indAlimentosPlan;
     int seleccion;
     int cantidad;
+    int totalCalorias;
+
     double[] caloriasPlan;
     int[] alimentosPlan;
     int[] cantidadesPlan;
@@ -333,14 +336,16 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         cal[3] = Math.round(maxCalorias * 0.2);
         cal[4] = Math.round(maxCalorias * 0.1);
 
-        maxCalorias = cal[0] + cal[1] +cal[2] +cal[3] +cal[4];
-        tvCalDiaria.setText("Calorias requeridas: " + maxCalorias);
+        DecimalFormat df = new DecimalFormat("#");
 
-        tvLimiteCal1.setText("- " + cal[0]);
-        tvLimiteCal2.setText("- " + cal[1]);
-        tvLimiteCal3.setText("- " + cal[2]);
-        tvLimiteCal4.setText("- " + cal[3]);
-        tvLimiteCal5.setText("- " + cal[4]);
+        maxCalorias = Double.parseDouble(df.format(cal[0] + cal[1] +cal[2] +cal[3] +cal[4]));
+        tvCalDiaria.setText("Calorias requeridas: " + df.format(maxCalorias));
+
+        tvLimiteCal1.setText("- " + df.format(cal[0]));
+        tvLimiteCal2.setText("- " + df.format(cal[1]));
+        tvLimiteCal3.setText("- " + df.format(cal[2]));
+        tvLimiteCal4.setText("- " + df.format(cal[3]));
+        tvLimiteCal5.setText("- " + df.format(cal[4]));
 
         gs.setCaloriasMax(cal);
         gs.insCalorias(5);
@@ -391,36 +396,37 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
     }
 
     private void generarListasPlanes(){
+        DecimalFormat df = new DecimalFormat("#");
 
         if(listaAlimentos1.size() > 0){
-            tvCalorias1.setText(""+ caloriasPlan[0]);
+            tvCalorias1.setText(""+ df.format(caloriasPlan[0]));
             adaptadorAlimentos1 = new AdaptadorListaAlimentos(getContext(), listaAlimentos1, 2);
             rvComida1.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida1.setAdapter(adaptadorAlimentos1);
         }
         if(listaAlimentos2.size() > 0){
-            tvCalorias2.setText(""+ caloriasPlan[1]);
+            tvCalorias2.setText(""+ df.format(caloriasPlan[1]));
             adaptadorAlimentos2 = new AdaptadorListaAlimentos(getContext(), listaAlimentos2, 2);
             rvComida2.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida2.setAdapter(adaptadorAlimentos2);
         }
 
         if(listaAlimentos3.size() > 0){
-            tvCalorias3.setText(""+ caloriasPlan[2]);
+            tvCalorias3.setText(""+ df.format(caloriasPlan[2]));
             adaptadorAlimentos3 = new AdaptadorListaAlimentos(getContext(), listaAlimentos3, 2);
             rvComida3.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida3.setAdapter(adaptadorAlimentos3);
         }
 
         if(listaAlimentos4.size() > 0){
-            tvCalorias4.setText(""+ caloriasPlan[3]);
+            tvCalorias4.setText(""+ df.format(caloriasPlan[3]));
             adaptadorAlimentos4 = new AdaptadorListaAlimentos(getContext(), listaAlimentos4, 2);
             rvComida4.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida4.setAdapter(adaptadorAlimentos4);
         }
 
         if(listaAlimentos5.size() > 0){
-            tvCalorias5.setText(""+ caloriasPlan[4]);
+            tvCalorias5.setText(""+ df.format(caloriasPlan[4]));
             adaptadorAlimentos5 = new AdaptadorListaAlimentos(getContext(), listaAlimentos5, 2);
             rvComida5.setLayoutManager(new GridLayoutManager(getContext(), 1));
             rvComida5.setAdapter(adaptadorAlimentos5);
@@ -452,6 +458,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
             caloriasPlan[4] += Float.parseFloat(calorias) * cantidad;
             listaAlimentos5.add(new ListaAlimentos(id, "Cant: "+cantidad, nombre, cal, prot, carb));
         }
+        totalCalorias = (int)(caloriasPlan[0] + caloriasPlan[1] + caloriasPlan[2] + caloriasPlan[3] + caloriasPlan[4]);
     }
 
     private void mostrarDialog(){
@@ -477,6 +484,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
                     sumCal += calorias[i];
                 }
 
+
                 if(sumCal <= maxCal[gs.getIndPlan()]){
                     caloriasPlan[gs.getIndPlan()] = sumCal;
 
@@ -492,7 +500,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
                     }
                 }
                 else{
-                    Toast.makeText(view.getContext(), "Calorias: "+ sumCal + " - "+ maxCal[gs.getIndPlan()], Toast.LENGTH_SHORT).show();
+                    Toast.makeText(view.getContext(), "Calorias superadas!\n"+ sumCal + " - "+ maxCal[gs.getIndPlan()], Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -578,6 +586,17 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         consulta = "plan_propuesto";
 
         String url = "http://"+gs.getIp()+"/nutricion/listar_plan_propuesto.php?comida="+comida+"&fecha="+fecha;
+
+        url = url.replace(" ", "%20");
+
+        jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
+        request.add(jsonObjectRequest);
+    }
+
+    private void actualizarCaloriasDiarias(){
+        consulta = "actualizar_calorias";
+
+        String url = "http://"+gs.getIp()+"/nutricion/actualizar_calorias_diarias.php?idPlan="+idPlanNutricional+"&calorias="+totalCalorias;
 
         url = url.replace(" ", "%20");
 
@@ -711,6 +730,7 @@ public class PlanesNutricionales extends Fragment implements Response.Listener<J
         else{
             if(consulta.compareTo("plan_nutricional") == 0 && datos.length() > 1) {
                 generarListasPlanes();
+                actualizarCaloriasDiarias();
             }
             else{
                 if(consulta.compareTo("plan_propuesto") == 0 && datos.length() > 1) {

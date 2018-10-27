@@ -1,7 +1,6 @@
 package com.example.uer.trabajogradofittness.Nutricion;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
@@ -43,7 +42,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
             holder.tvCantidad.setVisibility(View.VISIBLE);
         }
 
-        holder.item_alimento.setOnClickListener(new View.OnClickListener() {
+        /*holder.item_alimento.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 int idAlimento = alimentos.get(holder.getAdapterPosition()).getId();
@@ -53,7 +52,7 @@ public class AdaptadorListaAlimentos extends RecyclerView.Adapter<AdaptadorLista
                 registro.putExtra("idAlimento", idAlimento);
                 context.startActivity(registro);
             }
-        });
+        });*/
 
         return holder;
     }

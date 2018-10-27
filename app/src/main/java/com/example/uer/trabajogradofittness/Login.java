@@ -1,13 +1,18 @@
 package com.example.uer.trabajogradofittness;
 
 
+import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Fade;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -40,6 +45,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     String consulta;
     String fecha;
 
+    EditText teclado;
     EditText etUsuario;
     EditText etPassword;
     Button btnIngresar;
@@ -55,9 +61,16 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        Fade fadeIn = new Fade(Fade.IN);
+        fadeIn.setDuration(1000);
+        fadeIn.setInterpolator(new DecelerateInterpolator());
+
+        getWindow().setEnterTransition(fadeIn);
+
         setContentView(R.layout.activity_login);
 
         Calendar c = Calendar.getInstance();
@@ -69,17 +82,21 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
 
         progress = new ProgressDialog(Login.this);
         progress.setMessage("Cargando...");
+        progress.setCanceledOnTouchOutside(false);
 
-        etUsuario = (EditText)findViewById(R.id.etUsuario);
+        etUsuario = findViewById(R.id.etUsuario);
         etUsuario.setText("");
 
-        etPassword = (EditText)findViewById(R.id.etPassword);
+        etPassword = findViewById(R.id.etPassword);
         etPassword.setText("");
 
-        btnIngresar = (Button)findViewById(R.id.btnIngresar);
+        btnIngresar = findViewById(R.id.btnIngresar);
         btnIngresar.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
+                InputMethodManager inputMethodManager = (InputMethodManager)getSystemService(getApplicationContext().INPUT_METHOD_SERVICE);
+
+                inputMethodManager.hideSoftInputFromWindow(etPassword.getWindowToken(), 0);
                 consultarUsuario(view);
             }
         });
@@ -133,8 +150,13 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         }
 
         if(!correcto){
+            gs.setActualizaRendimiento("incumplido");
             rendimiento -= 0.01;
         }
+        else{
+            gs.setActualizaRendimiento("cumplido");
+        }
+
         gs.setRendimiento(rendimiento);
     }
 
@@ -199,7 +221,6 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
-
 
     private void calcularEdad(String fecha){
         Date fechaActual = new Date();
@@ -273,6 +294,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
         boolean usuarioValido = false;
         String url = "";
         int dias = 0;
+        int diasRegistro = 0;
         int cantidadRegistros = 0;
 
         JSONArray datos = response.optJSONArray(consulta);
@@ -284,6 +306,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                 if(consulta.compareTo("usuario") == 0){
                     gs.setSesion_usuario(jsonObject.optInt("id_persona"));
                     gs.setTipo_usuario(jsonObject.optInt("id_tipo_usuario"));
+                    usuario = jsonObject.optString("usuario");
                     if(gs.getSesion_usuario() != 0){
                         if(jsonObject.optString("password").compareTo(password) == 0 ){
                             gs.setUsuario(usuario);
@@ -308,6 +331,14 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
                     gs.setNivel(jsonObject.optInt("nivel"));
                     gs.setPuntos(jsonObject.optInt("puntos"));
                     dias = jsonObject.optInt("dias");
+                    diasRegistro = jsonObject.optInt("fecha_registro");
+
+                    if(diasRegistro < 30){
+                        gs.setNovato(true);
+                    }
+                    else{
+                        gs.setNovato(false);
+                    }
                     gs.setRendimiento(Double.parseDouble(jsonObject.optString("rendimiento")));
                     gs.setPeso(Float.parseFloat(jsonObject.optString("peso")));
                     gs.setNivelActividad(jsonObject.optString("nivel_actividad"));
@@ -321,6 +352,7 @@ public class Login extends AppCompatActivity implements Response.Listener<JSONOb
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            progress.hide();
         }
 
         if(usuarioValido){

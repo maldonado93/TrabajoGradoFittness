@@ -46,7 +46,6 @@ public class InformacionActividad extends AppCompatActivity implements Response.
     RadioButton rbNo;
     RadioButton rbSi;
 
-
     Button btnRegistrar;
 
     RequestQueue request;
@@ -63,6 +62,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
 
         progress = new ProgressDialog(InformacionActividad.this);
         progress.setMessage("Registrando datos...");
+        progress.setCanceledOnTouchOutside(false);
 
         btnRegresar = findViewById(R.id.btnRegresar);
         btnRegresar.setOnClickListener(new View.OnClickListener() {
@@ -267,6 +267,7 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         }
         catch (JSONException e) {
             e.printStackTrace();
+            progress.hide();
         }
 
         if(consulta.compareTo("persona") == 0){
@@ -313,13 +314,10 @@ public class InformacionActividad extends AppCompatActivity implements Response.
         }
     }
 
-
     @Override
     public void onErrorResponse(VolleyError error) {
-        progress.show();
+        progress.hide();
         Toast.makeText(getApplicationContext(), "Error "+ error.toString(), Toast.LENGTH_SHORT).show();
         Log.i("ERROR", error.toString());
-
     }
-
 }

@@ -72,16 +72,12 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     ScrollView scrollView;
     RelativeLayout relativeLayout;
 
-    ModeloPerfil modeloPerfil;
-
     ImageView ivImagen;
     Bitmap bitmap;
 
     LinearLayout layout_datos;
-    TextView tvTipoIdentificacion;
     TextView tvIdentificacion;
     TextView tvNombre;
-    TextView tvFecha;
     TextView tvEmail;
     TextView tvMovil;
     TextView tvLocalidad;
@@ -116,6 +112,16 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
     String fecha;
     private String consulta = null;
     boolean existeIdentificacion;
+
+    String tipoIdentificacion;
+    String identificacion;
+    String nombres;
+    String apellidos;
+    String localidad;
+    String email;
+    String movil;
+    String estatura;
+    String iPeso;
 
     RequestQueue request;
     JsonObjectRequest jsonObjectRequest;
@@ -186,14 +192,13 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         etIdentificacion.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                String[] ident = tvIdentificacion.getText().toString().split(". ");
-                if (etIdentificacion.getText().toString().compareTo(ident[1]) != 0) {
+                if (etIdentificacion.getText().toString().compareTo(identificacion) != 0) {
                     existeIdentificacion = false;
                     verificarIdentificacion();
                 }
                 else{
                     existeIdentificacion = false;
-                    etIdentificacion.setTextColor(Color.BLACK);
+                    etIdentificacion.setTextColor(Color.argb(255,3,88,108));
                 }
             }
         });
@@ -269,7 +274,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 });
                 AlertDialog ventana = dialog.create();
                 ventana.show();
-
             }
         });
 
@@ -366,23 +370,23 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
     private void asignarDatos(){
         if(spTipoIdentificacion.getSelectedItemPosition() == 0){
-            tvIdentificacion.setText("CC. " + etIdentificacion.getText());
+            tvIdentificacion.setText("   CC. " + etIdentificacion.getText());
         }
         else{
-            tvIdentificacion.setText("TI. " + etIdentificacion.getText());
+            tvIdentificacion.setText("   TI. " + etIdentificacion.getText());
         }
-        tvNombre.setText(etNombre.getText() + " " + etApellido.getText());
-        tvEmail.setText(etEmail.getText());
-        tvMovil.setText(etMovil.getText());
-        tvLocalidad.setText(spCiudad.getSelectedItem().toString()+", "+spDepartamento.getSelectedItem().toString());
+        tvNombre.setText("   " + etNombre.getText() + " " + etApellido.getText());
+        tvEmail.setText("   " + etEmail.getText());
+        tvMovil.setText("   " + etMovil.getText());
+        tvLocalidad.setText("   " + spCiudad.getSelectedItem().toString()+", "+spDepartamento.getSelectedItem().toString());
         if(tvPeso.getText().toString().compareTo(etPeso.getText().toString()) != 0){
-            tvPeso.setText(etPeso.getText());
+            tvPeso.setText("   " + etPeso.getText());
         }
         else{
             etPeso.setText("0");
         }
 
-        tvEstatura.setText(etEstatura.getText());
+        tvEstatura.setText("   " + etEstatura.getText());
 
         guardarDatos();
     }
@@ -429,7 +433,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                         else{
                             Toast.makeText(getContext(), "Error al actualizar la imagen!", Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -450,7 +453,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
 
                 return params;
             }
-
         };
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
@@ -469,7 +471,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                         else{
                             Toast.makeText(getContext(), "Error al actualizar la imagen!", Toast.LENGTH_SHORT).show();
                         }
-
                     }
                 },
                 new Response.ErrorListener() {
@@ -573,8 +574,6 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
         ArrayList<String> listaConsulta = new ArrayList<String>();
         ArrayAdapter<CharSequence> adaptador = null;
 
-        modeloPerfil = new ModeloPerfil();
-
         String url = "";
         try {
             if(consulta.compareTo("guardarImagen") != 0){
@@ -583,21 +582,21 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                     jsonObject = datos.getJSONObject(i);
 
                     if(consulta.compareTo("persona") == 0){
-                        modeloPerfil.setId_tipo_identificacion(jsonObject.optString("tipo"));
-                        modeloPerfil.setIdentificacion(jsonObject.optString("identificacion"));
-                        modeloPerfil.setNombres(jsonObject.optString("nombres"));
-                        modeloPerfil.setApellidos(jsonObject.optString("apellidos"));
-                        modeloPerfil.setEmail(jsonObject.optString("email"));
+                        tipoIdentificacion = jsonObject.optString("tipo");
+                        identificacion = jsonObject.optString("identificacion");
+                        nombres = jsonObject.optString("nombres");
+                        apellidos = jsonObject.optString("apellidos");
+                        email = jsonObject.optString("email");
                         if(jsonObject.optString("movil") != null){
-                            modeloPerfil.setMovil(jsonObject.optString("movil"));
+                            movil = jsonObject.optString("movil");
                         }
                         else{
-                            modeloPerfil.setMovil(" ");
+                            movil = "";
                         }
-                        modeloPerfil.setLocalidad(jsonObject.optString("localidad"));
+                        localidad =jsonObject.optString("localidad");
                         double peso = Double.parseDouble(jsonObject.optString("peso"));
-                        modeloPerfil.setPeso(String.valueOf((int)peso));
-                        modeloPerfil.setEstatura(jsonObject.optString("estatura"));
+                        iPeso = String.valueOf((int)peso);
+                        estatura = jsonObject.optString("estatura");
 
                     }
                     if(consulta.compareTo("tipo_identificacion") == 0){
@@ -621,7 +620,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                         }
                         else{
                             existeIdentificacion = false;
-                            etIdentificacion.setTextColor(Color.BLACK);
+                            etIdentificacion.setTextColor(Color.argb(255,3,88,108));
                         }
                     }
                 }
@@ -635,29 +634,28 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
             ArrayAdapter<CharSequence> adapter = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, listaConsulta);
 
             if(consulta.compareTo("persona") == 0){
-                if(modeloPerfil.getId_tipo_identificacion().compareTo("Cédula de ciudadanía") == 0){
-                    tvIdentificacion.setText("CC. " + modeloPerfil.getIdentificacion());
+                if(tipoIdentificacion.compareTo("Cédula de ciudadanía") == 0){
+                    tvIdentificacion.setText("   CC. " + identificacion);
                 }
                 else{
-                    tvIdentificacion.setText("TI. " + modeloPerfil.getIdentificacion());
+                    tvIdentificacion.setText("   TI. " + identificacion);
                 }
-                tvNombre.setText(modeloPerfil.getNombres() + " "+ modeloPerfil.getApellidos());
-                tvEmail.setText(modeloPerfil.getEmail());
-                tvLocalidad.setText(modeloPerfil.getLocalidad());
-                tvMovil.setText(modeloPerfil.getMovil());
+                tvNombre.setText("   " + nombres + " "+ apellidos);
+                tvEmail.setText("   " + email);
+                tvLocalidad.setText("   " + localidad);
+                tvMovil.setText("   " + movil);
 
-                etIdentificacion.setText(modeloPerfil.getIdentificacion());
-                etNombre.setText(modeloPerfil.getNombres());
-                etApellido.setText(modeloPerfil.getApellidos());
-                etEmail.setText(modeloPerfil.getEmail());
-                etMovil.setText(modeloPerfil.getMovil());
+                etIdentificacion.setText(identificacion);
+                etNombre.setText(nombres);
+                etApellido.setText(apellidos);
+                etEmail.setText(email);
+                etMovil.setText(movil);
 
-                tvPeso.setText(modeloPerfil.getPeso());
-                tvEstatura.setText(modeloPerfil.getEstatura());
+                tvPeso.setText("   " + iPeso + " Kg");
+                tvEstatura.setText("   " + estatura + " Cms");
 
-                etPeso.setText(modeloPerfil.getPeso());
-                etEstatura.setText(modeloPerfil.getEstatura());
-
+                etPeso.setText(iPeso);
+                etEstatura.setText(estatura);
 
                 cargarTiposIdentificacion();
             }
@@ -665,7 +663,7 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                 if (consulta.compareTo("tipo_identificacion") == 0) {
                     adaptador = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_item, listaConsulta);
                     spTipoIdentificacion.setAdapter(adaptador);
-                    spCiudad.setSelection(obtenerPosicionItem(spDepartamento, modeloPerfil.getId_tipo_identificacion()));
+                    spTipoIdentificacion.setSelection(obtenerPosicionItem(spTipoIdentificacion, tipoIdentificacion));
 
                     cargarDepartamentos();
                 }
@@ -678,8 +676,8 @@ public class Perfil extends Fragment implements Response.Listener<JSONObject>, R
                     else{
                         if(consulta.compareTo("ciudad") == 0){
                             spCiudad.setAdapter(adapter);
-                            String[] localidad = (tvLocalidad.getText().toString()).split(", ");
-                            spCiudad.setSelection(obtenerPosicionItem(spCiudad, localidad[0]));
+                            String[] loc = localidad.split(", ");
+                            spCiudad.setSelection(obtenerPosicionItem(spCiudad, loc[0]));
                         }
                     }
                 }

@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
@@ -85,6 +84,9 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     AlertDialog dialogRutina;
     View viewRutina;
 
+    AlertDialog dialogRendimiento;
+    View viewRendimiento;
+
     ImageView ivInsignia;
     TextView tvNivel;
     ProgressBar prPuntos;
@@ -93,6 +95,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
     TextView tvPuntosTiempo;
     TextView tvTotal;
     TextView tvRendimiento;
+    TextView tvNuevoNivel;
 
     Cronometro cronometro = null;
     Resultados resultados = null;
@@ -127,6 +130,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
     int puntosNivel = 1000;
     boolean subeNivel;
+    boolean subeNivelActividad;
     int puntosTiempo;
     int puntosTotal;
     int nivel;
@@ -225,12 +229,11 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                         }
                     });
                     dialogo1.show();
-
                 }
                 else{
-                    /*tiempoTotal = 2500;
-                    dialog_resultados();*/
-                    if(mBluetoothAdapter != null){
+                    tiempoTotal = 2500;
+                    dialog_resultados();
+                    /*if(mBluetoothAdapter != null){
                         if (mBluetoothAdapter.isEnabled()){
                             if(spDispositivos.getSelectedItemPosition() != 0){
                                 if(h7 || normal){
@@ -264,7 +267,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     }
                     else{
                         verificarBluetooth();
-                    }
+                    }*/
                 }
             }
         });
@@ -291,6 +294,10 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         estadoEntreno = false;
         h7 = false;
         normal = false;
+
+        if(gs.getActualizaRendimiento().compareTo("") != 0){
+            dialogRendimiento();
+        }
 
         consultarRutina();
     }
@@ -591,7 +598,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
             data.notifyDataChanged();
             graficaPulsaciones.notifyDataSetChanged();
-            graficaPulsaciones.setVisibleXRangeMaximum(15);
+            graficaPulsaciones.setVisibleXRangeMaximum(20);
             graficaPulsaciones.setMaxVisibleValueCount(Integer.parseInt(DataHandler.getInstance().getLastValue())+5);
 
             graficaPulsaciones.moveViewToX(data.getEntryCount());
@@ -794,6 +801,34 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         }
     }
 
+    private void dialogRendimiento(){
+        AlertDialog.Builder buider = new AlertDialog.Builder(getContext());
+        viewRendimiento = getLayoutInflater().inflate(R.layout.dialog_actualiza_rendimiento, null);
+
+        TextView tvCumplido = viewRendimiento.findViewById(R.id.tvCumplido);
+        TextView tvIncumplido = viewRendimiento.findViewById(R.id.tvIncumplido);
+
+        if(gs.getActualizaRendimiento().compareTo("cumplido") == 0){
+            tvCumplido.setVisibility(View.VISIBLE);
+        }
+        else{
+            tvIncumplido.setVisibility(View.VISIBLE);
+        }
+
+        Button btnContinuar = viewRendimiento.findViewById(R.id.btnContinuar);
+
+        btnContinuar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialogRendimiento.hide();
+            }
+        });
+
+        buider.setView(viewRendimiento);
+        dialogRendimiento = buider.create();
+        dialogRendimiento.show();
+    }
+
     private void dialogRutina(){
         AlertDialog.Builder buider = new AlertDialog.Builder(getContext());
         viewRutina = getLayoutInflater().inflate(R.layout.dialog_ejercicios_rutina, null);
@@ -805,15 +840,20 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         TextView tvCarga = viewRutina.findViewById(R.id.tvCarga);
 
-        if(orientacion.compareTo("Metabólica") == 0){
-            tvCarga.setText("50-60% 1RM con reducción del 15 al 20%");
+        if(gs.isNovato()){
+            tvCarga.setText("Auto- Carga");
         }
         else{
-            if(orientacion.compareTo("Estructural") == 0){
-                tvCarga.setText("60-70% 1RM con reducción del 15 al 20%");
+            if(orientacion.compareTo("Metabólica") == 0){
+                tvCarga.setText("50-60% 1RM con reducción del 15 al 20%");
             }
             else{
-                tvCarga.setText("70-80% 1RM con reducción del 15 al 20%");
+                if(orientacion.compareTo("Estructural") == 0){
+                    tvCarga.setText("60-70% 1RM con reducción del 15 al 20%");
+                }
+                else{
+                    tvCarga.setText("70-80% 1RM con reducción del 15 al 20%");
+                }
             }
         }
 
@@ -924,16 +964,20 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         calcularPuntosEntreno(puntosEntreno);
 
+        if(subeNivel){
+            tvNuevoNivel = viewResultado.findViewById(R.id.tvNuevoNivel);
+            tvNuevoNivel.setVisibility(View.VISIBLE);
+        }
+
         prPuntos.setProgress(puntos, true);
         tvPuntos.setText(puntos + "/" + puntosNivel);
 
-
-
         builder.setView(viewResultado);
+        builder.setCancelable(false);
         dialogResultado = builder.create();
         dialogResultado.show();
 
-        actualizarGamificacion();
+        //actualizarEntreno();
 
         hiloResultados = true;
         resultados = new Resultados();
@@ -1036,7 +1080,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
         promedio = (int) promedio / registroPulsaciones.size();
 
-        String url = "http://" + gs.getIp() + "/registro_entrenos/actualizar_entreno.php?idEntreno=" + idRegistroEntreno + "&tiempo=" + tiempoTotal+"&promedio="+promedio;
+        String url = "http://" + gs.getIp() + "/registro_entrenos/actualizar_entreno.php?idEntreno=" + idRegistroEntreno + "&tiempo=" + tiempoTotal+"&promedio="+promedio+"&puntos="+puntosTotal;
 
         url = url.replace(" ", "%20");
 
@@ -1063,6 +1107,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, this, this);
         request.add(jsonObjectRequest);
     }
+
     private void actualizarCondicionFisica(){
         consulta = "condicion_fisica";
         String url = "http://"+gs.getIp()+"/persona/actualizar_condicion_fisica.php?idPersona="+gs.getSesion_usuario()+"&nivel="+gs.getNivelActividad();
@@ -1114,12 +1159,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     Toast.makeText(getContext(), "Error al registrar el entreno", Toast.LENGTH_SHORT).show();
                 }
             }
-            if(consulta == "registro_actualizado"){
-                JSONObject jsonObject = null;
-
-                Snackbar.make(v, "Datos de entreno registrados!!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
             if(consulta == "datos_entreno"){
                 JSONObject jsonObject = null;
                 jsonObject = datos.getJSONObject(0);
@@ -1169,6 +1208,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             }
         }
         if(consulta.compareTo("registro_entreno") == 0 && idRegistroEntreno != 0){
+            subeNivelActividad = false;
             indPulsaciones = 0;
             estadoEntreno = true;
             cronometro = new Cronometro();
@@ -1176,11 +1216,11 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
         }
         else{
             if(consulta.compareTo("registro_actualizado") == 0){
-                dialog_resultados();
+                actualizarGamificacion();
             }
             else{
                 if(consulta.compareTo("gamificacion") == 0){
-                    if(subeNivel){
+                    if(subeNivelActividad){
                         actualizarCondicionFisica();
                     }
                 }
@@ -1262,11 +1302,13 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
             tvSegundos.setText(segundos);
         }
 
+        @TargetApi(Build.VERSION_CODES.N)
+        @RequiresApi(api = Build.VERSION_CODES.N)
         @Override
         protected void onPostExecute(Boolean resultado) {
             super.onPostExecute(resultado);
             if(resultado){
-                actualizarEntreno();
+                    dialog_resultados();
             }
         }
 
@@ -1287,7 +1329,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
 
             puntosTiempoHilo = 0;
             puntosTotalHilo = 0;
-            puntosHilo = gs.getPuntos();
+            puntosHilo = puntos;
         }
 
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -1305,7 +1347,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                 while(hiloResultados){
                     sleep(20);
                     if(pTiempo){
-                        if(puntosTiempoHilo <= puntosTiempo){
+                        if(puntosTiempoHilo < puntosTiempo){
                             puntosTiempoHilo++;
                         }
                         else{
@@ -1316,7 +1358,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     }
                     else{
                         if(pTotal){
-                            if(puntosTotalHilo <= puntosTotal){
+                            if(puntosTotalHilo < puntosTotal){
                                 puntosTotalHilo++;
                             }
                             else{
@@ -1334,11 +1376,13 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                                 ivInsignia.setBackground(insignia);
 
                                 if(nivel == 10){
+                                    subeNivelActividad = true;
                                     tvNivel.setText("Intermedio");
                                     gs.setNivelActividad("Intermedio");
                                 }
                                 else{
                                     if(nivel == 19){
+                                        subeNivelActividad = true;
                                         tvNivel.setText("Avanzado");
                                         gs.setNivelActividad("Avanzado");
                                     }
@@ -1363,7 +1407,7 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                                         }
                                     }
                                     else{
-                                        if(puntosHilo <= sumaPuntos){
+                                        if(puntosHilo < sumaPuntos){
                                             puntosHilo++;
                                         }
                                         else{
@@ -1377,7 +1421,6 @@ public class Inicio extends Fragment implements OnItemSelectedListener, Observer
                     }
                     publishProgress(puntosTiempoHilo, puntosTotalHilo, puntosHilo);
                 }
-
             }
             catch (InterruptedException e){
                 e.printStackTrace();

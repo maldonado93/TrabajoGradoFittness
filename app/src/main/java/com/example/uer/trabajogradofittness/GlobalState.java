@@ -10,7 +10,8 @@ public class GlobalState extends Application{
     public int puntos= 0;
     public double rendimiento = 1;
 
-
+    public boolean novato = false;
+    public String actualizaRendimiento = "";
     public int sesion_usuario = 0;
     public int tipo_usuario = 0;
     public int id_registro_entreno = 0;
@@ -86,12 +87,28 @@ public class GlobalState extends Application{
     }
 
 
+    public String getActualizaRendimiento() {
+        return actualizaRendimiento;
+    }
+
+    public void setActualizaRendimiento(String actualizaRendimiento) {
+        this.actualizaRendimiento = actualizaRendimiento;
+    }
+
     public int getSesion_usuario() {
         return sesion_usuario;
     }
 
     public void setSesion_usuario(int sesion_usuario) {
         this.sesion_usuario = sesion_usuario;
+    }
+
+    public boolean isNovato() {
+        return novato;
+    }
+
+    public void setNovato(boolean novato) {
+        this.novato = novato;
     }
 
     public int getTipo_usuario() {

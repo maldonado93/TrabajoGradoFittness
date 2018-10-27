@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="65" />
+                                                <entry key="scalingPercent" value="54" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -34,7 +34,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="72" />
+                                                <entry key="scalingPercent" value="54" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -44,11 +44,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="backgroundImage" value="C:\Users\HP\Desktop\Insignias\insignia.png" />
-                                      <entry key="backgroundLayerName" value="ic_insignia" />
-                                      <entry key="foregroundImage" value="C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Android Studio" />
-                                      <entry key="foregroundLayerName" value="ic_launcher_foreground" />
-                                      <entry key="outputName" value="insignia" />
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="ffffff" />
+                                      <entry key="backgroundImage" value="C:\Users\HP\Desktop\logo1.png" />
+                                      <entry key="foregroundImage" value="C:\Users\HP\Desktop\logo1.png" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -79,7 +78,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/editor/ic_mode_edit_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_import_export_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -90,7 +89,7 @@
                         <option name="values">
                           <map>
                             <entry key="color" value="008f4f" />
-                            <entry key="outputName" value="ic_mode_edit_grenn" />
+                            <entry key="outputName" value="ic_heigth" />
                             <entry key="sourceFile" value="C:\Users\HP" />
                           </map>
                         </option>

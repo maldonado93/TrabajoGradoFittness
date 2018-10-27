@@ -13,7 +13,8 @@
         android:layout_marginTop="10dp"
         android:text="Actividad fisica"
         android:textAllCaps="true"
-        android:textSize="18sp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

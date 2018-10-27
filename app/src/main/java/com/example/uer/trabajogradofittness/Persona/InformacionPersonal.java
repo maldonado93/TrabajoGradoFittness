@@ -301,7 +301,6 @@ public class InformacionPersonal extends AppCompatActivity implements Response.L
             }
         }
         else{
-            Toast.makeText(this,"Complete los campos, por favor!", Toast.LENGTH_SHORT).show();
             Snackbar.make(view, "Complete los campos, por favor!", Snackbar.LENGTH_SHORT).setAction("Action", null).show();
         }
     }

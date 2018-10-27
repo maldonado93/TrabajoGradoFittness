@@ -157,6 +157,7 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
                 fechas[i] = res[3] +"-"+ obtenerMes(mes-1)+"-"+res[1];
             }
             valoresy.add(new Entry(i+1,val));
+
             fechas[i+1] = res[3]+"-"+obtenerMes(mes)+"-"+res[1];
         }
         pActual = (double)val;
@@ -172,9 +173,11 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
 
 
         tvPesoInicial.setText((int)pInicial + " kg");
+
         tvPesoActual.setText((int)pActual + " kg");
         tvProgreso.setText((int)diferencia + " kg (" + df.format(porcentaje) + "%)");
 
+        gs.setPeso((float)pActual);
 
         LineDataSet datos = new LineDataSet(valoresy, "Pesos");
         datos.setFillAlpha(110);
@@ -204,6 +207,7 @@ public class HistoricoPesos extends Fragment implements Response.Listener<JSONOb
         graficaPesos.setData(lineData);
         graficaPesos.setVisibleXRangeMaximum(4);
         graficaPesos.animateX(1000, Easing.EasingOption.EaseOutSine);
+        graficaPesos.moveViewToX(lineData.getEntryCount());
     }
 
     private class Formato implements IAxisValueFormatter {

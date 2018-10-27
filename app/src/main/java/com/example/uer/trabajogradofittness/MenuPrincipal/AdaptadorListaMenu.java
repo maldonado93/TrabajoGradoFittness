@@ -98,7 +98,7 @@ public class AdaptadorListaMenu extends BaseExpandableListAdapter{
 
         ImageView icono = view.findViewById(R.id.icono);
         switch (titulo){
-            case "Inicio" : icono.setImageResource(R.drawable.ic_account);
+            case "Entreno" : icono.setImageResource(R.drawable.ic_account);
                         break;
             case "Mi información" : icono.setImageResource(R.drawable.ic_info);
                 break;

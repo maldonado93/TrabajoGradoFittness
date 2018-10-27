@@ -28,6 +28,8 @@
         android:layout_marginTop="8dp"
         android:text="Información de usuario"
         android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

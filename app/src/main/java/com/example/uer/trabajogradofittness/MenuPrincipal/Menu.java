@@ -57,6 +57,9 @@ public class Menu extends AppCompatActivity {
     private String tituloActividad;
     private String[] items;
 
+    AlertDialog dialogRendimiento;
+    View viewRendimiento;
+
     ImageView ivImagen;
     ImageView ivInsignia;
     TextView tvNombre;
@@ -226,15 +229,15 @@ public class Menu extends AppCompatActivity {
     }
 
     private void initItems() {
-        items = new String[]{"Inicio", "Informacion Personal", "Datos de entrenos", "Rutinas", "Nutricion"};
+        items = new String[]{"Entreno", "Mi información", "Datos de entrenos", "Rutinas", "Nutricion"};
     }
 
     private void genData() {
-        List<String> listaMenu = Arrays.asList("Inicio", "Mi información", "Datos de entrenos", "Rutina", "Nutrición");
+        List<String> listaMenu = Arrays.asList("Entreno", "Mi información", "Datos de entrenos", "Rutina", "Nutrición");
 
-        List<String> itemsInicio = Arrays.asList("Iniciar entreno", "Calcular frecuencia en reposo");
+        List<String> itemsInicio = Arrays.asList("Iniciar entreno");
         List<String> itemsInformacion = Arrays.asList("Perfil", "Ranking", "Histórico de peso", "Mi cuenta");
-        List<String> itemsDatos = Arrays.asList("Registro de entrenos", "Promedio de frecuencia por rutina");
+        List<String> itemsDatos = Arrays.asList("Registro de entrenos");
         List<String> itemsRutina = Arrays.asList("Mis rutinas", "Ejercicios");
         List<String> itemsNutricion = Arrays.asList("Plan nutricional", "Alimentos");
 
@@ -290,7 +293,7 @@ public class Menu extends AppCompatActivity {
             case "Alimentos": fragment = new Nutricion();
                 break;
 
-            default: gs.setFragmentActual("Inicio");
+            default: gs.setFragmentActual("Entreno");
                 fragment = new Inicio();
                 break;
         }
@@ -325,7 +328,7 @@ public class Menu extends AppCompatActivity {
                 dialogSalir();
             }
             else{
-                gs.setFragmentActual("Inicio");
+                gs.setFragmentActual("Entreno");
                 verificarFragment();
                 reemplazarFragment();
             }
@@ -333,6 +336,8 @@ public class Menu extends AppCompatActivity {
     }
 
     private void limpiarDatos(){
+        gs.setActualizaRendimiento("");
+        gs.setNovato(false);
         gs.setSesion_usuario(0);
         gs.setUsuario("");
         gs.setPassword("");
@@ -348,6 +353,8 @@ public class Menu extends AppCompatActivity {
         gs.setAccion(null);
         gs.setCaloriasPlan(null);
     }
+
+
 
     private void dialogSalir(){
         AlertDialog.Builder buider = new AlertDialog.Builder(Menu.this);

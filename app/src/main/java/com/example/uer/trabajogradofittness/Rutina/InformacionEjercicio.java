@@ -86,6 +86,8 @@ public class InformacionEjercicio extends AppCompatActivity implements Response.
                     @Override
                     public void onResponse(Bitmap response) {
                         ivImagen.setImageBitmap(response);
+                        progressBar.setVisibility(View.GONE);
+                        layout_informacion.setVisibility(View.VISIBLE);
                     }
                 }, 0, 0, ImageView.ScaleType.CENTER, null, new Response.ErrorListener() {
             @Override
@@ -124,10 +126,6 @@ public class InformacionEjercicio extends AppCompatActivity implements Response.
         }
 
         consultarImagen(url);
-
-        progressBar.setVisibility(View.GONE);
-        layout_informacion.setVisibility(View.VISIBLE);
-
     }
 
     @Override
